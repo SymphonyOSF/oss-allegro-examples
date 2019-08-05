@@ -1,2 +1,2 @@
-# oss-allegro-examples
-Example Programs for the Symphony Allegro Java API
+# allegro-examples
+Examples for the Allegro Java Native Language Bindings
