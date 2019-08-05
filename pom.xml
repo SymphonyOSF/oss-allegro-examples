@@ -26,10 +26,10 @@
     <maven.compiler.target>1.8</maven.compiler.target>
 
     <s2.common.version>0.2.1</s2.common.version>
-    <canon.version>0.2.7</canon.version>
+    <canon.version>0.2.8</canon.version>
     <fugue.version>0.2.21</fugue.version>
     <s2.model.version>0.3.4</s2.model.version>
-    <oss.models.version>0.0.5</oss.models.version>
+    <oss.models.version>0.0.6</oss.models.version>
     <allegro.version>0.0.4</allegro.version>
   </properties>
   
