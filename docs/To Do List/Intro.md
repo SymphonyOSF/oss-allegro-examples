@@ -1,5 +1,5 @@
 ---
-nav-sort: 200
+nav_order: 200
 ---
 # ToDo List Example
 The ToDo List Example is a small set of programs which demonstrate how to store and retrieve a small collection

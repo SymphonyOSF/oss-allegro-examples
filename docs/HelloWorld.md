@@ -1,5 +1,5 @@
 ---
-nav-sort: 100
+nav_order: 100
 ---
 # Hello World Example
 The Hello World example is the simplest possible Allegro program, which simply instantiates the API and authenticates
