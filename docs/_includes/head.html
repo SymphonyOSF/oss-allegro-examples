@@ -45,9 +45,25 @@
   }
   
   .side-bar {
-    max-width: 232px;
+    flex-wrap: nowrap;
+    position: absolute;
+    width: 248px;
+    height: 100%;
+    padding-top: 4rem;
+    padding-bottom: 0;
+    flex-direction: column;
+    border-right: 1px solid #eeebee;
+    align-items: flex-end;
   }
-}
 
+  .site-title {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 101;
+    height: 100px;
+    padding-top: 1rem;
+    border-bottom: 1px solid #eeebee;
+}
 </style>
 </head>
