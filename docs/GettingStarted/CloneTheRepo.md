@@ -1,6 +1,6 @@
 ---
 nav_order: 20
-parent: GettingStarted
+parent: Getting Started
 ---
 # Clone The Example Programs Repo and Build
 

@@ -1,6 +1,6 @@
 ---
 nav_order: 20
-parent: GettingStarted
+parent: Getting Started
 ---
 # Prerequisites
 

@@ -1,7 +1,7 @@
 ---
 nav_order: 200
 has_children: true
-permalink: /ToDoListExample
+permalink: /docs/ToDoListExample
 ---
 # ToDo List Example
 The ToDo List Example is a small set of programs which demonstrate how to store and retrieve a small collection
