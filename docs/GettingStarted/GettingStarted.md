@@ -1,7 +1,7 @@
 ---
 nav_order: 4
 has_children: true
-permalink: /GettingStarted
+permalink: /docs/GettingStarted
 ---
 # Getting Started
 In order to run the Allegro examples you need to provide the following values:
