@@ -1,6 +1,5 @@
 ---
 nav_order: 4
-title: Home
 ---
 # Getting Started
 In order to run the Allegro examples you need to provide the following values:
