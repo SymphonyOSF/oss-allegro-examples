@@ -8,3 +8,5 @@ aux_links:
   - "//allegro.oss.symphony.com"
  "Examples Source Code":
   - "//github.com/SymphonyOSF/oss-allegro-examples"
+
+search_enabled: true
