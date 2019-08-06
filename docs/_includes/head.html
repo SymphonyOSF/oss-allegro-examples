@@ -44,6 +44,10 @@
     margin-left: 232px
   }
   
+  .page-header {
+    height: 90px;
+  }
+  
   .side-bar {
     flex-wrap: nowrap;
     position: absolute;
@@ -61,9 +65,16 @@
     top: 0;
     right: 0;
     z-index: 101;
-    height: 100px;
+    height: 90px;
     padding-top: 1rem;
     border-bottom: 1px solid #eeebee;
+}
+
+@media (min-width: 70rem)
+  .navigation, .site-title, .site-footer {
+    width: 264px;
+    padding-right: 2rem;
+    padding-left: 2rem;
 }
 </style>
 </head>
