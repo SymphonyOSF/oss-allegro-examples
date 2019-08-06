@@ -1,5 +1,6 @@
 ---
 nav_order: 1
+title: Home
 ---
 # Allegro Example Programs
 These examples demonstrate various aspects of the Symphony Allegro API. Each program is intended to show one
