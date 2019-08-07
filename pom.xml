@@ -30,7 +30,7 @@
     <fugue.version>0.2.21</fugue.version>
     <s2.model.version>0.3.5</s2.model.version>
     <oss.models.version>0.0.6</oss.models.version>
-    <allegro.version>0.0.4</allegro.version>
+    <allegro.version>0.0.5-SNAPSHOT</allegro.version>
   </properties>
   
   <modules>
@@ -38,34 +38,6 @@
   	<module>get-message</module>
   	<module>calendar</module>
   </modules>
-  
-  <repositories>
-    <repository>
-      <id>symphony</id>
-      <name>symphony releases</name>
-      <url>https://repo.symphony.com/artifactory/libs-release</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>snapshots</id>
-      <url>https://repo.symphony.com/artifactory/libs-snapshot</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-    <repository>
-      <id>sonatype-oss-public</id>
-      <url>https://oss.sonatype.org/content/groups/public/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
   
   <dependencies>
     <dependency>
