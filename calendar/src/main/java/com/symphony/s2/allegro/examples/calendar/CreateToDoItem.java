@@ -69,10 +69,9 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
       .withObjectStoreUrl(objectStoreUrl_)
       .withUserName(serviceAccount_)
       .withRsaPemCredentialFile(credentialFile_)
-      .withTrustedSslCertResources(IAllegroApi.SYMPHONY_DEV_QA_ROOT_CERT)
       .build();
     
-    System.err.println("PodId is " + allegroApi_.getPodId());
+    System.out.println("PodId is " + allegroApi_.getPodId());
     
     ISequence absoluteSequence = allegroApi_.fetchOrCreateSequenceMetaData(new FetchOrCreateSequenceMetaDataRequest()
           .withSequenceType(SequenceType.ABSOLUTE)
@@ -80,7 +79,7 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
           .withThreadId(threadId_)
         );
     
-    System.err.println("absoluteSequence is " + absoluteSequence);
+    System.out.println("absoluteSequence is " + absoluteSequence);
     
     ISequence currentSequence = allegroApi_.fetchOrCreateSequenceMetaData(new FetchOrCreateSequenceMetaDataRequest()
         .withSequenceType(SequenceType.CURRENT)
@@ -88,23 +87,8 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
         .withThreadId(threadId_)
       );
   
-    System.err.println("currentSequence is " + currentSequence);
+    System.out.println("currentSequence is " + currentSequence);
     
-//    ContentIdObject.Builder idBuilder = new ContentIdObject.Builder()
-//        .withSubjectHash(allegroApi_.getPrincipalBaseHash())
-//        .withSubjectType(Principal.TYPE_ID)
-//        .withContentType(ToDoItem.TYPE_ID);
-//    
-//    IContentIdObject todoAbsoluteSequenceId = idBuilder
-//      .withIdType(ContentIdType.ABSOLUTE_SEQUENCE)
-//      .build();
-//    
-//    System.out.println("todoAbsoluteSequenceId=" + todoAbsoluteSequenceId);
-//    System.out.println("todoAbsoluteSequenceId hash=" + todoAbsoluteSequenceId.getAbsoluteHash());
-//    
-//    
-//    allegroApi_.store(todoSequenceId);
-//    
     IToDoItem toDoItem = new ToDoItem.Builder()
       .withDue(Instant.now())
       .withTitle("An example TODO Item")
@@ -125,7 +109,6 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
       .build();
     
     allegroApi_.store(toDoObject);
-    
     
     System.out.println("Created " + toDoObject);
   }

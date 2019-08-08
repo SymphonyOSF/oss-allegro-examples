@@ -23,7 +23,6 @@ import com.symphony.oss.allegro.api.FetchSequenceMetaDataRequest;
 import com.symphony.oss.allegro.api.FetchSequenceRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.models.calendar.canon.CalendarModel;
-import com.symphony.oss.models.calendar.canon.IToDoItem;
 import com.symphony.oss.models.calendar.canon.ToDoItem;
 import com.symphony.oss.models.fundmental.canon.DeletionType;
 import com.symphony.oss.models.fundmental.canon.ISequence;
@@ -70,7 +69,6 @@ public class DeleteFirstItem extends CommandLineHandler implements Runnable
       .withUserName(serviceAccount_)
       .withRsaPemCredentialFile(credentialFile_)
       .withFactories(CalendarModel.FACTORIES)
-      .withTrustedSslCertResources(IAllegroApi.SYMPHONY_DEV_QA_ROOT_CERT)
       .build();
     
     ISequence currentSequence = allegroApi_.fetchSequenceMetaData(new FetchSequenceMetaDataRequest()

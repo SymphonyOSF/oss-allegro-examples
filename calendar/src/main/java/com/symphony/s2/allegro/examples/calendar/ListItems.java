@@ -70,30 +70,7 @@ public class ListItems extends CommandLineHandler implements Runnable
       .withUserName(serviceAccount_)
       .withRsaPemCredentialFile(credentialFile_)
       .withFactories(CalendarModel.FACTORIES)
-      .withTrustedSslCertResources(IAllegroApi.SYMPHONY_DEV_QA_ROOT_CERT)
       .build();
-    
-//    try
-//    {
-//      IFundamentalObject obj = allegroApi_.fetchCurrent(Hash.newInstance("PlWmBNS4HDDUmuQUZ6QGfmLrA729UIGqWT3G0v0h2vkBAQ=="));
-//      
-//      System.err.println(obj);
-//    }
-//    catch(Exception e)
-//    {
-//      e.printStackTrace();
-//    }
-//    
-//    try
-//    {
-//      IFundamentalObject obj = allegroApi_.fetchAbsolute(Hash.newInstance("UTsTBYm8JImuppEd0SQnpSCupgzlR1jbpuntgFGdnQkBAQ"));
-//      
-//      System.err.println(obj);
-//    }
-//    catch(Exception e)
-//    {
-//      e.printStackTrace();
-//    }
     
     ISequence absoluteSequence = allegroApi_.fetchSequenceMetaData(new FetchSequenceMetaDataRequest()
         .withSequenceType(SequenceType.ABSOLUTE)
