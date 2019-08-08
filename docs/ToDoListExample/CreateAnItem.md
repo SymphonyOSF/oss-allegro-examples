@@ -103,6 +103,11 @@ The ToDo object is the unencrypted payload which we wish to store. Before we can
 it, which we do by creating a FundamentalObject using the __ApplicationObjectBuilder__ class.
 
 ```java
+    ISequenceHashes sequences = new SequenceHashes.Builder()
+      .withAbsolute(absoluteSequence.getBaseHash())
+      .withCurrent(currentSequence.getBaseHash())
+      .build();
+    
     IFundamentalObject toDoObject = allegroApi_.newApplicationObjectBuilder()
         .withThreadId(threadId_)
         .withPayload(toDoItem)
