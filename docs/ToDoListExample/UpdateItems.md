@@ -54,7 +54,7 @@ all fields of the builder to the values in the current object. It then updatesth
 builds a new ToDo object.
 
 The actual update is performed by an ApplicationObjectUpdater which uses the existing (unencrypted)
-FundamentalObject to identify the object to be updates and takes the new payload. The new FundamentalObject
+FundamentalObject to identify the object to be updated and takes the new payload. The new FundamentalObject
 is then stored in the Object Store.
 
 

@@ -58,3 +58,16 @@ explicitly they can detect the difference between a deleted object and one which
 simply catch __NotFoundException__ then they will see the same effect in both cases. Callers have the option
 to deal with both cases but are therefore not required to do so.
 
+## Physical Deletion
+Chat messages, and other objects created by the Symphony chat application, are retained for a fixed period (which may
+be determined by the owner of the pod). The Allegro API allows for the creation of potentially large volumes
+of data, and it may be that the owner of this data decides that not only do they wish to logically delete the 
+data but they wish to avoid future storage charges for that data immediately.
+
+In order to facilitate this, Allegro provides a PHYSICAL delete mode. When an object is physically deleted it
+is removed from all sequences (absolute as well as current) and it is physically removed from the indexes
+making it inaccessible by most means. The purpose of the physical deletion is to avoid storage costs however
+and it does not guarantee that all copies of the data will be removed or that the object will be inaccessible.
+
+The process of physical deletion involves the client sending a signed DeletedObject to the server, which will
+be retained for some period as evidence that the object was indeed removed deliberately.
