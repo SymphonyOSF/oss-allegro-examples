@@ -56,9 +56,10 @@ public class FetchFiveRecentMessages extends CommandLineHandler implements Runna
       .withObjectStoreUrl(objectStoreUrl_)
       .withUserName(serviceAccount_)
       .withRsaPemCredentialFile(credentialFile_)
-      .withTrustedSslCertResources(IAllegroApi.SYMPHONY_DEV_QA_ROOT_CERT)
+//      .withTrustedSslCertResources(IAllegroApi.SYMPHONY_DEV_QA_ROOT_CERT)
       .build();
     
+    System.out.println("Fetch messages from object store...");
     allegroApi_.fetchRecentMessages(
         new FetchRecentMessagesRequest()
           .withThreadId(threadId_)
@@ -69,6 +70,17 @@ public class FetchFiveRecentMessages extends CommandLineHandler implements Runna
 //          System.out.println("ThreadId       = " + message.getThreadId());
 //          System.out.println("PresentationML = " + message.getPresentationML());
 //          System.out.println("EntityJson     = " + message.getEntityJson());
+        }
+        );
+    
+    System.out.println("Fetch messages from object pod...");
+    allegroApi_.fetchRecentMessagesFromPod(
+        new FetchRecentMessagesRequest()
+          .withThreadId(threadId_)
+          .withMaxMessages(5),
+        (message) ->
+        {
+          System.out.println(message);
         }
         );
   }

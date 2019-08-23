@@ -52,7 +52,7 @@ public class AtMention extends CommandLineHandler implements Runnable
       .withPodUrl(podUrl_)
       .withUserName(serviceAccount_)
       .withRsaPemCredentialFile(credentialFile_)
-      .withTrustedSslCertResources(IAllegroApi.SYMPHONY_DEV_QA_ROOT_CERT)
+//      .withTrustedSslCertResources(IAllegroApi.SYMPHONY_DEV_QA_ROOT_CERT)
       .build();
     
     String messageML     = "<messageML><p>I am <mention email=\"" + allegroApi_.getSessioninfo().getEmailAddress() + "\"/></p></messageML>";

@@ -57,7 +57,7 @@ public class CreateFeed extends CommandLineHandler implements Runnable
       .withObjectStoreUrl(objectStoreUrl_)
       .withUserName(serviceAccount_)
       .withRsaPemCredentialFile(credentialFile_)
-      .withTrustedSslCertResources(IAllegroApi.SYMPHONY_DEV_QA_ROOT_CERT)
+//      .withTrustedSslCertResources(IAllegroApi.SYMPHONY_DEV_QA_ROOT_CERT)
       .build();
     
 //    allegroApi_.storeCredential();

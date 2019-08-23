@@ -69,7 +69,7 @@ public class PurgeFirstItem extends CommandLineHandler implements Runnable
       .withUserName(serviceAccount_)
       .withRsaPemCredentialFile(credentialFile_)
       .withFactories(CalendarModel.FACTORIES)
-      .withTrustedSslCertResources(IAllegroApi.SYMPHONY_DEV_QA_ROOT_CERT)
+//      .withTrustedSslCertResources(IAllegroApi.SYMPHONY_DEV_QA_ROOT_CERT)
       .build();
     
     ISequence currentSequence = allegroApi_.fetchSequenceMetaData(new FetchSequenceMetaDataRequest()
