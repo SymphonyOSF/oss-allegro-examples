@@ -1,0 +1,49 @@
+{
+	"canon": "0.0.1",
+	"info": {
+		"title": "Symphony 2.0 Calendar Application Model",
+		"license": {
+			"name": "Apache 2.0",
+			"url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+		}
+	},
+	"id": "com.symphony.s2.model.calendar",
+  "version": "1.0",
+	"basePath": "/calendar/v1",
+	"model": {
+		"javaGenPackage": "com.symphony.oss.models.calendar.canon",
+		"javaFacadePackage": "com.symphony.oss.models.calendar.canon.facade"
+	},
+	"components": {
+		"schemas": {
+      "CalendarItemSequenceId": {
+        "description": "The ID object for the TODO sequence for a principal.",
+        "type": "object",
+        "extends": "http://symphonyosf.github.io/oss-models/fundamental.json#/components/schemas/FundamentalId",
+        "properties": {
+          "principalHash": {
+            "$ref": "http://symphonyosf.github.io/oss-models/fundamental.json#/components/schemas/Hash"
+          }
+        }
+      },
+      
+      "ToDoItem": {
+        "description": "A TODO item.",
+        "type": "object",
+        "extends": "http://symphonyosf.github.io/oss-models/fundamental.json#/components/schemas/ApplicationObject",
+        "facade": false,
+        "properties": {
+          "due": {
+            "$ref": "http://symphonyosf.github.io/oss-models/fundamental.json#/components/schemas/Instant"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    }
+	}
+}
