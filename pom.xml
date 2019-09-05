@@ -29,7 +29,7 @@
     <canon.version>0.2.8</canon.version>
     <fugue.version>0.2.23</fugue.version>
     <s2.model.version>0.3.6</s2.model.version>
-    <oss.models.version>0.0.8-SNAPSHOT</oss.models.version>
+    <oss.models.version>0.0.8</oss.models.version>
     <allegro.version>0.0.7</allegro.version>
   </properties>
   

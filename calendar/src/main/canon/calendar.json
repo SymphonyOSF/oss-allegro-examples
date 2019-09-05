@@ -19,10 +19,10 @@
       "CalendarItemSequenceId": {
         "description": "The ID object for the TODO sequence for a principal.",
         "type": "object",
-        "extends": "http://symphonyosf.github.io/oss-models/fundamental.json#/components/schemas/FundamentalId",
+        "extends": "https://models.oss.symphony.com/fundamental.json#/components/schemas/FundamentalId",
         "properties": {
           "principalHash": {
-            "$ref": "http://symphonyosf.github.io/oss-models/fundamental.json#/components/schemas/Hash"
+            "$ref": "https://models.oss.symphony.com/fundamental.json#/components/schemas/Hash"
           }
         }
       },
@@ -30,11 +30,11 @@
       "ToDoItem": {
         "description": "A TODO item.",
         "type": "object",
-        "extends": "http://symphonyosf.github.io/oss-models/fundamental.json#/components/schemas/ApplicationObject",
+        "extends": "https://models.oss.symphony.com/fundamental.json#/components/schemas/ApplicationObject",
         "facade": false,
         "properties": {
           "due": {
-            "$ref": "http://symphonyosf.github.io/oss-models/fundamental.json#/components/schemas/Instant"
+            "$ref": "https://models.oss.symphony.com/fundamental.json#/components/schemas/Instant"
           },
           "title": {
             "type": "string"
