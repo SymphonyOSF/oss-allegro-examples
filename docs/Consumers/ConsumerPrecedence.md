@@ -36,7 +36,7 @@ In cases where there is more than one consumer with the same "type distance" fro
 then the order in which the consumers are registered determines which will be used, with earlier registered
 consumers being selected in preference to later registered ones.
 
-```java;
+```java
     allegroApi_.fetchRecentMessages(
         new FetchRecentMessagesRequest()
           .withThreadId(threadId_)
