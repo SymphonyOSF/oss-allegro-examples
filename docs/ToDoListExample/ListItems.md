@@ -71,24 +71,14 @@ This method takes a lambda as one of its parameters which is used to process the
 In this example we simply open (decrypt) the returned object, and print it to standard output.
 
 
-```java    
+```java   
     allegroApi_.fetchSequence(new FetchSequenceRequest()
           .withMaxItems(10)
           .withSequenceHash(absoluteSequence.getBaseHash())
-        ,
-        (item) ->
-        {
-          try
+          .withConsumer(IToDoItem.class, (item, trace) ->
           {
-            System.out.println(allegroApi_.open(item));
-          }
-          catch(Exception e)
-          {
-            e.printStackTrace();
-            
             System.out.println(item);
-          }
-        });
+          }));
 ```
 
 We then repeat this process for the current sequence. Since we have created a single object, the absolute and current sequences contain the same thing.

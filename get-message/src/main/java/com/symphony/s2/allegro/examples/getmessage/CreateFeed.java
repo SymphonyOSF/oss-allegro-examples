@@ -11,6 +11,8 @@ import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.UpsertSmsGatewayRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
+import com.symphony.oss.allegro.api.UpsertFeedRequest;
+import com.symphony.oss.models.fundamental.canon.facade.DistinguishedValue;
 import com.symphony.oss.models.system.canon.FeedType;
 import com.symphony.oss.models.system.canon.IFeed;
 
@@ -28,12 +30,14 @@ public class CreateFeed extends CommandLineHandler implements Runnable
   private static final String OBJECT_STORE_URL  = "OBJECT_STORE_URL";
   private static final String CREDENTIAL_FILE   = "CREDENTIAL_FILE";
   private static final String TELEPHONE         = "TELEPHONE";
+  private static final String TRUST             = "TRUST";
   
   private String              serviceAccount_;
   private String              podUrl_;
   private String              objectStoreUrl_;
   private String              credentialFile_;
   private String              phoneNumber_;
+  private String              trust_;
   
   private IAllegroApi         allegroApi_;
 
@@ -47,18 +51,37 @@ public class CreateFeed extends CommandLineHandler implements Runnable
     withFlag('o',   OBJECT_STORE_URL, ALLEGRO + OBJECT_STORE_URL, String.class,   false, true,   (v) -> objectStoreUrl_       = v);
     withFlag('f',   CREDENTIAL_FILE,  ALLEGRO + CREDENTIAL_FILE,  String.class,   false, true,   (v) -> credentialFile_       = v);
     withFlag('t',   TELEPHONE,        ALLEGRO + TELEPHONE,        String.class,   false, false,  (v) -> phoneNumber_          = v);
+    withFlag('T',   TRUST,            ALLEGRO + TRUST,            String.class,   false, false,  (v) -> trust_                = v);
   }
   
   @Override
   public void run()
   {
-    allegroApi_ = new AllegroApi.Builder()
+    AllegroApi.Builder builder = new AllegroApi.Builder()
       .withPodUrl(podUrl_)
       .withObjectStoreUrl(objectStoreUrl_)
       .withUserName(serviceAccount_)
       .withRsaPemCredentialFile(credentialFile_)
-//      .withTrustedSslCertResources(IAllegroApi.SYMPHONY_DEV_QA_ROOT_CERT)
-      .build();
+      ;
+    
+    if(trust_ != null)
+    {
+      switch(trust_.toLowerCase())
+      {
+        case "symphony":
+          builder.withTrustedSslCertResources(IAllegroApi.SYMPHONY_DEV_QA_ROOT_CERT);
+          break;
+        
+        case "all":
+          builder.withTrustAllSslCerts();
+          break;
+        
+        default:
+          throw new IllegalArgumentException("Invalid trust value, expected \"symphony\" or \"all\"");
+      }
+    }
+    
+    allegroApi_ = builder.build();
     
 //    allegroApi_.storeCredential();
 //    
@@ -68,11 +91,18 @@ public class CreateFeed extends CommandLineHandler implements Runnable
 //          .withType(FeedType.GATEWAY)
 //          );
     
+//    IFeed feed = allegroApi_.upsertFeed(
+//      new UpsertSmsGatewayRequest()
+//        .withType(FeedType.GATEWAY)
+//        .withPhoneNumber(phoneNumber_)
+//        );
+    
     IFeed feed = allegroApi_.upsertFeed(
-      new UpsertSmsGatewayRequest()
-        .withType(FeedType.GATEWAY)
-        .withPhoneNumber(phoneNumber_)
-        );
+        new UpsertFeedRequest()
+          .withType(FeedType.FEED)
+          .withSequences(DistinguishedValue.USER_CONTENT_SEQUENCE)
+          .withName("myFeed")
+          );
     
     System.out.println("Feed is " + feed);
   }

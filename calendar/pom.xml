@@ -30,9 +30,9 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>  
     
-    <!-- <s2.common.version>0.2.3</s2.common.version> -->
-    <canon.version>0.2.8</canon.version>
-    <!-- <fugue.version>0.2.23</fugue.version> -->
+    <!-- <s2.common.version>0.2.4-SNAPSHOT</s2.common.version> -->
+    <canon.version>0.2.10</canon.version>
+    <!-- <fugue.version>0.2.27</fugue.version> -->
     
     <canon.template.groupid>org.symphonyoss.s2.canon</canon.template.groupid>
     <canon.template.java>canon-template-java</canon.template.java>
@@ -104,9 +104,7 @@
     								<artifactId>
     									canon-maven-plugin
     								</artifactId>
-    								<versionRange>
-    									[0.2.9,)
-    								</versionRange>
+    								<versionRange>[0.2.3,)</versionRange>
     								<goals>
     									<goal>generate-sources</goal>
     								</goals>

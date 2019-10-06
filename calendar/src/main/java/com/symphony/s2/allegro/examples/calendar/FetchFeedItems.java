@@ -16,17 +16,27 @@
 
 package com.symphony.s2.allegro.examples.calendar;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.symphonyoss.s2.fugue.IFugueLifecycleComponent;
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
 import com.symphony.oss.allegro.api.AllegroApi;
+import com.symphony.oss.allegro.api.CreateFeedSubscriberRequest;
 import com.symphony.oss.allegro.api.FetchSequenceMetaDataRequest;
-import com.symphony.oss.allegro.api.FetchSequenceRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
+import com.symphony.oss.allegro.api.UpsertFeedRequest;
 import com.symphony.oss.models.calendar.canon.CalendarModel;
 import com.symphony.oss.models.calendar.canon.IToDoItem;
 import com.symphony.oss.models.calendar.canon.ToDoItem;
 import com.symphony.oss.models.fundmental.canon.ISequence;
 import com.symphony.oss.models.fundmental.canon.SequenceType;
+import com.symphony.oss.models.system.canon.FeedType;
+import com.symphony.oss.models.system.canon.IFeed;
 
 /**
  * Retrieve all objects on the given Sequence.
@@ -34,8 +44,10 @@ import com.symphony.oss.models.fundmental.canon.SequenceType;
  * @author Bruce Skingle
  *
  */
-public class ListItems extends CommandLineHandler implements Runnable
+public class FetchFeedItems extends CommandLineHandler implements Runnable
 {
+  private static final Logger log_ = LoggerFactory.getLogger(FetchFeedItems.class);
+  
   private static final String ALLEGRO          = "ALLEGRO_";
   private static final String SERVICE_ACCOUNT  = "SERVICE_ACCOUNT";
   private static final String POD_URL          = "POD_URL";
@@ -52,7 +64,7 @@ public class ListItems extends CommandLineHandler implements Runnable
   /**
    * Constructor.
    */
-  public ListItems()
+  public FetchFeedItems()
   {
     withFlag('s',   SERVICE_ACCOUNT,  ALLEGRO + SERVICE_ACCOUNT,  String.class,   false, true,   (v) -> serviceAccount_       = v);
     withFlag('p',   POD_URL,          ALLEGRO + POD_URL,          String.class,   false, true,   (v) -> podUrl_               = v);
@@ -71,35 +83,58 @@ public class ListItems extends CommandLineHandler implements Runnable
       .withFactories(CalendarModel.FACTORIES)
       .build();
     
-    ISequence absoluteSequence = allegroApi_.fetchSequenceMetaData(new FetchSequenceMetaDataRequest()
-        .withSequenceType(SequenceType.ABSOLUTE)
-        .withContentType(ToDoItem.TYPE_ID)
-      );
-  
-    System.out.println("absoluteSequence is " + absoluteSequence.getBaseHash() + " " + absoluteSequence);
-    
-    allegroApi_.fetchSequence(new FetchSequenceRequest()
-          .withMaxItems(10)
-          .withSequenceHash(absoluteSequence.getBaseHash())
-          .withConsumer(IToDoItem.class, (item, trace) ->
-          {
-            System.out.println(item);
-          }));
-    
     ISequence currentSequence = allegroApi_.fetchSequenceMetaData(new FetchSequenceMetaDataRequest()
         .withSequenceType(SequenceType.CURRENT)
         .withContentType(ToDoItem.TYPE_ID)
       );
   
-    System.out.println("currentSequence is " + currentSequence.getBaseHash() + " " + currentSequence);
+    log_.info("currentSequence is " + currentSequence.getBaseHash() + " " + currentSequence);
     
-    allegroApi_.fetchSequence(new FetchSequenceRequest()
-          .withMaxItems(10)
-          .withSequenceHash(currentSequence.getBaseHash())
-          .withConsumer(IToDoItem.class, (item, trace) ->
-          {
-            System.out.println(item);
-          }));
+    IFeed feed = allegroApi_.upsertFeed(
+        new UpsertFeedRequest()
+          .withType(FeedType.FEED)
+          .withName("myCalendarFeed")
+          .withSequences(currentSequence)
+          );
+    
+    log_.info("Feed is " + feed);
+    
+    IFugueLifecycleComponent subscriber = allegroApi_.createFeedSubscriber(new CreateFeedSubscriberRequest()
+        .withName("myCalendarFeed")
+        .withSubscriberThreadPoolSize(10)
+        .withHandlerThreadPoolSize(90)
+        .withConsumer(IToDoItem.class, (message, traceContext) ->
+        {
+          log_.info(message.toString());
+        })
+        .withUnprocessableMessageConsumer((item, trace, message, cause) ->
+        {
+          log_.error("Failed to consume message: " + message + "\nPayload:" + item, cause);
+        })
+    );
+
+    log_.info("Subscriber state: " + subscriber.getLifecycleState());
+    subscriber.start();
+    
+    
+    BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    
+    log_.info("Subscriber state: " + subscriber.getLifecycleState());
+    
+    System.err.println();
+    System.err.println("Press RETURN to quit");
+    try
+    {
+      in.readLine();
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+    
+    log_.info("Stopping...");
+    subscriber.stop();
+    log_.info("Subscriber state: " + subscriber.getLifecycleState());
   }
   
   /**
@@ -109,7 +144,7 @@ public class ListItems extends CommandLineHandler implements Runnable
    */
   public static void main(String[] args)
   {
-    ListItems program = new ListItems();
+    FetchFeedItems program = new FetchFeedItems();
     
     program.process(args);
     
