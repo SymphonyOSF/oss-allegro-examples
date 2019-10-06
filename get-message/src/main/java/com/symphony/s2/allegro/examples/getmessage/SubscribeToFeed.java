@@ -6,24 +6,23 @@
 
 package com.symphony.s2.allegro.examples.getmessage;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.symphonyoss.s2.canon.runtime.IEntity;
 import org.symphonyoss.s2.common.fault.TransientTransactionFault;
+import org.symphonyoss.s2.fugue.IFugueLifecycleComponent;
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 import org.symphonyoss.s2.fugue.core.trace.ITraceContext;
-import org.symphonyoss.s2.fugue.pipeline.IConsumer;
-import org.symphonyoss.s2.fugue.pipeline.ISimpleConsumer;
+import org.symphonyoss.s2.fugue.pipeline.ISimpleThreadSafeConsumer;
+import org.symphonyoss.s2.fugue.pipeline.IThreadSafeConsumer;
 
 import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.FetchFeedMessagesRequest;
+import com.symphony.oss.allegro.api.CreateFeedSubscriberRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
-import com.symphony.oss.models.allegro.canon.facade.IChatMessage;
 import com.symphony.oss.models.allegro.canon.facade.IReceivedChatMessage;
 import com.symphony.oss.models.chat.canon.facade.ISocialMessage;
 import com.symphony.oss.models.fundamental.canon.facade.INotification;
@@ -34,9 +33,9 @@ import com.symphony.oss.models.fundamental.canon.facade.INotification;
  * @author Bruce Skingle
  *
  */
-public class FetchFeed extends CommandLineHandler implements Runnable
+public class SubscribeToFeed extends CommandLineHandler implements Runnable
 {
-  private static final Logger log_ = LoggerFactory.getLogger(FetchFeed.class);
+  private static final Logger log_ = LoggerFactory.getLogger(SubscribeToFeed.class);
   
   private static final String   ALLEGRO          = "ALLEGRO_";
   private static final String   SERVICE_ACCOUNT  = "SERVICE_ACCOUNT";
@@ -58,51 +57,13 @@ public class FetchFeed extends CommandLineHandler implements Runnable
   /**
    * Constructor.
    */
-  public FetchFeed()
+  public SubscribeToFeed()
   {
     withFlag('s',   SERVICE_ACCOUNT,  ALLEGRO + SERVICE_ACCOUNT,  String.class,   false, true,   (v) -> serviceAccount_       = v);
     withFlag('p',   POD_URL,          ALLEGRO + POD_URL,          String.class,   false, true,   (v) -> podUrl_               = v);
     withFlag('o',   OBJECT_STORE_URL, ALLEGRO + OBJECT_STORE_URL, String.class,   false, true,   (v) -> objectStoreUrl_       = v);
     withFlag('f',   CREDENTIAL_FILE,  ALLEGRO + CREDENTIAL_FILE,  String.class,   false, true,   (v) -> credentialFile_       = v);
     withFlag('T',   TRUST,            ALLEGRO + TRUST,            String.class,   false, false,  (v) -> trust_                = v);
-
-    
-    debug();
-  }
-
-  private void debug()
-  {
-    List<Class<?>> typeList = new ArrayList<>();
-    
-    typeList.add(IEntity.class);
-    typeList.add(IChatMessage.class);
-    typeList.add(INotification.class);
-    
-    getType(IChatMessage.class, typeList);
-    getType(INotification.class, typeList);
-
-    getType(ISocialMessage.class, typeList);
-    getType(String.class, typeList);
-    
-    System.out.println("===");
-    
-  }
-  
-  private void getType(Class<?> type, List<Class<?>> typeList)
-  {
-    Class<?> best = Object.class;
-    
-    for(Class<?> t : typeList)
-    {
-      if(!t.isAssignableFrom(type))
-        continue;
-      
-      if(best == null || best.isAssignableFrom(t))
-        best = t;
-      
-    }
-    
-    System.out.println("Best for " + type + " is " + best);
   }
 
   @Override
@@ -134,30 +95,14 @@ public class FetchFeed extends CommandLineHandler implements Runnable
     
     allegroApi_ = builder.build();
     
-//    allegroApi_.storeCredential();
-//    
-//    IFeed feed = allegroApi_.fetchOrCreateFeed(
-//        new FetchOrCreateFeedRequest()
-//          .withName("MyDataFeed")
-//          .withType(FeedType.GATEWAY)
-//          );
-    
-//    IFeed feed = allegroApi_.upsertFeed(
-//      new UpsertSmsGatewayRequest()
-//        .withType(FeedType.GATEWAY)
-//        .withPhoneNumber(phoneNumber_)
-//        );
-    
-    
-    
-    allegroApi_.fetchFeedMessages(new FetchFeedMessagesRequest()
+    IFugueLifecycleComponent subscriber = allegroApi_.createFeedSubscriber(new CreateFeedSubscriberRequest()
         .withName("myFeed")
-        .withConsumer(INotification.class, new IConsumer<INotification>()
+        .withConsumer(INotification.class, new IThreadSafeConsumer<INotification>()
         {
           boolean ack = true;
           
           @Override
-          public void consume(INotification message, ITraceContext traceContext)
+          public void consume(INotification message, ITraceContext trace)
           {
             if(ack)
             {
@@ -175,31 +120,31 @@ public class FetchFeed extends CommandLineHandler implements Runnable
           @Override
           public void close()
           {
-            System.out.println("That's all folks");
+            System.out.println("That's all folks!");
           }
         }
         )
-        .withConsumer(IReceivedChatMessage.class, (message, traceContext) ->
+        .withConsumer(ISocialMessage.class, (message, trace) ->
         {
           System.out.println("ACK " + message.getMessageId());
         })
-//        .withConsumer(IReceivedChatMessage.class, new IConsumer<IReceivedChatMessage>()
-//        {
-//          boolean ack = false;
-//          
-//          @Override
-//          public void consume(IReceivedChatMessage message, ITraceContext traceContext)
-//          {
-//            if(ack)
-//            {
-//              log_.info("ACK " + message.getPresentationML());
-//              
-//              
-//              ack = false;
-//            }
-//            else
-//            {
-//              log_.info("NAK " + message.getPresentationML());
+        .withConsumer(IReceivedChatMessage.class, new ISimpleThreadSafeConsumer<IReceivedChatMessage>()
+        {
+          boolean ack = false;
+          
+          @Override
+          public void consume(IReceivedChatMessage message, ITraceContext trace)
+          {
+            if(ack)
+            {
+              log_.info("ACK " + message.getPresentationML());
+              
+              
+              ack = false;
+            }
+            else
+            {
+              log_.info("NAK " + message.getPresentationML());
 //              log_.info("But wait.....");
 //              
 //              try
@@ -212,20 +157,43 @@ public class FetchFeed extends CommandLineHandler implements Runnable
 //              }
 //              
 //              log_.info("But wait.....OK carry on");
-//              
-////              ack = true;
+              
+//              ack = true;
 //              throw new TransientTransactionFault("Rejected", RETRY_TIME_UNIT, RETRY_TIME);
-//            }
-//          }
-//
-//          @Override
-//          public void close() throws Exception
-//          {
-//            log_.info("That is all");
-//          }
-//        }
-//      )
-    );
+              throw new TransientTransactionFault("Rejected", TimeUnit.SECONDS, 3L);
+              
+//              throw new FatalTransactionFault("Fatally rejected");
+            }
+          }
+        }
+        )
+        .withUnprocessableMessageConsumer((item, trace, message, cause) ->
+        {
+          log_.error("Failed to consume message: " + message + "\nPayload:" + item, cause);
+        })
+      );
+    
+    subscriber.start();
+    
+    BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    
+    log_.info("Subscriber state: " + subscriber.getLifecycleState());
+    
+    System.err.println();
+    System.err.println("Press RETURN to quit");
+    try
+    {
+      in.readLine();
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+    
+    log_.info("Stopping...");
+    subscriber.stop();
+    log_.info("Subscriber state: " + subscriber.getLifecycleState());
+    
   }
   
   /**
@@ -235,7 +203,7 @@ public class FetchFeed extends CommandLineHandler implements Runnable
    */
   public static void main(String[] args)
   {
-    FetchFeed program = new FetchFeed();
+    SubscribeToFeed program = new SubscribeToFeed();
     
     program.process(args);
     

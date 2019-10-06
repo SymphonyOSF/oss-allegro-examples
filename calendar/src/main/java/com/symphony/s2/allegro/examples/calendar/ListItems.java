@@ -19,12 +19,14 @@ package com.symphony.s2.allegro.examples.calendar;
 import org.symphonyoss.s2.common.hash.Hash;
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
+import com.symphony.oss.models.fundamental.canon.facade.IApplicationObject;
 import com.symphony.oss.models.fundamental.canon.facade.IFundamentalObject;
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.FetchSequenceMetaDataRequest;
 import com.symphony.oss.allegro.api.FetchSequenceRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.models.calendar.canon.CalendarModel;
+import com.symphony.oss.models.calendar.canon.IToDoItem;
 import com.symphony.oss.models.calendar.canon.ToDoItem;
 import com.symphony.oss.models.fundmental.canon.ISequence;
 import com.symphony.oss.models.fundmental.canon.SequenceType;
@@ -82,20 +84,10 @@ public class ListItems extends CommandLineHandler implements Runnable
     allegroApi_.fetchSequence(new FetchSequenceRequest()
           .withMaxItems(10)
           .withSequenceHash(absoluteSequence.getBaseHash())
-        ,
-        (item) ->
-        {
-          try
+          .withConsumer(IToDoItem.class, (item, trace) ->
           {
-            System.out.println(allegroApi_.open(item));
-          }
-          catch(Exception e)
-          {
-            e.printStackTrace();
-            
             System.out.println(item);
-          }
-        });
+          }));
     
     ISequence currentSequence = allegroApi_.fetchSequenceMetaData(new FetchSequenceMetaDataRequest()
         .withSequenceType(SequenceType.CURRENT)
@@ -107,20 +99,10 @@ public class ListItems extends CommandLineHandler implements Runnable
     allegroApi_.fetchSequence(new FetchSequenceRequest()
           .withMaxItems(10)
           .withSequenceHash(currentSequence.getBaseHash())
-        ,
-        (item) ->
-        {
-          try
+          .withConsumer(IToDoItem.class, (item, trace) ->
           {
-            System.out.println(allegroApi_.open(item));
-          }
-          catch(Exception e)
-          {
-            e.printStackTrace();
-            
             System.out.println(item);
-          }
-        });
+          }));
   }
   
   /**
