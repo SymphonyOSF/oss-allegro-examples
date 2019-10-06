@@ -16,7 +16,7 @@ the visibility timeout is extended as necessary.
 There is also a Subscriber API which takes care of visibility timeout extension and message deletion for you,
 and this is the mechanism illustrated by this example.
 
-The first part of the program is almost identical to the [Hello World Example](/HelloWorld.md), see the description
+The first part of the program is almost identical to the [Hello World Example](/HelloWorld.html), see the description
 there for more details.
 
 In this case we also need to provide the Object Store URL, since these examples use that API.

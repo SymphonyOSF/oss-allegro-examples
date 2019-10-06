@@ -6,7 +6,7 @@ parent: ToDo List Example
 
 The Create an Item example creates a new ToDo item.
 
-The first part of the program is almost identical to the [Hello World Example](/HelloWorld.md), see the description
+The first part of the program is almost identical to the [Hello World Example](/HelloWorld.html), see the description
 there for more details.
 
 In this case we also need to provide the Object Store URL, since these examples use that API.
