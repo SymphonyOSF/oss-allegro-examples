@@ -12,6 +12,7 @@ import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.UpsertSmsGatewayRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.UpsertFeedRequest;
+import com.symphony.oss.models.fundamental.canon.facade.DistinguishedValue;
 import com.symphony.oss.models.system.canon.FeedType;
 import com.symphony.oss.models.system.canon.IFeed;
 
@@ -99,6 +100,7 @@ public class CreateFeed extends CommandLineHandler implements Runnable
     IFeed feed = allegroApi_.upsertFeed(
         new UpsertFeedRequest()
           .withType(FeedType.FEED)
+          .withSequences(DistinguishedValue.USER_CONTENT_SEQUENCE)
           .withName("myFeed")
           );
     

@@ -32,6 +32,12 @@ import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.FetchOrCreateSequenceMetaDataRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
 
+/**
+ * An example application which creates a ToDoItem, adding it to a current and absolute sequence.
+ * 
+ * @author Bruce Skingle
+ *
+ */
 public class CreateToDoItem extends CommandLineHandler implements Runnable
 {
   private static final String ALLEGRO         = "ALLEGRO_";
