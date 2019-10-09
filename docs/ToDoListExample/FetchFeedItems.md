@@ -109,7 +109,8 @@ This method takes
 - The size of the subscriber thread pool
 - The size of the handler thread pool
 - One or more typed message consumers
-- A default consumer for messages which do not match any typed consumer.
+- A default consumer for messages which do not match any typed consumer (not shown in this example).
+- An unprocessable handler which will be called id the consumer for a message throws a fatal exception.
 
 The consumer is implemented as a lambda which simply prints received ToDoItems to standard output.
 
@@ -132,7 +133,7 @@ The consumer is implemented as a lambda which simply prints received ToDoItems t
 
 The subscriber will not begin processing until its __start()__ method is called. Once this is done it is necessary to
 prevent the main thread from exiting (the thread pools used by the subscriber create __daemon__ threads and will
-not prevent the JVM from terminating.
+not prevent the JVM from terminating).
 
 For this example we simply wait for a newline to be typed on the standard input. When this happens we stop
 the subscriber gracefully. You may notice that this shutdown process takes up to 20 seconds, because it waits
@@ -198,10 +199,9 @@ Then we see the sequence and feed meta data:
   "queueName":"sym-s2-dev-s2smoke2-166-s2fwd-feed-fa2UpDgUgkLUcZTpxHbyWk",
   "type":"FEED"
 }
-}
 ```
 Followed by log messages from the subscriber starting up, the message __Press RETURN to quit__ which is
-printed to standard error, and ToDoItens as they are updated. (You may wish to run the 
+printed to standard error, and ToDoItems as they are updated. (You may wish to run the 
 [Update Items](/UpdateItems.md) example in another window to trigger some events on the feed).
 
 ```

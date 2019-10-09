@@ -13,11 +13,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.symphonyoss.s2.common.fault.TransientTransactionFault;
 import org.symphonyoss.s2.fugue.IFugueLifecycleComponent;
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 import org.symphonyoss.s2.fugue.core.trace.ITraceContext;
-import org.symphonyoss.s2.fugue.pipeline.ISimpleThreadSafeConsumer;
 import org.symphonyoss.s2.fugue.pipeline.IThreadSafeConsumer;
 
 import com.symphony.oss.allegro.api.AllegroApi;
@@ -127,45 +125,12 @@ public class SubscribeToFeed extends CommandLineHandler implements Runnable
         .withConsumer(ISocialMessage.class, (message, trace) ->
         {
           System.out.println("ACK " + message.getMessageId());
+          System.out.println("ACK " + message.toString());
         })
-        .withConsumer(IReceivedChatMessage.class, new ISimpleThreadSafeConsumer<IReceivedChatMessage>()
-        {
-          boolean ack = false;
-          
-          @Override
-          public void consume(IReceivedChatMessage message, ITraceContext trace)
+        .withConsumer(IReceivedChatMessage.class, (message, trace) ->
           {
-            if(ack)
-            {
-              log_.info("ACK " + message.getPresentationML());
-              
-              
-              ack = false;
-            }
-            else
-            {
-              log_.info("NAK " + message.getPresentationML());
-//              log_.info("But wait.....");
-//              
-//              try
-//              {
-//                Thread.sleep(20000);
-//              }
-//              catch(InterruptedException e)
-//              {
-//                
-//              }
-//              
-//              log_.info("But wait.....OK carry on");
-              
-//              ack = true;
-//              throw new TransientTransactionFault("Rejected", RETRY_TIME_UNIT, RETRY_TIME);
-              throw new TransientTransactionFault("Rejected", TimeUnit.SECONDS, 3L);
-              
-//              throw new FatalTransactionFault("Fatally rejected");
-            }
+              log_.info(message.getPresentationML().toString());
           }
-        }
         )
         .withUnprocessableMessageConsumer((item, trace, message, cause) ->
         {
