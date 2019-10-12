@@ -30,9 +30,9 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>  
     
-    <!-- <s2.common.version>0.2.4-SNAPSHOT</s2.common.version> -->
-    <canon.version>0.2.10</canon.version>
-    <!-- <fugue.version>0.2.27</fugue.version> -->
+    <!-- <s2.common.version>0.2.4</s2.common.version> -->
+    <canon.version>0.2.11</canon.version>
+    <!-- <fugue.version>0.2.29</fugue.version> -->
     
     <canon.template.groupid>org.symphonyoss.s2.canon</canon.template.groupid>
     <canon.template.java>canon-template-java</canon.template.java>
