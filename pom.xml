@@ -25,11 +25,11 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
 
-    <s2.common.version>0.2.4</s2.common.version>
-    <canon.version>0.2.11</canon.version>
-    <fugue.version>0.2.29</fugue.version>
-    <oss.models.version>0.0.12</oss.models.version>
-    <allegro.version>0.0.9</allegro.version>
+    <s2.common.version>0.2.6</s2.common.version>
+    <canon.version>0.2.12</canon.version>
+    <fugue.version>0.2.37-SNAPSHOT</fugue.version>
+    <oss.models.version>0.3.0-SNAPSHOT</oss.models.version>
+    <allegro.version>0.0.10-SNAPSHOT</allegro.version>
   </properties>
   
   <modules>

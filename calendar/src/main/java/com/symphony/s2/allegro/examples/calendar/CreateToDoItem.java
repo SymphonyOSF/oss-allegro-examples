@@ -75,6 +75,7 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
       .withObjectStoreUrl(objectStoreUrl_)
       .withUserName(serviceAccount_)
       .withRsaPemCredentialFile(credentialFile_)
+      .withTrustAllSslCerts()
       .build();
     
     System.out.println("PodId is " + allegroApi_.getPodId());

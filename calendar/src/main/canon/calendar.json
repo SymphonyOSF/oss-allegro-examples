@@ -34,7 +34,7 @@
         "facade": false,
         "properties": {
           "due": {
-            "$ref": "https://models.oss.symphony.com/fundamental.json#/components/schemas/Instant"
+            "$ref": "https://models.oss.symphony.com/core.json#/components/schemas/Instant"
           },
           "title": {
             "type": "string"

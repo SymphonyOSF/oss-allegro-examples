@@ -181,7 +181,7 @@ public class FetchFeed extends CommandLineHandler implements Runnable
         )
         .withConsumer(IReceivedChatMessage.class, (message, traceContext) ->
         {
-          System.out.println("ACK " + message.getMessageId());
+          System.out.println("ACK " + message.getMessageId() + " " + message.getCanonType() + " " + message.getText());
         })
 //        .withConsumer(IReceivedChatMessage.class, new IConsumer<IReceivedChatMessage>()
 //        {
