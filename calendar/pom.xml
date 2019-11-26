@@ -24,26 +24,13 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>calendar</artifactId>
-  
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>  
-    
-    <!-- <s2.common.version>0.2.6</s2.common.version> -->
-    <canon.version>0.2.12</canon.version>
-    <!-- <fugue.version>0.2.37-SNAPSHOT</fugue.version> -->
-    
-    <canon.template.groupid>org.symphonyoss.s2.canon</canon.template.groupid>
-    <canon.template.java>canon-template-java</canon.template.java>
-    <canon.template.version>${canon.version}</canon.template.version>
-  </properties>
 
   <build>
     <plugins>
       <plugin>
         <groupId>org.symphonyoss.s2.canon</groupId>
         <artifactId>canon-maven-plugin</artifactId>
+        <version>${canon.version}</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -53,6 +40,16 @@
             <configuration>
               <srcDirs>src/main/canon</srcDirs>
               <proformaCopyDir>src/main</proformaCopyDir>
+              <uriMapping>
+                <property>
+                 <name>https://models.oss.symphony.com/core.json</name>
+                 <value>../../../../../oss-models/core-model/src/main/canon/core.json</value>
+                </property>
+                <property>
+                 <name>https://models.oss.symphony.com/object.json</name>
+                 <value>../../../../../oss-models/object-model/src/main/canon/object.json</value>
+                </property>
+              </uriMapping>
 
               <templateArtifacts>
                 <templateArtifact>

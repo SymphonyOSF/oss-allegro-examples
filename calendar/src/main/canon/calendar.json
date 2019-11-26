@@ -17,20 +17,17 @@
 	"components": {
 		"schemas": {
       "CalendarItemSequenceId": {
-        "description": "The ID object for the TODO sequence for a principal.",
+        "description": "The ID object for the TODO partition for a user.",
         "type": "object",
-        "extends": "https://models.oss.symphony.com/fundamental.json#/components/schemas/FundamentalId",
+        "extends": "https://models.oss.symphony.com/object.json#/components/schemas/UserIdObject",
         "properties": {
-          "principalHash": {
-            "$ref": "https://models.oss.symphony.com/fundamental.json#/components/schemas/Hash"
-          }
         }
       },
       
       "ToDoItem": {
         "description": "A TODO item.",
         "type": "object",
-        "extends": "https://models.oss.symphony.com/fundamental.json#/components/schemas/ApplicationObject",
+        "extends": "https://models.oss.symphony.com/core.json#/components/schemas/ApplicationPayload",
         "facade": false,
         "properties": {
           "due": {
