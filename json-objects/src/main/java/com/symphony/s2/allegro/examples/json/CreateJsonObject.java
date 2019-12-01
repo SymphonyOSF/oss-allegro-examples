@@ -89,7 +89,7 @@ public class CreateJsonObject extends CommandLineHandler implements Runnable
     
     IApplicationObject item = new ApplicationObject(json);
     
-    IFundamentalObject toDoObject = allegroApi_.newApplicationObjectBuilder()
+    IFundamentalObject toDoObject = allegroApi_.newStoredApplicationObjectBuilder()
         .withThreadId(threadId_)
         .withPayload(item)
         .withSequences(sequences)

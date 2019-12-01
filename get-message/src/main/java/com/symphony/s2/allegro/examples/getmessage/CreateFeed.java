@@ -10,8 +10,8 @@ import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.UpsertSmsGatewayRequest;
+import com.symphony.oss.allegro.api.request.UpsertFeedRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
-import com.symphony.oss.allegro.api.UpsertFeedRequest;
 import com.symphony.oss.models.fundamental.canon.facade.DistinguishedValue;
 import com.symphony.oss.models.system.canon.FeedType;
 import com.symphony.oss.models.system.canon.IFeed;

@@ -29,7 +29,7 @@ import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.CreateFeedSubscriberRequest;
 import com.symphony.oss.allegro.api.FetchSequenceMetaDataRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
-import com.symphony.oss.allegro.api.UpsertFeedRequest;
+import com.symphony.oss.allegro.api.request.UpsertFeedRequest;
 import com.symphony.oss.models.calendar.canon.CalendarModel;
 import com.symphony.oss.models.calendar.canon.IToDoItem;
 import com.symphony.oss.models.calendar.canon.ToDoItem;

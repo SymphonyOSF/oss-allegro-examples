@@ -28,7 +28,7 @@
     <s2.common.version>0.2.7</s2.common.version>
     <canon.version>0.2.13</canon.version>
     <fugue.version>0.2.37</fugue.version>
-    <oss.models.version>0.3.0</oss.models.version>
+    <oss.models.version>0.3.1-SNAPSHOT</oss.models.version>
     <allegro.version>0.0.10-SNAPSHOT</allegro.version>
     
     <canon.template.groupid>org.symphonyoss.s2.canon</canon.template.groupid>

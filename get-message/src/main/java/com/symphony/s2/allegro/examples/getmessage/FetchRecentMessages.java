@@ -9,8 +9,9 @@ package com.symphony.s2.allegro.examples.getmessage;
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
 import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.FetchRecentMessagesRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
+import com.symphony.oss.allegro.api.request.ConsumerManager;
+import com.symphony.oss.allegro.api.request.FetchRecentMessagesRequest;
 import com.symphony.oss.models.allegro.canon.facade.IReceivedChatMessage;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 
@@ -83,13 +84,18 @@ public class FetchRecentMessages extends CommandLineHandler implements Runnable
     
     System.out.println("Fetch messages from pod...");
     allegroApi_.fetchRecentMessagesFromPod(
-        new FetchRecentMessagesRequest()
+        new FetchRecentMessagesRequest.Builder()
           .withThreadId(threadId_)
-          .withMaxMessages(maxMessages_)
-          .withConsumer(IReceivedChatMessage.class, (message, trace) ->
-          {
-            System.out.println(message.getMessageId() + " " + message.getText());
-          })
+          .withMaxItems(maxMessages_)
+          .withConsumerManager(new ConsumerManager.Builder()
+              .withConsumer(IReceivedChatMessage.class, (message, trace) ->
+              {
+                System.out.println(message.getMessageId() + " " + message.getText());
+              }
+              )
+              .build()
+          )
+          .build()
         );
   }
   
