@@ -25,11 +25,9 @@ import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.UpsertPartitionRequest;
 import com.symphony.oss.models.calendar.canon.IToDoItem;
 import com.symphony.oss.models.calendar.canon.ToDoItem;
-import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 import com.symphony.oss.models.object.canon.AffectedUsers;
 import com.symphony.oss.models.object.canon.IAffectedUsers;
-import com.symphony.oss.models.object.canon.facade.IApplicationObject;
 import com.symphony.oss.models.object.canon.facade.IPartition;
 import com.symphony.oss.models.object.canon.facade.IStoredApplicationObject;
 

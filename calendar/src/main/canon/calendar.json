@@ -27,7 +27,7 @@
       "ToDoItem": {
         "description": "A TODO item.",
         "type": "object",
-        "extends": "https://models.oss.symphony.com/core.json#/components/schemas/ApplicationPayload",
+        "extends": "https://models.oss.symphony.com/object.json#/components/schemas/ApplicationObjectPayload",
         "facade": false,
         "properties": {
           "due": {

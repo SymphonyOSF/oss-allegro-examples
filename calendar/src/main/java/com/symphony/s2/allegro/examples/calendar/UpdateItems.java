@@ -26,6 +26,8 @@ import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.FetchSequenceMetaDataRequest;
 import com.symphony.oss.allegro.api.FetchSequenceRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
+import com.symphony.oss.allegro.api.request.ConsumerManager;
+import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
 import com.symphony.oss.models.calendar.canon.CalendarModel;
 import com.symphony.oss.models.calendar.canon.IToDoItem;
 import com.symphony.oss.models.calendar.canon.ToDoItem;
@@ -76,27 +78,24 @@ public class UpdateItems extends CommandLineHandler implements Runnable
       .withTrustAllSslCerts()
       .build();
     
-    ISequence currentSequence = allegroApi_.fetchSequenceMetaData(new FetchSequenceMetaDataRequest()
-        .withSequenceType(SequenceType.CURRENT)
-        .withContentType(ToDoItem.TYPE_ID)
-      );
-  
-    System.err.println("currentSequence is " + currentSequence);
+
     
-    allegroApi_.fetchSequence(new FetchSequenceRequest()
+    allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
+          .withName(ToDoItem.TYPE_ID)
+          .withOwner(allegroApi_.getUserId())
           .withMaxItems(10)
-          .withSequenceHash(currentSequence.getBaseHash())
-        ,
-        (item) ->
-        {
-          System.out.println(item);
-          
-          IEntity payload = allegroApi_.open(item);
-          
-          if(payload instanceof IToDoItem)
-            update((IToDoItem)payload);
-          
-        });
+          .withConsumerManager(new ConsumerManager.Builder()
+              .withConsumer(IToDoItem.class, (item, trace) ->
+              {
+                System.out.println("Header:  " + item.getStoredApplicationObject().getHeader());
+                System.out.println("Payload: " + item);
+                
+                update(item);
+              })
+              .build()
+              )
+          .build()
+          );
   }
   
   private void update(IToDoItem item)

@@ -76,7 +76,8 @@ public class ListItems extends CommandLineHandler implements Runnable
           .withConsumerManager(new ConsumerManager.Builder()
               .withConsumer(IToDoItem.class, (item, trace) ->
               {
-                System.out.println(item);
+                System.out.println("Header:  " + item.getStoredApplicationObject().getHeader());
+                System.out.println("Payload: " + item);
               })
               .build()
               )
