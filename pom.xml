@@ -16,7 +16,7 @@
   
   <groupId>com.symphony.oss.allegro</groupId>
   <artifactId>oss-allegro-examples</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   
   
@@ -26,10 +26,10 @@
     <maven.compiler.target>1.8</maven.compiler.target>
 
     <s2.common.version>0.2.7</s2.common.version>
-    <canon.version>0.2.14-SNAPSHOT</canon.version>
-    <fugue.version>0.2.38-SNAPSHOT</fugue.version>
-    <oss.models.version>0.3.1-SNAPSHOT</oss.models.version>
-    <allegro.version>0.0.10-SNAPSHOT</allegro.version>
+    <canon.version>0.2.14</canon.version>
+    <fugue.version>0.2.38</fugue.version>
+    <oss.models.version>0.3.1</oss.models.version>
+    <allegro.version>0.1.0</allegro.version>
     
     <canon.template.groupid>org.symphonyoss.s2.canon</canon.template.groupid>
     <canon.template.java>canon-template-java</canon.template.java>

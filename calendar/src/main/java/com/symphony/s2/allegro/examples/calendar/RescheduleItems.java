@@ -17,6 +17,7 @@
 package com.symphony.s2.allegro.examples.calendar;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
@@ -35,7 +36,7 @@ import com.symphony.oss.models.object.canon.facade.StoredApplicationObject;
  * @author Bruce Skingle
  *
  */
-public class UpdateItems extends CommandLineHandler implements Runnable
+public class RescheduleItems extends CommandLineHandler implements Runnable
 {
   private static final String ALLEGRO          = "ALLEGRO_";
   private static final String SERVICE_ACCOUNT  = "SERVICE_ACCOUNT";
@@ -50,12 +51,12 @@ public class UpdateItems extends CommandLineHandler implements Runnable
 
   private IAllegroApi         allegroApi_;
   
-  private int                 count_ = 1;
+  private Instant             due_ = Instant.now().plus(30, ChronoUnit.MINUTES);
 
   /**
    * Constructor.
    */
-  public UpdateItems()
+  public RescheduleItems()
   {
     withFlag('s',   SERVICE_ACCOUNT,  ALLEGRO + SERVICE_ACCOUNT,  String.class,   false, true,   (v) -> serviceAccount_       = v);
     withFlag('p',   POD_URL,          ALLEGRO + POD_URL,          String.class,   false, true,   (v) -> podUrl_               = v);
@@ -86,7 +87,6 @@ public class UpdateItems extends CommandLineHandler implements Runnable
               {
                 System.out.println("Header:  " + item.getStoredApplicationObject().getHeader());
                 System.out.println("Payload: " + item);
-                System.out.println("Stored:  " + item.getStoredApplicationObject());
                 
                 update(item);
               })
@@ -98,15 +98,17 @@ public class UpdateItems extends CommandLineHandler implements Runnable
   
   private void update(IToDoItem item)
   {
+    due_ = due_.minus(2, ChronoUnit.MINUTES);
     
     IToDoItem toDoItem = new ToDoItem.Builder(item)
-        .withDescription("Updated at " + Instant.now() + ", item " + count_++)
+        .withDue(due_)
         .build();
       
     System.out.println("About to update item " + toDoItem);
     
     StoredApplicationObject toDoObject = allegroApi_.newApplicationObjectUpdater(item)
         .withPayload(toDoItem)
+        .withSortKey(due_.toString())
       .build();
     
     allegroApi_.store(toDoObject);
@@ -119,7 +121,7 @@ public class UpdateItems extends CommandLineHandler implements Runnable
    */
   public static void main(String[] args)
   {
-    UpdateItems program = new UpdateItems();
+    RescheduleItems program = new RescheduleItems();
     
     program.process(args);
     

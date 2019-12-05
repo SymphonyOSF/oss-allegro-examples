@@ -18,19 +18,16 @@ package com.symphony.s2.allegro.examples.json;
 
 import java.time.Instant;
 
-import org.symphonyoss.s2.canon.runtime.IEntity;
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
-import com.symphony.oss.models.fundamental.canon.facade.ApplicationObject;
-import com.symphony.oss.models.fundamental.canon.facade.IApplicationObject;
-import com.symphony.oss.models.fundamental.canon.facade.IFundamentalObject;
 import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.FetchSequenceMetaDataRequest;
-import com.symphony.oss.allegro.api.FetchSequenceRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
-import com.symphony.oss.models.fundmental.canon.DeletionType;
-import com.symphony.oss.models.fundmental.canon.ISequence;
-import com.symphony.oss.models.fundmental.canon.SequenceType;
+import com.symphony.oss.allegro.api.request.ConsumerManager;
+import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
+import com.symphony.oss.models.fundamental.canon.facade.IFundamentalObject;
+import com.symphony.oss.models.object.canon.facade.ApplicationObjectPayload;
+import com.symphony.oss.models.object.canon.facade.IApplicationObjectPayload;
+import com.symphony.oss.models.object.canon.facade.StoredApplicationObject;
 
 /**
  * Retrieve all objects on the given Sequence.
@@ -38,7 +35,7 @@ import com.symphony.oss.models.fundmental.canon.SequenceType;
  * @author Bruce Skingle
  *
  */
-public class UpdateJsonObject extends CommandLineHandler implements Runnable
+public class UpdateJsonObject extends CommandLineHandler implements JsonObjectExample
 {
   private static final String ALLEGRO          = "ALLEGRO_";
   private static final String SERVICE_ACCOUNT  = "SERVICE_ACCOUNT";
@@ -74,38 +71,31 @@ public class UpdateJsonObject extends CommandLineHandler implements Runnable
       .withRsaPemCredentialFile(credentialFile_)
       .build();
     
-    ISequence currentSequence = allegroApi_.fetchSequenceMetaData(new FetchSequenceMetaDataRequest()
-        .withSequenceType(SequenceType.CURRENT)
-        .withContentType("com.example.random.json.objects")
-      );
-  
-    System.err.println("currentSequence is " + currentSequence);
-    
-    allegroApi_.fetchSequence(new FetchSequenceRequest()
-          .withMaxItems(10)
-          .withSequenceHash(currentSequence.getBaseHash())
-        ,
-        (item) ->
-        {
-          System.out.println(item);
-          
-          IEntity payload = allegroApi_.open(item);
-          
-          if(payload instanceof IApplicationObject)
-            update((IApplicationObject)payload);
-          
-        });
+    allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
+        .withName(PARTITION_NAME)
+        .withOwner(allegroApi_.getUserId())
+        .withMaxItems(10)
+        .withConsumerManager(new ConsumerManager.Builder()
+            .withConsumer(IApplicationObjectPayload.class, (item, trace) ->
+            {
+              System.out.println("Payload: " + item);
+              update(item);
+            })
+            .build()
+            )
+        .build()
+        );
   }
   
-  private void update(IApplicationObject item)
+  private void update(IApplicationObjectPayload item)
   {
     String json = String.format("{ \"name\": \"UPDATED JSON Object\", \"date\": \"%s\" }", Instant.now().toString());
     
-    IApplicationObject updatedItem = new ApplicationObject(json);
+    IApplicationObjectPayload updatedItem = new ApplicationObjectPayload(json);
       
     System.out.println("About to update item " + updatedItem);
     
-    IFundamentalObject toDoObject = allegroApi_.newApplicationObjectUpdater(item)
+    StoredApplicationObject toDoObject = allegroApi_.newApplicationObjectUpdater(item)
         .withPayload(updatedItem)
       .build();
     

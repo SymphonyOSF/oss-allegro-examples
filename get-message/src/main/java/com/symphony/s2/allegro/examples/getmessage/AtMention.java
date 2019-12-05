@@ -8,10 +8,10 @@ package com.symphony.s2.allegro.examples.getmessage;
 
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
-import com.symphony.oss.models.allegro.canon.facade.IChatMessage;
-import com.symphony.oss.models.chat.canon.facade.ThreadId;
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
+import com.symphony.oss.models.allegro.canon.facade.IChatMessage;
+import com.symphony.oss.models.core.canon.facade.ThreadId;
 
 /**
  * Send a message containing an at-mention using the email address shorthand tag.
@@ -55,7 +55,7 @@ public class AtMention extends CommandLineHandler implements Runnable
 //      .withTrustedSslCertResources(IAllegroApi.SYMPHONY_DEV_QA_ROOT_CERT)
       .build();
     
-    String messageML     = "<messageML><p>I am <mention email=\"" + allegroApi_.getSessioninfo().getEmailAddress() + "\"/></p></messageML>";
+    String messageML     = "<messageML><p>I am <mention email=\"" + allegroApi_.getUserInfo().getEmailAddress() + "\"/></p></messageML>";
 
     IChatMessage chatMessage = allegroApi_.newChatMessageBuilder()
         .withThreadId(threadId_)

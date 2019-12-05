@@ -19,12 +19,10 @@ package com.symphony.s2.allegro.examples.json;
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
 import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.FetchOrCreateSequenceMetaDataRequest;
-import com.symphony.oss.allegro.api.FetchSequenceMetaDataRequest;
-import com.symphony.oss.allegro.api.FetchSequenceRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
-import com.symphony.oss.models.fundmental.canon.ISequence;
-import com.symphony.oss.models.fundmental.canon.SequenceType;
+import com.symphony.oss.allegro.api.request.ConsumerManager;
+import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
+import com.symphony.oss.models.object.canon.facade.IApplicationObjectPayload;
 
 /**
  * Retrieve all objects on the given Sequence.
@@ -32,7 +30,7 @@ import com.symphony.oss.models.fundmental.canon.SequenceType;
  * @author Bruce Skingle
  *
  */
-public class ListJsonObjects extends CommandLineHandler implements Runnable
+public class ListJsonObjects extends CommandLineHandler implements JsonObjectExample
 {
   private static final String ALLEGRO          = "ALLEGRO_";
   private static final String SERVICE_ACCOUNT  = "SERVICE_ACCOUNT";
@@ -68,31 +66,21 @@ public class ListJsonObjects extends CommandLineHandler implements Runnable
       .withRsaPemCredentialFile(credentialFile_)
       .withTrustAllSslCerts()
       .build();
-    
-    ISequence currentSequence = allegroApi_.fetchSequenceMetaData(new FetchSequenceMetaDataRequest()
-        .withSequenceType(SequenceType.CURRENT)
-        .withContentType("com.example.random.json.objects")
-      );
   
-    System.out.println("currentSequence is " + currentSequence.getBaseHash() + " " + currentSequence);
-    
-    allegroApi_.fetchSequence(new FetchSequenceRequest()
-          .withMaxItems(10)
-          .withSequenceHash(currentSequence.getBaseHash())
-        ,
-        (item) ->
-        {
-          try
-          {
-            System.out.println(allegroApi_.open(item));
-          }
-          catch(Exception e)
-          {
-            e.printStackTrace();
-            
-            System.out.println(item);
-          }
-        });
+    allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
+        .withName(PARTITION_NAME)
+        .withOwner(allegroApi_.getUserId())
+        .withMaxItems(10)
+        .withConsumerManager(new ConsumerManager.Builder()
+            .withConsumer(IApplicationObjectPayload.class, (item, trace) ->
+            {
+              System.out.println("Header:  " + item.getStoredApplicationObject().getHeader());
+              System.out.println("Payload: " + item);
+            })
+            .build()
+            )
+        .build()
+        );
   }
   
   /**

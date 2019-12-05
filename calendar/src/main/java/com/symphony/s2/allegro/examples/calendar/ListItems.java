@@ -22,9 +22,9 @@ import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.ConsumerManager;
 import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
-import com.symphony.oss.models.calendar.canon.CalendarModel;
-import com.symphony.oss.models.calendar.canon.IToDoItem;
-import com.symphony.oss.models.calendar.canon.ToDoItem;
+import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
+import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
+import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
 
 /**
  * Retrieve all objects on the given Sequence.

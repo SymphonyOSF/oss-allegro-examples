@@ -19,11 +19,11 @@
  *           artifactId canon-template-java
  *		Template name		   proforma/java/Model/I_ModelEntity.java.ftl
  *		Template version	   1.0
- *  At                  2019-09-04 09:19:18 BST
+ *  At                  2019-12-03 06:01:38 GMT-08:00
  *----------------------------------------------------------------------------------------------------
  */
 
-package com.symphony.oss.models.calendar.canon.facade;
+package com.symphony.oss.allegro.examples.calendar.canon.facade;
 
 
 import org.symphonyoss.s2.canon.runtime.IEntity;

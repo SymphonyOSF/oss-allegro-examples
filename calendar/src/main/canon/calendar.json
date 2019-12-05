@@ -11,19 +11,11 @@
   "version": "1.0",
 	"basePath": "/calendar/v1",
 	"model": {
-		"javaGenPackage": "com.symphony.oss.models.calendar.canon",
-		"javaFacadePackage": "com.symphony.oss.models.calendar.canon.facade"
+		"javaGenPackage": "com.symphony.oss.allegro.examples.calendar.canon",
+		"javaFacadePackage": "com.symphony.oss.allegro.examples.calendar.canon.facade"
 	},
 	"components": {
 		"schemas": {
-      "CalendarItemSequenceId": {
-        "description": "The ID object for the TODO partition for a user.",
-        "type": "object",
-        "extends": "https://models.oss.symphony.com/object.json#/components/schemas/UserIdObject",
-        "properties": {
-        }
-      },
-      
       "ToDoItem": {
         "description": "A TODO item.",
         "type": "object",

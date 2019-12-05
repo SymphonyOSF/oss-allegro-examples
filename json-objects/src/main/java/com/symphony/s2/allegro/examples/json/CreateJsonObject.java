@@ -21,18 +21,15 @@ import java.time.Instant;
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
 import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.FetchOrCreateSequenceMetaDataRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
-import com.symphony.oss.models.chat.canon.facade.ThreadId;
-import com.symphony.oss.models.fundamental.canon.facade.ApplicationObject;
-import com.symphony.oss.models.fundamental.canon.facade.IApplicationObject;
-import com.symphony.oss.models.fundamental.canon.facade.IFundamentalObject;
-import com.symphony.oss.models.fundmental.canon.ISequence;
-import com.symphony.oss.models.fundmental.canon.ISequenceHashes;
-import com.symphony.oss.models.fundmental.canon.SequenceHashes;
-import com.symphony.oss.models.fundmental.canon.SequenceType;
+import com.symphony.oss.allegro.api.request.UpsertPartitionRequest;
+import com.symphony.oss.models.core.canon.facade.ThreadId;
+import com.symphony.oss.models.object.canon.facade.ApplicationObjectPayload;
+import com.symphony.oss.models.object.canon.facade.IApplicationObjectPayload;
+import com.symphony.oss.models.object.canon.facade.IPartition;
+import com.symphony.oss.models.object.canon.facade.IStoredApplicationObject;
 
-public class CreateJsonObject extends CommandLineHandler implements Runnable
+public class CreateJsonObject extends CommandLineHandler implements JsonObjectExample
 {
   private static final String ALLEGRO         = "ALLEGRO_";
   private static final String SERVICE_ACCOUNT = "SERVICE_ACCOUNT";
@@ -71,28 +68,27 @@ public class CreateJsonObject extends CommandLineHandler implements Runnable
       .withRsaPemCredentialFile(credentialFile_)
       .build();
     
-    String json = String.format("{ \"name\": \"Some JSON Object\", \"date\": \"%s\" }", Instant.now().toString());
+    String now = Instant.now().toString();
+    String json = String.format("{ \"name\": \"Some JSON Object\", \"date\": \"%s\" }", now);
     
-    ISequence currentSequence = allegroApi_.fetchOrCreateSequenceMetaData(new FetchOrCreateSequenceMetaDataRequest()
-        .withSequenceType(SequenceType.CURRENT)
-        .withContentType("com.example.random.json.objects")
-        .withThreadId(threadId_)
+    IPartition partition = allegroApi_.upsertPartition(new UpsertPartitionRequest.Builder()
+        .withName(PARTITION_NAME)
+        .withThreadIds(threadId_)
+        .build()
       );
   
-    System.out.println("currentSequence is " + currentSequence);
+    System.out.println("partition is " + partition);
     
     System.out.println("About to create item " + json);
     
-    ISequenceHashes sequences = new SequenceHashes.Builder()
-      .withCurrent(currentSequence.getBaseHash())
-      .build();
     
-    IApplicationObject item = new ApplicationObject(json);
+    IApplicationObjectPayload item = new ApplicationObjectPayload(json);
     
-    IFundamentalObject toDoObject = allegroApi_.newStoredApplicationObjectBuilder()
+    IStoredApplicationObject toDoObject = allegroApi_.newApplicationObjectBuilder()
         .withThreadId(threadId_)
         .withPayload(item)
-        .withSequences(sequences)
+        .withPartition(partition)
+        .withSortKey(now)
       .build();
     
     allegroApi_.store(toDoObject);

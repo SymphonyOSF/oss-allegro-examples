@@ -23,8 +23,8 @@ import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.UpsertPartitionRequest;
-import com.symphony.oss.models.calendar.canon.IToDoItem;
-import com.symphony.oss.models.calendar.canon.ToDoItem;
+import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
+import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 import com.symphony.oss.models.object.canon.AffectedUsers;
 import com.symphony.oss.models.object.canon.IAffectedUsers;
@@ -101,7 +101,7 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
         .withEffectiveDate(Instant.now())
         .build();
     
-    IStoredApplicationObject toDoObject = allegroApi_.newStoredApplicationObjectBuilder()
+    IStoredApplicationObject toDoObject = allegroApi_.newApplicationObjectBuilder()
         .withThreadId(threadId_)
         .withHeader(affectedUsers)
         .withPayload(toDoItem)
