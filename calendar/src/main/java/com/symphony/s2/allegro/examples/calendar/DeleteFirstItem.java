@@ -19,14 +19,13 @@ package com.symphony.s2.allegro.examples.calendar;
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
 import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.FetchSequenceMetaDataRequest;
-import com.symphony.oss.allegro.api.FetchSequenceRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
-import com.symphony.oss.models.calendar.canon.CalendarModel;
-import com.symphony.oss.models.calendar.canon.ToDoItem;
-import com.symphony.oss.models.fundmental.canon.DeletionType;
-import com.symphony.oss.models.fundmental.canon.ISequence;
-import com.symphony.oss.models.fundmental.canon.SequenceType;
+import com.symphony.oss.allegro.api.request.ConsumerManager;
+import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
+import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
+import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
+import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
+import com.symphony.oss.models.object.canon.DeletionType;
 
 /**
  * Retrieve all objects on the given Sequence.
@@ -71,23 +70,23 @@ public class DeleteFirstItem extends CommandLineHandler implements Runnable
       .withFactories(CalendarModel.FACTORIES)
       .build();
     
-    ISequence currentSequence = allegroApi_.fetchSequenceMetaData(new FetchSequenceMetaDataRequest()
-        .withSequenceType(SequenceType.CURRENT)
-        .withContentType(ToDoItem.TYPE_ID)
-      );
-  
-    System.err.println("currentSequence is " + currentSequence);
-    
-    allegroApi_.fetchSequence(new FetchSequenceRequest()
-          .withMaxItems(1)
-          .withSequenceHash(currentSequence.getBaseHash())
-        ,
-        (item) ->
-        {
-          System.out.println(item);
-          
-          allegroApi_.delete(item, DeletionType.LOGICAL);
-        });
+    allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
+        .withName(ToDoItem.TYPE_ID)
+        .withOwner(allegroApi_.getUserId())
+        .withMaxItems(1)
+        .withConsumerManager(new ConsumerManager.Builder()
+            .withConsumer(IToDoItem.class, (item, trace) ->
+            {
+              System.out.println("Header:  " + item.getStoredApplicationObject().getHeader());
+              System.out.println("Payload: " + item);
+              System.out.println("Stored:  " + item.getStoredApplicationObject());
+              
+              allegroApi_.delete(item, DeletionType.LOGICAL);
+            })
+            .build()
+            )
+        .build()
+        );
   }
 
   /**

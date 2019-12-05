@@ -20,17 +20,16 @@ import java.time.Instant;
 
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
-import com.symphony.oss.models.calendar.canon.IToDoItem;
-import com.symphony.oss.models.calendar.canon.ToDoItem;
-import com.symphony.oss.models.chat.canon.facade.ThreadId;
-import com.symphony.oss.models.fundamental.canon.facade.IFundamentalObject;
-import com.symphony.oss.models.fundmental.canon.ISequence;
-import com.symphony.oss.models.fundmental.canon.ISequenceHashes;
-import com.symphony.oss.models.fundmental.canon.SequenceHashes;
-import com.symphony.oss.models.fundmental.canon.SequenceType;
 import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.FetchOrCreateSequenceMetaDataRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
+import com.symphony.oss.allegro.api.request.UpsertPartitionRequest;
+import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
+import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
+import com.symphony.oss.models.core.canon.facade.ThreadId;
+import com.symphony.oss.models.object.canon.AffectedUsers;
+import com.symphony.oss.models.object.canon.IAffectedUsers;
+import com.symphony.oss.models.object.canon.facade.IPartition;
+import com.symphony.oss.models.object.canon.facade.IStoredApplicationObject;
 
 /**
  * An example application which creates a ToDoItem, adding it to a current and absolute sequence.
@@ -80,21 +79,13 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
     
     System.out.println("PodId is " + allegroApi_.getPodId());
     
-    ISequence absoluteSequence = allegroApi_.fetchOrCreateSequenceMetaData(new FetchOrCreateSequenceMetaDataRequest()
-          .withSequenceType(SequenceType.ABSOLUTE)
-          .withContentType(ToDoItem.TYPE_ID)
-          .withThreadId(threadId_)
+    IPartition partition = allegroApi_.upsertPartition(new UpsertPartitionRequest.Builder()
+          .withName(ToDoItem.TYPE_ID)
+          .withThreadIds(threadId_)
+          .build()
         );
     
-    System.out.println("absoluteSequence is " + absoluteSequence);
-    
-    ISequence currentSequence = allegroApi_.fetchOrCreateSequenceMetaData(new FetchOrCreateSequenceMetaDataRequest()
-        .withSequenceType(SequenceType.CURRENT)
-        .withContentType(ToDoItem.TYPE_ID)
-        .withThreadId(threadId_)
-      );
-  
-    System.out.println("currentSequence is " + currentSequence);
+    System.out.println("partition is " + partition);
     
     IToDoItem toDoItem = new ToDoItem.Builder()
       .withDue(Instant.now())
@@ -104,15 +95,18 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
     
     System.out.println("About to create item " + toDoItem);
     
-    ISequenceHashes sequences = new SequenceHashes.Builder()
-      .withAbsolute(absoluteSequence.getBaseHash())
-      .withCurrent(currentSequence.getBaseHash())
-      .build();
+    IAffectedUsers affectedUsers = new AffectedUsers.Builder()
+        .withRequestingUser(allegroApi_.getUserId())
+        .withAffectedUsers(allegroApi_.getUserId())
+        .withEffectiveDate(Instant.now())
+        .build();
     
-    IFundamentalObject toDoObject = allegroApi_.newApplicationObjectBuilder()
+    IStoredApplicationObject toDoObject = allegroApi_.newApplicationObjectBuilder()
         .withThreadId(threadId_)
+        .withHeader(affectedUsers)
         .withPayload(toDoItem)
-        .withSequences(sequences)
+        .withPartition(partition)
+        .withSortKey(toDoItem.getDue().toString())
       .build();
     
     allegroApi_.store(toDoObject);

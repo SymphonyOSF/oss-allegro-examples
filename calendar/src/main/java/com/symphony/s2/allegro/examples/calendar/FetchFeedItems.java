@@ -16,27 +16,13 @@
 
 package com.symphony.s2.allegro.examples.calendar;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.symphonyoss.s2.fugue.IFugueLifecycleComponent;
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
 import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.CreateFeedSubscriberRequest;
-import com.symphony.oss.allegro.api.FetchSequenceMetaDataRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
-import com.symphony.oss.allegro.api.UpsertFeedRequest;
-import com.symphony.oss.models.calendar.canon.CalendarModel;
-import com.symphony.oss.models.calendar.canon.IToDoItem;
-import com.symphony.oss.models.calendar.canon.ToDoItem;
-import com.symphony.oss.models.fundmental.canon.ISequence;
-import com.symphony.oss.models.fundmental.canon.SequenceType;
-import com.symphony.oss.models.system.canon.FeedType;
-import com.symphony.oss.models.system.canon.IFeed;
+import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 
 /**
  * Retrieve all objects on the given Sequence.
@@ -83,58 +69,60 @@ public class FetchFeedItems extends CommandLineHandler implements Runnable
       .withFactories(CalendarModel.FACTORIES)
       .build();
     
-    ISequence currentSequence = allegroApi_.fetchSequenceMetaData(new FetchSequenceMetaDataRequest()
-        .withSequenceType(SequenceType.CURRENT)
-        .withContentType(ToDoItem.TYPE_ID)
-      );
-  
-    log_.info("currentSequence is " + currentSequence.getBaseHash() + " " + currentSequence);
+    System.err.println("This example is temporarily not working while refactoring completes.");
     
-    IFeed feed = allegroApi_.upsertFeed(
-        new UpsertFeedRequest()
-          .withType(FeedType.FEED)
-          .withName("myCalendarFeed")
-          .withSequences(currentSequence)
-          );
-    
-    log_.info("Feed is " + feed);
-    
-    IFugueLifecycleComponent subscriber = allegroApi_.createFeedSubscriber(new CreateFeedSubscriberRequest()
-        .withName("myCalendarFeed")
-        .withSubscriberThreadPoolSize(10)
-        .withHandlerThreadPoolSize(90)
-        .withConsumer(IToDoItem.class, (message, traceContext) ->
-        {
-          log_.info(message.toString());
-        })
-        .withUnprocessableMessageConsumer((item, trace, message, cause) ->
-        {
-          log_.error("Failed to consume message: " + message + "\nPayload:" + item, cause);
-        })
-    );
-
-    log_.info("Subscriber state: " + subscriber.getLifecycleState());
-    subscriber.start();
-    
-    
-    BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-    
-    log_.info("Subscriber state: " + subscriber.getLifecycleState());
-    
-    System.err.println();
-    System.err.println("Press RETURN to quit");
-    try
-    {
-      in.readLine();
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-    }
-    
-    log_.info("Stopping...");
-    subscriber.stop();
-    log_.info("Subscriber state: " + subscriber.getLifecycleState());
+//    ISequence currentSequence = allegroApi_.fetchSequenceMetaData(new FetchSequenceMetaDataRequest()
+//        .withSequenceType(SequenceType.CURRENT)
+//        .withContentType(ToDoItem.TYPE_ID)
+//      );
+//  
+//    log_.info("currentSequence is " + currentSequence.getBaseHash() + " " + currentSequence);
+//    
+//    IFeed feed = allegroApi_.upsertFeed(
+//        new UpsertFeedRequest()
+//          .withType(FeedType.FEED)
+//          .withName("myCalendarFeed")
+//          .withSequences(currentSequence)
+//          );
+//    
+//    log_.info("Feed is " + feed);
+//    
+//    IFugueLifecycleComponent subscriber = allegroApi_.createFeedSubscriber(new CreateFeedSubscriberRequest()
+//        .withName("myCalendarFeed")
+//        .withSubscriberThreadPoolSize(10)
+//        .withHandlerThreadPoolSize(90)
+//        .withConsumer(IToDoItem.class, (message, traceContext) ->
+//        {
+//          log_.info(message.toString());
+//        })
+//        .withUnprocessableMessageConsumer((item, trace, message, cause) ->
+//        {
+//          log_.error("Failed to consume message: " + message + "\nPayload:" + item, cause);
+//        })
+//    );
+//
+//    log_.info("Subscriber state: " + subscriber.getLifecycleState());
+//    subscriber.start();
+//    
+//    
+//    BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+//    
+//    log_.info("Subscriber state: " + subscriber.getLifecycleState());
+//    
+//    System.err.println();
+//    System.err.println("Press RETURN to quit");
+//    try
+//    {
+//      in.readLine();
+//    }
+//    catch (IOException e)
+//    {
+//      e.printStackTrace();
+//    }
+//    
+//    log_.info("Stopping...");
+//    subscriber.stop();
+//    log_.info("Subscriber state: " + subscriber.getLifecycleState());
   }
   
   /**

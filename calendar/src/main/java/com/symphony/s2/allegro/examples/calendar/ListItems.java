@@ -19,14 +19,12 @@ package com.symphony.s2.allegro.examples.calendar;
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
 import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.FetchSequenceMetaDataRequest;
-import com.symphony.oss.allegro.api.FetchSequenceRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
-import com.symphony.oss.models.calendar.canon.CalendarModel;
-import com.symphony.oss.models.calendar.canon.IToDoItem;
-import com.symphony.oss.models.calendar.canon.ToDoItem;
-import com.symphony.oss.models.fundmental.canon.ISequence;
-import com.symphony.oss.models.fundmental.canon.SequenceType;
+import com.symphony.oss.allegro.api.request.ConsumerManager;
+import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
+import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
+import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
+import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
 
 /**
  * Retrieve all objects on the given Sequence.
@@ -71,35 +69,20 @@ public class ListItems extends CommandLineHandler implements Runnable
       .withFactories(CalendarModel.FACTORIES)
       .build();
     
-    ISequence absoluteSequence = allegroApi_.fetchSequenceMetaData(new FetchSequenceMetaDataRequest()
-        .withSequenceType(SequenceType.ABSOLUTE)
-        .withContentType(ToDoItem.TYPE_ID)
-      );
-  
-    System.out.println("absoluteSequence is " + absoluteSequence.getBaseHash() + " " + absoluteSequence);
-    
-    allegroApi_.fetchSequence(new FetchSequenceRequest()
+    allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
+          .withName(ToDoItem.TYPE_ID)
+          .withOwner(allegroApi_.getUserId())
           .withMaxItems(10)
-          .withSequenceHash(absoluteSequence.getBaseHash())
-          .withConsumer(IToDoItem.class, (item, trace) ->
-          {
-            System.out.println(item);
-          }));
-    
-    ISequence currentSequence = allegroApi_.fetchSequenceMetaData(new FetchSequenceMetaDataRequest()
-        .withSequenceType(SequenceType.CURRENT)
-        .withContentType(ToDoItem.TYPE_ID)
-      );
-  
-    System.out.println("currentSequence is " + currentSequence.getBaseHash() + " " + currentSequence);
-    
-    allegroApi_.fetchSequence(new FetchSequenceRequest()
-          .withMaxItems(10)
-          .withSequenceHash(currentSequence.getBaseHash())
-          .withConsumer(IToDoItem.class, (item, trace) ->
-          {
-            System.out.println(item);
-          }));
+          .withConsumerManager(new ConsumerManager.Builder()
+              .withConsumer(IToDoItem.class, (item, trace) ->
+              {
+                System.out.println("Header:  " + item.getStoredApplicationObject().getHeader());
+                System.out.println("Payload: " + item);
+              })
+              .build()
+              )
+          .build()
+          );
   }
   
   /**

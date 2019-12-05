@@ -12,9 +12,13 @@ import org.symphonyoss.s2.fugue.core.trace.ITraceContext;
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.FetchMessagesRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
-import com.symphony.oss.allegro.api.ReceivedChatMessageAdaptor;
+import com.symphony.oss.allegro.api.request.ConsumerManager;
+import com.symphony.oss.allegro.api.request.FetchRecentMessagesRequest;
+import com.symphony.oss.allegro.api.request.ReceivedChatMessageAdaptor;
+import com.symphony.oss.models.allegro.canon.IReceivedMaestroMessage;
 import com.symphony.oss.models.allegro.canon.IReceivedSocialMessage;
-import com.symphony.oss.models.chat.canon.facade.ThreadId;
+import com.symphony.oss.models.core.canon.facade.ThreadId;
+import com.symphony.s2.allegro.examples.getmessage.FetchConversation.Adaptor;
 
 /**
  * Fetch only social messages from the given conversation.
@@ -64,12 +68,15 @@ public class FetchSocialMessages extends CommandLineHandler implements Runnable
       .withRsaPemCredentialFile(credentialFile_)
       .build();
     
-    allegroApi_.fetchMessages(
-        new FetchMessagesRequest()
+    allegroApi_.fetchRecentMessagesFromPod(
+        new FetchRecentMessagesRequest.Builder()
           .withThreadId(threadId_)
-          .withMaxMessages(maxMessages_)
-          .withScanForwards(true)
-          .withConsumer(new Adaptor())
+          .withMaxItems(maxMessages_)
+          .withConsumerManager(new ConsumerManager.Builder()
+            .withConsumer(new Adaptor())
+            .build()
+            )
+          .build()
         );
   }
   
