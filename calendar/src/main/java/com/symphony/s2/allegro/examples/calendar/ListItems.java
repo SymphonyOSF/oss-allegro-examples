@@ -25,6 +25,8 @@ import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
+import com.symphony.oss.models.core.canon.facade.PodAndUserId;
+import com.symphony.oss.models.object.canon.facade.IStoredApplicationObject;
 
 /**
  * Retrieve all objects on the given Sequence.
@@ -39,11 +41,13 @@ public class ListItems extends CommandLineHandler implements Runnable
   private static final String POD_URL          = "POD_URL";
   private static final String OBJECT_STORE_URL = "OBJECT_STORE_URL";
   private static final String CREDENTIAL_FILE  = "CREDENTIAL_FILE";
+  private static final String OWNER_USER_ID    = "OWNER_USER_ID";
   
   private String              serviceAccount_;
   private String              podUrl_;
   private String              objectStoreUrl_;
   private String              credentialFile_;
+  private Long                ownerId_;
   
   private IAllegroApi         allegroApi_;
 
@@ -56,6 +60,7 @@ public class ListItems extends CommandLineHandler implements Runnable
     withFlag('p',   POD_URL,          ALLEGRO + POD_URL,          String.class,   false, true,   (v) -> podUrl_               = v);
     withFlag('o',   OBJECT_STORE_URL, ALLEGRO + OBJECT_STORE_URL, String.class,   false, true,   (v) -> objectStoreUrl_       = v);
     withFlag('f',   CREDENTIAL_FILE,  ALLEGRO + CREDENTIAL_FILE,  String.class,   false, true,   (v) -> credentialFile_       = v);
+    withFlag('u',   OWNER_USER_ID,    ALLEGRO + OWNER_USER_ID,    Long.class,   false, false, (v) -> ownerId_              = v);
   }
   
   @Override
@@ -69,15 +74,24 @@ public class ListItems extends CommandLineHandler implements Runnable
       .withFactories(CalendarModel.FACTORIES)
       .build();
     
+    PodAndUserId ownerUserId = ownerId_ == null ? allegroApi_.getUserId() : PodAndUserId.newBuilder().build(ownerId_);
+    
+    System.out.println("CallerId is " + allegroApi_.getUserId());
+    System.out.println("OwnerId is " + ownerUserId);
+    
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
           .withName(ToDoItem.TYPE_ID)
-          .withOwner(allegroApi_.getUserId())
+          .withOwner(ownerUserId)
           .withMaxItems(10)
           .withConsumerManager(new ConsumerManager.Builder()
               .withConsumer(IToDoItem.class, (item, trace) ->
               {
                 System.out.println("Header:  " + item.getStoredApplicationObject().getHeader());
                 System.out.println("Payload: " + item);
+              })
+              .withConsumer(IStoredApplicationObject.class, (item, trace) ->
+              {
+                System.out.println("StoredApplicationObject:  " + item);
               })
               .build()
               )
