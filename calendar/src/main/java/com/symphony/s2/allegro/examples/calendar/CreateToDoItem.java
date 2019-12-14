@@ -16,6 +16,8 @@
 
 package com.symphony.s2.allegro.examples.calendar;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
 import java.time.Instant;
 
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
@@ -86,6 +88,18 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
         );
     
     System.out.println("partition is " + partition);
+    
+    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    PrintWriter out = new PrintWriter(bos);
+    
+    out.println("Since we are creating this item with a due date of Instant.now() we are already late!");
+    
+    for(int i=0 ; i<256 ; i++)
+      out.println("PADDING");
+    
+    out.flush();
+    
+    String desc = new String(bos.toByteArray());
     
     IToDoItem toDoItem = new ToDoItem.Builder()
       .withDue(Instant.now())

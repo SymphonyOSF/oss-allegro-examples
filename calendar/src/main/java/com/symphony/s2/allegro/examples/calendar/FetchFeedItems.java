@@ -22,7 +22,14 @@ import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
+import com.symphony.oss.allegro.api.request.ConsumerManager;
+import com.symphony.oss.allegro.api.request.FetchFeedObjectsRequest;
+import com.symphony.oss.allegro.api.request.FetchPartitionRequest;
+import com.symphony.oss.allegro.api.request.UpsertFeedRequest;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
+import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
+import com.symphony.oss.models.core.canon.facade.PodAndUserId;
+import com.symphony.oss.models.object.canon.IFeed;
 
 /**
  * Retrieve all objects on the given Sequence.
@@ -39,11 +46,13 @@ public class FetchFeedItems extends CommandLineHandler implements Runnable
   private static final String POD_URL          = "POD_URL";
   private static final String OBJECT_STORE_URL = "OBJECT_STORE_URL";
   private static final String CREDENTIAL_FILE  = "CREDENTIAL_FILE";
+  private static final String OWNER_USER_ID    = "OWNER_USER_ID";
   
   private String              serviceAccount_;
   private String              podUrl_;
   private String              objectStoreUrl_;
   private String              credentialFile_;
+  private Long                ownerId_;
   
   private IAllegroApi         allegroApi_;
 
@@ -56,6 +65,7 @@ public class FetchFeedItems extends CommandLineHandler implements Runnable
     withFlag('p',   POD_URL,          ALLEGRO + POD_URL,          String.class,   false, true,   (v) -> podUrl_               = v);
     withFlag('o',   OBJECT_STORE_URL, ALLEGRO + OBJECT_STORE_URL, String.class,   false, true,   (v) -> objectStoreUrl_       = v);
     withFlag('f',   CREDENTIAL_FILE,  ALLEGRO + CREDENTIAL_FILE,  String.class,   false, true,   (v) -> credentialFile_       = v);
+    withFlag('u',   OWNER_USER_ID,    ALLEGRO + OWNER_USER_ID,    Long.class,     false, false,  (v) -> ownerId_              = v);
   }
   
   @Override
@@ -67,26 +77,40 @@ public class FetchFeedItems extends CommandLineHandler implements Runnable
       .withUserName(serviceAccount_)
       .withRsaPemCredentialFile(credentialFile_)
       .withFactories(CalendarModel.FACTORIES)
+      .withTrustAllSslCerts()
       .build();
     
-    System.err.println("This example is temporarily not working while refactoring completes.");
+    PodAndUserId ownerUserId = ownerId_ == null ? allegroApi_.getUserId() : PodAndUserId.newBuilder().build(ownerId_);
     
-//    ISequence currentSequence = allegroApi_.fetchSequenceMetaData(new FetchSequenceMetaDataRequest()
-//        .withSequenceType(SequenceType.CURRENT)
-//        .withContentType(ToDoItem.TYPE_ID)
-//      );
-//  
-//    log_.info("currentSequence is " + currentSequence.getBaseHash() + " " + currentSequence);
-//    
-//    IFeed feed = allegroApi_.upsertFeed(
-//        new UpsertFeedRequest()
-//          .withType(FeedType.FEED)
-//          .withName("myCalendarFeed")
-//          .withSequences(currentSequence)
-//          );
-//    
-//    log_.info("Feed is " + feed);
-//    
+    System.out.println("CallerId is " + allegroApi_.getUserId());
+    System.out.println("OwnerId is " + ownerUserId);
+      
+    IFeed feed = allegroApi_.upsertFeed(
+        new UpsertFeedRequest.Builder()
+          .withName("myCalendarFeed")
+          .withPartitionHashes(allegroApi_.getPartitionHash(
+              new FetchPartitionRequest.Builder()
+                .withName(ToDoItem.TYPE_ID)
+                .withOwner(ownerUserId)
+                .build()
+              ))
+          .build()
+          );
+    
+    log_.info("Feed is " + feed);
+    
+    allegroApi_.fetchFeedObjects(new FetchFeedObjectsRequest.Builder()
+        .withName("myCalendarFeed")
+        .withMaxItems(10)
+        .withConsumerManager(new ConsumerManager.Builder()
+            .withConsumer(Object.class, (object, trace) ->
+            {
+              System.out.println(object);
+            })
+            .build())
+        .build()
+        );
+    
 //    IFugueLifecycleComponent subscriber = allegroApi_.createFeedSubscriber(new CreateFeedSubscriberRequest()
 //        .withName("myCalendarFeed")
 //        .withSubscriberThreadPoolSize(10)

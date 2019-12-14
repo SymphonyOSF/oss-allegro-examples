@@ -60,7 +60,7 @@ public class ListItems extends CommandLineHandler implements Runnable
     withFlag('p',   POD_URL,          ALLEGRO + POD_URL,          String.class,   false, true,   (v) -> podUrl_               = v);
     withFlag('o',   OBJECT_STORE_URL, ALLEGRO + OBJECT_STORE_URL, String.class,   false, true,   (v) -> objectStoreUrl_       = v);
     withFlag('f',   CREDENTIAL_FILE,  ALLEGRO + CREDENTIAL_FILE,  String.class,   false, true,   (v) -> credentialFile_       = v);
-    withFlag('u',   OWNER_USER_ID,    ALLEGRO + OWNER_USER_ID,    Long.class,   false, false, (v) -> ownerId_              = v);
+    withFlag('u',   OWNER_USER_ID,    ALLEGRO + OWNER_USER_ID,    Long.class,     false, false,  (v) -> ownerId_              = v);
   }
   
   @Override
@@ -72,6 +72,7 @@ public class ListItems extends CommandLineHandler implements Runnable
       .withUserName(serviceAccount_)
       .withRsaPemCredentialFile(credentialFile_)
       .withFactories(CalendarModel.FACTORIES)
+      .withTrustAllSslCerts()
       .build();
     
     PodAndUserId ownerUserId = ownerId_ == null ? allegroApi_.getUserId() : PodAndUserId.newBuilder().build(ownerId_);

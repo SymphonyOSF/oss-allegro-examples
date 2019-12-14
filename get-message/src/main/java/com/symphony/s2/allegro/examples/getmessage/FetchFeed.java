@@ -21,7 +21,6 @@ import org.symphonyoss.s2.fugue.pipeline.IConsumer;
 import org.symphonyoss.s2.fugue.pipeline.ISimpleConsumer;
 
 import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.FetchFeedMessagesRequest;
 import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.models.allegro.canon.facade.IChatMessage;
 import com.symphony.oss.models.allegro.canon.facade.IReceivedChatMessage;
