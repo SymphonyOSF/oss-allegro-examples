@@ -6,23 +6,7 @@
 
 package com.symphony.s2.allegro.examples.getmessage;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.symphonyoss.s2.fugue.IFugueLifecycleComponent;
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
-import org.symphonyoss.s2.fugue.core.trace.ITraceContext;
-import org.symphonyoss.s2.fugue.pipeline.IThreadSafeConsumer;
-
-import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.CreateFeedSubscriberRequest;
-import com.symphony.oss.allegro.api.IAllegroApi;
-import com.symphony.oss.models.allegro.canon.facade.IReceivedChatMessage;
-import com.symphony.oss.models.chat.canon.facade.ISocialMessage;
 
 /**
  * Create a feed for the caller's default feed. 
