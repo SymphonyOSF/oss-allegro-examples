@@ -27,9 +27,9 @@ import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
-import com.symphony.oss.allegro.api.request.ConsumerManager;
 import com.symphony.oss.allegro.api.request.FetchPartitionRequest;
 import com.symphony.oss.allegro.api.request.SubscribeFeedObjectsRequest;
+import com.symphony.oss.allegro.api.request.ThreadSafeConsumerManager;
 import com.symphony.oss.allegro.api.request.UpsertFeedRequest;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
@@ -109,7 +109,7 @@ public class SubscribeFeedItems extends CommandLineHandler implements Runnable
         .withName("myCalendarFeed")
         .withSubscriberThreadPoolSize(10)
         .withHandlerThreadPoolSize(90)
-        .withConsumerManager(new ConsumerManager.Builder()
+        .withConsumerManager(new ThreadSafeConsumerManager.Builder()
           .withConsumer(IToDoItem.class, (message, traceContext) ->
           {
             log_.info(message.toString());
