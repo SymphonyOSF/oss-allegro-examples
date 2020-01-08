@@ -22,6 +22,8 @@ import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
+import com.symphony.oss.allegro.api.Permission;
+import com.symphony.oss.allegro.api.ResourcePermissions;
 import com.symphony.oss.allegro.api.request.ConsumerManager;
 import com.symphony.oss.allegro.api.request.FetchFeedObjectsRequest;
 import com.symphony.oss.allegro.api.request.FetchPartitionRequest;
@@ -38,9 +40,9 @@ import com.symphony.oss.models.object.canon.IFeed;
  * @author Bruce Skingle
  *
  */
-public class FetchFeedItems extends CommandLineHandler implements Runnable
+public class CreateFeed extends CommandLineHandler implements Runnable
 {
-  private static final Logger log_ = LoggerFactory.getLogger(FetchFeedItems.class);
+  private static final Logger log_ = LoggerFactory.getLogger(CreateFeed.class);
   
   private static final String ALLEGRO          = "ALLEGRO_";
   private static final String SERVICE_ACCOUNT  = "SERVICE_ACCOUNT";
@@ -48,25 +50,28 @@ public class FetchFeedItems extends CommandLineHandler implements Runnable
   private static final String OBJECT_STORE_URL = "OBJECT_STORE_URL";
   private static final String CREDENTIAL_FILE  = "CREDENTIAL_FILE";
   private static final String OWNER_USER_ID    = "OWNER_USER_ID";
+  private static final String OTHER_USER_ID    = "OTHER_USER_ID";
   
   private String              serviceAccount_;
   private String              podUrl_;
   private String              objectStoreUrl_;
   private String              credentialFile_;
-  private Long                ownerId_;
+  private PodAndUserId        ownerId_;
+  private PodAndUserId        otherUserId_;
   
   private IAllegroApi         allegroApi_;
 
   /**
    * Constructor.
    */
-  public FetchFeedItems()
+  public CreateFeed()
   {
     withFlag('s',   SERVICE_ACCOUNT,  ALLEGRO + SERVICE_ACCOUNT,  String.class,   false, true,   (v) -> serviceAccount_       = v);
     withFlag('p',   POD_URL,          ALLEGRO + POD_URL,          String.class,   false, true,   (v) -> podUrl_               = v);
     withFlag('o',   OBJECT_STORE_URL, ALLEGRO + OBJECT_STORE_URL, String.class,   false, true,   (v) -> objectStoreUrl_       = v);
     withFlag('f',   CREDENTIAL_FILE,  ALLEGRO + CREDENTIAL_FILE,  String.class,   false, true,   (v) -> credentialFile_       = v);
-    withFlag('u',   OWNER_USER_ID,    ALLEGRO + OWNER_USER_ID,    Long.class,     false, false,  (v) -> ownerId_              = v);
+    withFlag('u',   OWNER_USER_ID,    ALLEGRO + OWNER_USER_ID,    Long.class,     false, false,  (v) -> ownerId_              = PodAndUserId.newBuilder().build(v));
+    withFlag(null,  OTHER_USER_ID,    ALLEGRO + OTHER_USER_ID,    Long.class,     false, false,  (v) -> otherUserId_          = PodAndUserId.newBuilder().build(v));
   }
   
   @Override
@@ -81,23 +86,31 @@ public class FetchFeedItems extends CommandLineHandler implements Runnable
       .withTrustAllSslCerts()
       .build();
     
-    PodAndUserId ownerUserId = ownerId_ == null ? allegroApi_.getUserId() : PodAndUserId.newBuilder().build(ownerId_);
-    
     System.out.println("CallerId is " + allegroApi_.getUserId());
-    System.out.println("OwnerId is " + ownerUserId);
-      
-    allegroApi_.fetchFeedObjects(new FetchFeedObjectsRequest.Builder()
+    System.out.println("OwnerId is " + otherUserId_);
+    System.out.println("OtherUserId is " + otherUserId_);
+    
+    UpsertFeedRequest.Builder builder = new UpsertFeedRequest.Builder()
         .withName("myCalendarFeed")
-        .withOwner(ownerUserId)
-        .withMaxItems(10)
-        .withConsumerManager(new ConsumerManager.Builder()
-            .withConsumer(Object.class, (object, trace) ->
-            {
-              System.out.println(object);
-            })
-            .build())
-        .build()
-        );
+        .withPartitionIds(
+            new PartitionId.Builder()
+            .withName(ToDoItem.TYPE_ID)
+            .withOwner(ownerId_)
+            .build()
+            )
+        ;
+    
+    if(otherUserId_ != null)
+    {
+      builder.withPermissions(new ResourcePermissions.Builder()
+          .withUser(otherUserId_, Permission.Read)
+          .build()
+          );
+    }
+    
+    IFeed feed = allegroApi_.upsertFeed(builder.build());
+    
+    log_.info("Feed is " + feed);
   }
   
   /**
@@ -107,7 +120,7 @@ public class FetchFeedItems extends CommandLineHandler implements Runnable
    */
   public static void main(String[] args)
   {
-    FetchFeedItems program = new FetchFeedItems();
+    CreateFeed program = new CreateFeed();
     
     program.process(args);
     

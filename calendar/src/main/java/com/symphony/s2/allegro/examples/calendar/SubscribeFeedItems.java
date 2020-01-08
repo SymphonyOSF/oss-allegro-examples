@@ -28,6 +28,7 @@ import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.FetchPartitionRequest;
+import com.symphony.oss.allegro.api.request.PartitionId;
 import com.symphony.oss.allegro.api.request.SubscribeFeedObjectsRequest;
 import com.symphony.oss.allegro.api.request.ThreadSafeConsumerManager;
 import com.symphony.oss.allegro.api.request.UpsertFeedRequest;
@@ -91,19 +92,6 @@ public class SubscribeFeedItems extends CommandLineHandler implements Runnable
     System.out.println("CallerId is " + allegroApi_.getUserId());
     System.out.println("OwnerId is " + ownerUserId);
       
-    IFeed feed = allegroApi_.upsertFeed(
-        new UpsertFeedRequest.Builder()
-          .withName("myCalendarFeed")
-          .withPartitionHashes(allegroApi_.getPartitionHash(
-              new FetchPartitionRequest.Builder()
-                .withName(ToDoItem.TYPE_ID)
-                .withOwner(ownerUserId)
-                .build()
-              ))
-          .build()
-          );
-    
-    log_.info("Feed is " + feed);
     
     IFugueLifecycleComponent subscriber = allegroApi_.subscribeToFeed(new SubscribeFeedObjectsRequest.Builder()
         .withName("myCalendarFeed")
