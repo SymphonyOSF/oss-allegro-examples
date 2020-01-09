@@ -42,11 +42,13 @@ public class ListItems extends CommandLineHandler implements Runnable
   private static final String OBJECT_STORE_URL = "OBJECT_STORE_URL";
   private static final String CREDENTIAL_FILE  = "CREDENTIAL_FILE";
   private static final String OWNER_USER_ID    = "OWNER_USER_ID";
+  private static final String SORT_KEY_PREFIX  = "SORT_KEY_PREFIX";
   
   private String              serviceAccount_;
   private String              podUrl_;
   private String              objectStoreUrl_;
   private String              credentialFile_;
+  private String              sortKeyPrefix_;
   private Long                ownerId_;
   
   private IAllegroApi         allegroApi_;
@@ -61,6 +63,7 @@ public class ListItems extends CommandLineHandler implements Runnable
     withFlag('o',   OBJECT_STORE_URL, ALLEGRO + OBJECT_STORE_URL, String.class,   false, true,   (v) -> objectStoreUrl_       = v);
     withFlag('f',   CREDENTIAL_FILE,  ALLEGRO + CREDENTIAL_FILE,  String.class,   false, true,   (v) -> credentialFile_       = v);
     withFlag('u',   OWNER_USER_ID,    ALLEGRO + OWNER_USER_ID,    Long.class,     false, false,  (v) -> ownerId_              = v);
+    withFlag('k',   SORT_KEY_PREFIX,  ALLEGRO + SORT_KEY_PREFIX,  String.class,   false, false,  (v) -> sortKeyPrefix_        = v);
   }
   
   @Override
@@ -84,9 +87,12 @@ public class ListItems extends CommandLineHandler implements Runnable
           .withName(ToDoItem.TYPE_ID)
           .withOwner(ownerUserId)
           .withMaxItems(10)
+          .withSortKeyPrefix(sortKeyPrefix_)
           .withConsumerManager(new ConsumerManager.Builder()
               .withConsumer(IToDoItem.class, (item, trace) ->
               {
+//                System.out.println("SortKey: " + item.getStoredApplicationObject().getSortKey());
+                
                 System.out.println("Header:  " + item.getStoredApplicationObject().getHeader());
                 System.out.println("Payload: " + item);
               })
