@@ -16,24 +16,16 @@
 
 package com.symphony.s2.allegro.examples.calendar;
 
-import java.time.Instant;
-
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.Permission;
 import com.symphony.oss.allegro.api.ResourcePermissions;
-import com.symphony.oss.allegro.api.request.PartitionId;
 import com.symphony.oss.allegro.api.request.UpsertPartitionRequest;
-import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
-import com.symphony.oss.models.core.canon.facade.ThreadId;
-import com.symphony.oss.models.object.canon.AffectedUsers;
-import com.symphony.oss.models.object.canon.IAffectedUsers;
 import com.symphony.oss.models.object.canon.facade.IPartition;
-import com.symphony.oss.models.object.canon.facade.IStoredApplicationObject;
 
 /**
  * An example application which creates a ToDoItem, adding it to a current and absolute sequence.
@@ -41,23 +33,19 @@ import com.symphony.oss.models.object.canon.facade.IStoredApplicationObject;
  * @author Bruce Skingle
  *
  */
-public class CreateToDoItem extends CommandLineHandler implements Runnable
+public class CreatePartition extends CommandLineHandler implements Runnable
 {
   private static final String ALLEGRO         = "ALLEGRO_";
   private static final String SERVICE_ACCOUNT = "SERVICE_ACCOUNT";
   private static final String POD_URL         = "POD_URL";
   private static final String OBJECT_STORE_URL = "OBJECT_STORE_URL";
   private static final String CREDENTIAL_FILE = "CREDENTIAL_FILE";
-  private static final String THREAD_ID       = "THREAD_ID";
-  private static final String OWNER_USER_ID    = "OWNER_USER_ID";
   private static final String OTHER_USER_ID    = "OTHER_USER_ID";
   
   private String              serviceAccount_;
   private String              podUrl_;
   private String              objectStoreUrl_;
   private String              credentialFile_;
-  private ThreadId            threadId_;
-  private Long                ownerId_;
   private PodAndUserId        otherUserId_;
   
   private IAllegroApi         allegroApi_;
@@ -65,14 +53,12 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
   /**
    * Constructor.
    */
-  public CreateToDoItem()
+  public CreatePartition()
   {
     withFlag('s',   SERVICE_ACCOUNT,  ALLEGRO + SERVICE_ACCOUNT,  String.class,   false, true,   (v) -> serviceAccount_       = v);
     withFlag('p',   POD_URL,          ALLEGRO + POD_URL,          String.class,   false, true,   (v) -> podUrl_               = v);
     withFlag('o',   OBJECT_STORE_URL, ALLEGRO + OBJECT_STORE_URL, String.class,   false, true,   (v) -> objectStoreUrl_       = v);
     withFlag('f',   CREDENTIAL_FILE,  ALLEGRO + CREDENTIAL_FILE,  String.class,   false, false,  (v) -> credentialFile_       = v);
-    withFlag('t',   THREAD_ID,        ALLEGRO + THREAD_ID,        String.class,   false, true,   (v) -> threadId_             = ThreadId.newBuilder().build(v));
-    withFlag('u',   OWNER_USER_ID,    ALLEGRO + OWNER_USER_ID,    Long.class,     false, false,  (v) -> ownerId_              = v);
     withFlag(null,  OTHER_USER_ID,    ALLEGRO + OTHER_USER_ID,    Long.class,     false, false,  (v) -> otherUserId_          = PodAndUserId.newBuilder().build(v));
   }
   
@@ -87,10 +73,6 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
       .withTrustAllSslCerts()
       .build();
     
-    PodAndUserId ownerUserId = ownerId_ == null ? allegroApi_.getUserId() : PodAndUserId.newBuilder().build(ownerId_);
-    
-    System.out.println("CallerId is " + allegroApi_.getUserId());
-    System.out.println("OwnerId is " + ownerUserId);
     System.out.println("PodId is " + allegroApi_.getPodId());
     
     ResourcePermissions permissions = null;
@@ -98,7 +80,7 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
     if(otherUserId_ != null)
     {
       permissions = new ResourcePermissions.Builder()
-          .withUser(otherUserId_, Permission.Read)
+          .withUser(otherUserId_, Permission.Read, Permission.Write)
           .build()
           ;
     }
@@ -110,36 +92,6 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
         );
     
     System.out.println("partition is " + partition);
-    
-    IToDoItem toDoItem = new ToDoItem.Builder()
-      .withDue(Instant.now())
-      .withTitle("An example TODO Item")
-      .withDescription("Since we are creating this item with a due date of Instant.now() we are already late!")
-      .build();
-    
-    System.out.println("About to create item " + toDoItem);
-    
-    IAffectedUsers affectedUsers = new AffectedUsers.Builder()
-        .withRequestingUser(allegroApi_.getUserId())
-        .withAffectedUsers(allegroApi_.getUserId())
-        .withEffectiveDate(Instant.now())
-        .build();
-    
-    IStoredApplicationObject toDoObject = allegroApi_.newApplicationObjectBuilder()
-        .withThreadId(threadId_)
-        .withHeader(affectedUsers)
-        .withPayload(toDoItem)
-        .withPartition(new PartitionId.Builder()
-            .withName(ToDoItem.TYPE_ID)
-            .withOwner(ownerUserId)
-            .build()
-            )
-        .withSortKey(toDoItem.getDue().toString())
-      .build();
-    
-    allegroApi_.store(toDoObject);
-    
-    System.out.println("Created " + toDoObject);
   }
   
   /**
@@ -149,7 +101,7 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
    */
   public static void main(String[] args)
   {
-    CreateToDoItem program = new CreateToDoItem();
+    CreatePartition program = new CreatePartition();
     
     program.process(args);
     

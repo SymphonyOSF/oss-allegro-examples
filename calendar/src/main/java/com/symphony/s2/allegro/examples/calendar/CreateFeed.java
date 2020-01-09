@@ -90,8 +90,19 @@ public class CreateFeed extends CommandLineHandler implements Runnable
     System.out.println("OwnerId is " + otherUserId_);
     System.out.println("OtherUserId is " + otherUserId_);
     
+    ResourcePermissions permissions = null;
+    
+    if(otherUserId_ != null)
+    {
+      permissions = new ResourcePermissions.Builder()
+          .withUser(otherUserId_, Permission.Read)
+          .build()
+          ;
+    }
+    
     UpsertFeedRequest.Builder builder = new UpsertFeedRequest.Builder()
         .withName("myCalendarFeed")
+        .withPermissions(permissions)
         .withPartitionIds(
             new PartitionId.Builder()
             .withName(ToDoItem.TYPE_ID)

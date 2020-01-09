@@ -73,7 +73,6 @@ public class CreateJsonObject extends CommandLineHandler implements JsonObjectEx
     
     IPartition partition = allegroApi_.upsertPartition(new UpsertPartitionRequest.Builder()
         .withName(PARTITION_NAME)
-        .withThreadIds(threadId_)
         .build()
       );
   
