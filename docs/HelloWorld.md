@@ -57,12 +57,12 @@ The three required parameters are
 + The user name of the account you will log into in the pod
 + The name of a file containing an RSA authentication credential for the user account.
 
-For a description about how to create an RSA authentication credential, see https://developers.symphony.com/restapi/docs/rsa-bot-authentication-workflow
+For a description about how to create an RSA authentication credential, see [developers.symphony.com](https://developers.symphony.com/restapi/docs/rsa-bot-authentication-workflow).
 
 The file you pass to Allegro must contain the private half of the RSA key pair, and should contain BAse64 encoded binary
 enclosed within __\-\-\-\-\-BEGIN RSA PRIVATE KEY\-\-\-\-\-__ and __\-\-\-\-\-END RSA PRIVATE KEY\-\-\-\-\-__
 
-The final part ofthe program is a simple main() method which instantiates a HelloWorld instance and calls its run() method:
+The final part of the program is a simple main() method which instantiates a HelloWorld instance and calls its run() method:
 
 ```
   /**

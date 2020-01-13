@@ -111,14 +111,6 @@ public class CreateFeed extends CommandLineHandler implements Runnable
             )
         ;
     
-    if(otherUserId_ != null)
-    {
-      builder.withPermissions(new ResourcePermissions.Builder()
-          .withUser(otherUserId_, Permission.Read)
-          .build()
-          );
-    }
-    
     IFeed feed = allegroApi_.upsertFeed(builder.build());
     
     log_.info("Feed is " + feed);

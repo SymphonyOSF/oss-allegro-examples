@@ -95,6 +95,7 @@ public class SubscribeFeedItems extends CommandLineHandler implements Runnable
     
     IFugueLifecycleComponent subscriber = allegroApi_.subscribeToFeed(new SubscribeFeedObjectsRequest.Builder()
         .withName("myCalendarFeed")
+        .withOwner(ownerUserId)
         .withSubscriberThreadPoolSize(10)
         .withHandlerThreadPoolSize(90)
         .withConsumerManager(new ThreadSafeConsumerManager.Builder()
