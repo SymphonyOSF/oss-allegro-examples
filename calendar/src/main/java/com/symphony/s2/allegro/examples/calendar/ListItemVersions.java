@@ -21,6 +21,7 @@ import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.ConsumerManager;
+import com.symphony.oss.allegro.api.request.FetchObjectVersionsRequest;
 import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
@@ -34,7 +35,7 @@ import com.symphony.oss.models.object.canon.facade.IStoredApplicationObject;
  * @author Bruce Skingle
  *
  */
-public class ListItems extends CommandLineHandler implements Runnable
+public class ListItemVersions extends CommandLineHandler implements Runnable
 {
   private static final String ALLEGRO          = "ALLEGRO_";
   private static final String SERVICE_ACCOUNT  = "SERVICE_ACCOUNT";
@@ -56,7 +57,7 @@ public class ListItems extends CommandLineHandler implements Runnable
   /**
    * Constructor.
    */
-  public ListItems()
+  public ListItemVersions()
   {
     withFlag('s',   SERVICE_ACCOUNT,  ALLEGRO + SERVICE_ACCOUNT,  String.class,   false, true,   (v) -> serviceAccount_       = v);
     withFlag('p',   POD_URL,          ALLEGRO + POD_URL,          String.class,   false, true,   (v) -> podUrl_               = v);
@@ -82,6 +83,15 @@ public class ListItems extends CommandLineHandler implements Runnable
     
     System.out.println("CallerId is " + allegroApi_.getUserId());
     System.out.println("OwnerId is " + ownerUserId);
+    System.out.println();
+    
+    System.out.format("  %-50s %-50s %-50s %-50s %s%n",
+        "BaseHash",
+        "AbsoluteHash",
+        "PartitionHash",
+        "SortKey",
+        "CreatedDate"
+        );
     
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
           .withName(ToDoItem.TYPE_ID)
@@ -89,14 +99,33 @@ public class ListItems extends CommandLineHandler implements Runnable
           .withMaxItems(10)
           .withSortKeyPrefix(sortKeyPrefix_)
           .withConsumerManager(new ConsumerManager.Builder()
-              .withConsumer(IToDoItem.class, (item, trace) ->
-              {
-                System.out.println("Header:  " + item.getStoredApplicationObject().getHeader());
-                System.out.println("Payload: " + item);
-              })
               .withConsumer(IStoredApplicationObject.class, (item, trace) ->
               {
-                System.out.println("StoredApplicationObject:  " + item);
+                System.out.format("  %-50s %-50s %-50s %-50s%n",
+                    item.getBaseHash(),
+                    item.getAbsoluteHash(),
+                    item.getPartitionHash(),
+                    item.getSortKey()
+                    );
+                
+                allegroApi_.fetchObjectVersions(new FetchObjectVersionsRequest.Builder()
+                    .withBaseHash(item.getBaseHash())
+                    .withMaxItems(10)
+                    .withConsumerManager(new ConsumerManager.Builder()
+                        .withConsumer(IStoredApplicationObject.class, (vitem, vtrace) ->
+                        {
+                          System.out.format("V %-50s %-50s %-50s %-50s %s%n",
+                              vitem.getBaseHash(),
+                              vitem.getAbsoluteHash(),
+                              vitem.getPartitionHash(),
+                              vitem.getSortKey(),
+                              vitem.getCreatedDate()
+                              );
+                        })
+                        .build()
+                        )
+                    .build()
+                    );
               })
               .build()
               )
@@ -111,7 +140,7 @@ public class ListItems extends CommandLineHandler implements Runnable
    */
   public static void main(String[] args)
   {
-    ListItems program = new ListItems();
+    ListItemVersions program = new ListItemVersions();
     
     program.process(args);
     
