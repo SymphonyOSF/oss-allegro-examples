@@ -43,11 +43,11 @@
               <uriMapping>
                 <property>
                  <name>https://models.oss.symphony.com/core.json</name>
-                 <value>../../../../../oss-models/core-model/src/main/canon/core.json</value>
+                 <value>../oss-models/core-model/src/main/resources/canon/core.json</value>
                 </property>
                 <property>
                  <name>https://models.oss.symphony.com/object.json</name>
-                 <value>../../../../../oss-models/object-model/src/main/canon/object.json</value>
+                 <value>../oss-models/object-model/src/main/resources/canon/object.json</value>
                 </property>
               </uriMapping>
 

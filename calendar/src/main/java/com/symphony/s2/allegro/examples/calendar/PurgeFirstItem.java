@@ -73,8 +73,8 @@ public class PurgeFirstItem extends CommandLineHandler implements Runnable
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
         .withName(ToDoItem.TYPE_ID)
         .withOwner(allegroApi_.getUserId())
-        .withMaxItems(1)
         .withConsumerManager(new ConsumerManager.Builder()
+            .withMaxItems(1)
             .withConsumer(IToDoItem.class, (item, trace) ->
             {
               System.out.println("Header:  " + item.getStoredApplicationObject().getHeader());

@@ -70,8 +70,8 @@ public class ListJsonObjects extends CommandLineHandler implements JsonObjectExa
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
         .withName(PARTITION_NAME)
         .withOwner(allegroApi_.getUserId())
-        .withMaxItems(10)
         .withConsumerManager(new ConsumerManager.Builder()
+            .withMaxItems(10)
             .withConsumer(IApplicationObjectPayload.class, (item, trace) ->
             {
               System.out.println("Header:  " + item.getStoredApplicationObject().getHeader());

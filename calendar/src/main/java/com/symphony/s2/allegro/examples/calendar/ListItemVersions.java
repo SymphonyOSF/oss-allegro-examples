@@ -96,9 +96,9 @@ public class ListItemVersions extends CommandLineHandler implements Runnable
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
           .withName(ToDoItem.TYPE_ID)
           .withOwner(ownerUserId)
-          .withMaxItems(10)
           .withSortKeyPrefix(sortKeyPrefix_)
           .withConsumerManager(new ConsumerManager.Builder()
+              .withMaxItems(10)
               .withConsumer(IStoredApplicationObject.class, (item, trace) ->
               {
                 System.out.format("  %-50s %-50s %-50s %-50s%n",

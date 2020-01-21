@@ -27,16 +27,11 @@ import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
-import com.symphony.oss.allegro.api.request.FetchPartitionRequest;
-import com.symphony.oss.allegro.api.request.PartitionId;
-import com.symphony.oss.allegro.api.request.SubscribeFeedObjectsRequest;
-import com.symphony.oss.allegro.api.request.ThreadSafeConsumerManager;
-import com.symphony.oss.allegro.api.request.UpsertFeedRequest;
+import com.symphony.oss.allegro.api.request.AsyncConsumerManager;
+import com.symphony.oss.allegro.api.request.FetchFeedObjectsRequest;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
-import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
-import com.symphony.oss.models.object.canon.IFeed;
 
 /**
  * Retrieve all objects on the given Sequence.
@@ -93,21 +88,21 @@ public class SubscribeFeedItems extends CommandLineHandler implements Runnable
     System.out.println("OwnerId is " + ownerUserId);
       
     
-    IFugueLifecycleComponent subscriber = allegroApi_.subscribeToFeed(new SubscribeFeedObjectsRequest.Builder()
+    IFugueLifecycleComponent subscriber = allegroApi_.fetchFeedObjects(new FetchFeedObjectsRequest.Builder()
         .withName("myCalendarFeed")
         .withOwner(ownerUserId)
-        .withSubscriberThreadPoolSize(10)
-        .withHandlerThreadPoolSize(90)
-        .withConsumerManager(new ThreadSafeConsumerManager.Builder()
-          .withConsumer(IToDoItem.class, (message, traceContext) ->
-          {
-            log_.info(message.toString());
-          })
-          .withUnprocessableMessageConsumer((item, trace, message, cause) ->
-          {
-            log_.error("Failed to consume message: " + message + "\nPayload:" + item, cause);
-          })
-          .build()
+        .withConsumerManager(new AsyncConsumerManager.Builder()
+            .withSubscriberThreadPoolSize(10)
+            .withHandlerThreadPoolSize(90)
+            .withConsumer(IToDoItem.class, (message, traceContext) ->
+            {
+              log_.info(message.toString());
+            })
+            .withUnprocessableMessageConsumer((item, trace, message, cause) ->
+            {
+              log_.error("Failed to consume message: " + message + "\nPayload:" + item, cause);
+            })
+            .build()
         )
       .build()
     );
