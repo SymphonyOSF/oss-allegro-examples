@@ -24,6 +24,7 @@ import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.ConsumerManager;
 import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
+import com.symphony.oss.allegro.api.request.PartitionQuery;
 import com.symphony.oss.models.fundamental.canon.facade.IFundamentalObject;
 import com.symphony.oss.models.object.canon.facade.ApplicationObjectPayload;
 import com.symphony.oss.models.object.canon.facade.IApplicationObjectPayload;
@@ -72,10 +73,12 @@ public class UpdateJsonObject extends CommandLineHandler implements JsonObjectEx
       .build();
     
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
-        .withName(PARTITION_NAME)
-        .withOwner(allegroApi_.getUserId())
+        .withQuery(new PartitionQuery.Builder()
+          .withName(PARTITION_NAME)
+          .withMaxItems(10)
+          .build()
+          )
         .withConsumerManager(new ConsumerManager.Builder()
-            .withMaxItems(10)
             .withConsumer(IApplicationObjectPayload.class, (item, trace) ->
             {
               System.out.println("Payload: " + item);

@@ -23,8 +23,9 @@ import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.ConsumerManager;
 import com.symphony.oss.allegro.api.request.FetchObjectVersionsRequest;
 import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
+import com.symphony.oss.allegro.api.request.PartitionQuery;
+import com.symphony.oss.allegro.api.request.VersionQuery;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
-import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.object.canon.facade.IStoredApplicationObject;
@@ -94,9 +95,12 @@ public class ListItemVersions extends CommandLineHandler implements Runnable
         );
     
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
-          .withName(ToDoItem.TYPE_ID)
-          .withOwner(ownerUserId)
-          .withSortKeyPrefix(sortKeyPrefix_)
+        .withQuery(new PartitionQuery.Builder()
+            .withName(ToDoItem.TYPE_ID)
+            .withOwner(ownerUserId)
+            .withSortKeyPrefix(sortKeyPrefix_)
+            .build()
+            )
           .withConsumerManager(new ConsumerManager.Builder()
               .withMaxItems(10)
               .withConsumer(IStoredApplicationObject.class, (item, trace) ->
@@ -109,9 +113,12 @@ public class ListItemVersions extends CommandLineHandler implements Runnable
                     );
                 
                 allegroApi_.fetchObjectVersions(new FetchObjectVersionsRequest.Builder()
-                    .withBaseHash(item.getBaseHash())
-                    .withMaxItems(10)
+                    .withQuery(new VersionQuery.Builder()
+                        .withBaseHash(item.getBaseHash())
+                        .build()
+                        )
                     .withConsumerManager(new ConsumerManager.Builder()
+                        .withMaxItems(10)
                         .withConsumer(IStoredApplicationObject.class, (vitem, vtrace) ->
                         {
                           System.out.format("V %-50s %-50s %-50s %-50s %s%n",
