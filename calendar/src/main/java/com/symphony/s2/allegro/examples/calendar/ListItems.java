@@ -86,13 +86,13 @@ public class ListItems extends CommandLineHandler implements Runnable
     
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
         .withQuery(new PartitionQuery.Builder()
+            .withMaxItems(10)
             .withName(ToDoItem.TYPE_ID)
             .withOwner(ownerUserId)
             .withSortKeyPrefix(sortKeyPrefix_)
             .build()
             )
           .withConsumerManager(new ConsumerManager.Builder()
-              .withMaxItems(10)
               .withConsumer(IToDoItem.class, (item, trace) ->
               {
                 System.out.println("Header:  " + item.getStoredApplicationObject().getHeader());

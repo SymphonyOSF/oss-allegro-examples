@@ -80,12 +80,12 @@ public class UpdateItems extends CommandLineHandler implements Runnable
     
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
         .withQuery(new PartitionQuery.Builder()
+            .withMaxItems(10)
             .withName(ToDoItem.TYPE_ID)
             .withOwner(allegroApi_.getUserId())
             .build()
             )
           .withConsumerManager(new ConsumerManager.Builder()
-              .withMaxItems(10)
               .withConsumer(IToDoItem.class, (item, trace) ->
               {
                 System.out.println("Header:  " + item.getStoredApplicationObject().getHeader());

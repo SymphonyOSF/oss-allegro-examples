@@ -96,13 +96,13 @@ public class ListItemVersions extends CommandLineHandler implements Runnable
     
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
         .withQuery(new PartitionQuery.Builder()
+            .withMaxItems(10)
             .withName(ToDoItem.TYPE_ID)
             .withOwner(ownerUserId)
             .withSortKeyPrefix(sortKeyPrefix_)
             .build()
             )
           .withConsumerManager(new ConsumerManager.Builder()
-              .withMaxItems(10)
               .withConsumer(IStoredApplicationObject.class, (item, trace) ->
               {
                 System.out.format("  %-50s %-50s %-50s %-50s%n",
@@ -114,11 +114,11 @@ public class ListItemVersions extends CommandLineHandler implements Runnable
                 
                 allegroApi_.fetchObjectVersions(new FetchObjectVersionsRequest.Builder()
                     .withQuery(new VersionQuery.Builder()
+                        .withMaxItems(10)
                         .withBaseHash(item.getBaseHash())
                         .build()
                         )
                     .withConsumerManager(new ConsumerManager.Builder()
-                        .withMaxItems(10)
                         .withConsumer(IStoredApplicationObject.class, (vitem, vtrace) ->
                         {
                           System.out.format("V %-50s %-50s %-50s %-50s %s%n",

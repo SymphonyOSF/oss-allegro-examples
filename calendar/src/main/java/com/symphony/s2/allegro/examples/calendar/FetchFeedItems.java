@@ -23,6 +23,7 @@ import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.ConsumerManager;
+import com.symphony.oss.allegro.api.request.FeedQuery;
 import com.symphony.oss.allegro.api.request.FetchFeedObjectsRequest;
 import com.symphony.oss.allegro.api.request.FetchPartitionRequest;
 import com.symphony.oss.allegro.api.request.PartitionId;
@@ -87,9 +88,11 @@ public class FetchFeedItems extends CommandLineHandler implements Runnable
     System.out.println("OwnerId is " + ownerUserId);
       
     allegroApi_.fetchFeedObjects(new FetchFeedObjectsRequest.Builder()
-        .withName("myCalendarFeed")
-        .withOwner(ownerUserId)
-        .withMaxItems(10)
+        .withQuery(new FeedQuery.Builder()
+            .withName("myCalendarFeed")
+            .withOwner(ownerUserId)
+            .withMaxItems(10)
+            .build())
         .withConsumerManager(new ConsumerManager.Builder()
             .withConsumer(Object.class, (object, trace) ->
             {
