@@ -27,7 +27,9 @@ import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
+import com.symphony.oss.allegro.api.query.IAllegroQueryManager;
 import com.symphony.oss.allegro.api.request.AsyncConsumerManager;
+import com.symphony.oss.allegro.api.request.FeedQuery;
 import com.symphony.oss.allegro.api.request.FetchFeedObjectsRequest;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
@@ -87,10 +89,12 @@ public class SubscribeFeedItems extends CommandLineHandler implements Runnable
     System.out.println("CallerId is " + allegroApi_.getUserId());
     System.out.println("OwnerId is " + ownerUserId);
       
-    
-    IFugueLifecycleComponent subscriber = allegroApi_.fetchFeedObjects(new FetchFeedObjectsRequest.Builder()
-        .withName("myCalendarFeed")
-        .withOwner(ownerUserId)
+    IAllegroQueryManager subscriber = allegroApi_.fetchFeedObjects(new FetchFeedObjectsRequest.Builder()
+        .withQuery(new FeedQuery.Builder()
+            .withName("myCalendarFeed")
+            .withOwner(ownerUserId)
+            .build()
+            )
         .withConsumerManager(new AsyncConsumerManager.Builder()
             .withSubscriberThreadPoolSize(10)
             .withHandlerThreadPoolSize(90)

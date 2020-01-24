@@ -22,6 +22,7 @@ import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.ConsumerManager;
 import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
+import com.symphony.oss.allegro.api.request.PartitionQuery;
 import com.symphony.oss.models.object.canon.facade.IApplicationObjectPayload;
 
 /**
@@ -68,10 +69,13 @@ public class ListJsonObjects extends CommandLineHandler implements JsonObjectExa
       .build();
   
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
-        .withName(PARTITION_NAME)
-        .withOwner(allegroApi_.getUserId())
-        .withConsumerManager(new ConsumerManager.Builder()
+        .withQuery(new PartitionQuery.Builder()
+            .withName(PARTITION_NAME)
+            .withOwner(allegroApi_.getUserId())
             .withMaxItems(10)
+            .build()
+            )
+        .withConsumerManager(new ConsumerManager.Builder()
             .withConsumer(IApplicationObjectPayload.class, (item, trace) ->
             {
               System.out.println("Header:  " + item.getStoredApplicationObject().getHeader());

@@ -25,6 +25,7 @@ import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.ConsumerManager;
 import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
+import com.symphony.oss.allegro.api.request.PartitionQuery;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
@@ -79,10 +80,13 @@ public class RescheduleItems extends CommandLineHandler implements Runnable
 
     
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
-          .withName(ToDoItem.TYPE_ID)
-          .withOwner(allegroApi_.getUserId())
+        .withQuery(new PartitionQuery.Builder()
+            .withMaxItems(10)
+            .withName(ToDoItem.TYPE_ID)
+            .withOwner(allegroApi_.getUserId())
+            .build()
+            )
           .withConsumerManager(new ConsumerManager.Builder()
-              .withMaxItems(10)
               .withConsumer(IToDoItem.class, (item, trace) ->
               {
                 System.out.println("Header:  " + item.getStoredApplicationObject().getHeader());

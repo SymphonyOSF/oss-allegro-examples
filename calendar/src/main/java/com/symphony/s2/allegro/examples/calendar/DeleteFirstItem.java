@@ -22,6 +22,7 @@ import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.ConsumerManager;
 import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
+import com.symphony.oss.allegro.api.request.PartitionQuery;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
@@ -71,10 +72,12 @@ public class DeleteFirstItem extends CommandLineHandler implements Runnable
       .build();
     
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
-        .withName(ToDoItem.TYPE_ID)
-        .withOwner(allegroApi_.getUserId())
-        .withConsumerManager(new ConsumerManager.Builder()
+        .withQuery(new PartitionQuery.Builder()
+            .withName(ToDoItem.TYPE_ID)
             .withMaxItems(1)
+            .build()
+            )
+        .withConsumerManager(new ConsumerManager.Builder()
             .withConsumer(IToDoItem.class, (item, trace) ->
             {
               System.out.println("Header:  " + item.getStoredApplicationObject().getHeader());
