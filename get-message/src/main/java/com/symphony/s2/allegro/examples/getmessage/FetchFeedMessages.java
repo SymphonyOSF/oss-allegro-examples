@@ -6,27 +6,17 @@
 
 package com.symphony.s2.allegro.examples.getmessage;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.symphonyoss.s2.canon.runtime.IEntity;
-import org.symphonyoss.s2.common.fault.TransientTransactionFault;
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
-import org.symphonyoss.s2.fugue.core.trace.ITraceContext;
-import org.symphonyoss.s2.fugue.pipeline.IConsumer;
-import org.symphonyoss.s2.fugue.pipeline.ISimpleConsumer;
 
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.ConsumerManager;
 import com.symphony.oss.allegro.api.request.FetchFeedMessagesRequest;
-import com.symphony.oss.models.allegro.canon.facade.IChatMessage;
+import com.symphony.oss.models.allegro.canon.facade.ChatMessage;
 import com.symphony.oss.models.allegro.canon.facade.IReceivedChatMessage;
-import com.symphony.oss.models.chat.canon.facade.ISocialMessage;
+import com.symphony.oss.models.allegro.canon.facade.IReceivedSocialMessage;
 import com.symphony.oss.models.internal.pod.canon.AckId;
 import com.symphony.oss.models.internal.pod.canon.FeedId;
 
@@ -45,16 +35,12 @@ import com.symphony.oss.models.internal.pod.canon.FeedId;
 
 public class FetchFeedMessages extends CommandLineHandler implements Runnable
 {
-  private static final Logger log_ = LoggerFactory.getLogger(FetchFeedMessages.class);
-  
   private static final String   ALLEGRO          = "ALLEGRO_";
   private static final String   SERVICE_ACCOUNT  = "SERVICE_ACCOUNT";
   private static final String   POD_URL          = "POD_URL";
   private static final String   OBJECT_STORE_URL = "OBJECT_STORE_URL";
   private static final String   CREDENTIAL_FILE  = "CREDENTIAL_FILE";
   private static final String   TRUST            = "TRUST";
-  private static final TimeUnit RETRY_TIME_UNIT  = TimeUnit.SECONDS;
-  private static final Long     RETRY_TIME       = 60L;
   
   private String              serviceAccount_;
   private String              podUrl_;
@@ -132,6 +118,25 @@ public class FetchFeedMessages extends CommandLineHandler implements Runnable
             .withConsumer(IReceivedChatMessage.class, (item, trace) ->
             {
               System.out.println(item.getPresentationML());
+            })
+            .withConsumer(IReceivedSocialMessage.class, (item, trace) ->
+            {
+              System.out.println(item.getPresentationML());
+              
+              if(item.isMentioned(allegroApi_.getUserId()))
+              {
+                String messageML     = "<messageML><p>You said <i>" + 
+                    item.getText() + 
+                    "</i></p></messageML>";
+                
+                allegroApi_.sendMessage(new ChatMessage.Builder()
+                    .withMessageML(messageML)
+                    .withThreadId(item.getThreadId())
+                    .build()
+                    );
+                
+                System.out.println("Replied.");
+              }
             })
             .build()
           )

@@ -19,7 +19,7 @@ import com.symphony.oss.models.core.canon.facade.ThreadId;
  * @author Bruce Skingle
  *
  */
-public class AtMention extends CommandLineHandler implements Runnable
+public class SendEntityJson extends CommandLineHandler implements Runnable
 {
   private static final String ALLEGRO         = "ALLEGRO_";
   private static final String SERVICE_ACCOUNT = "SERVICE_ACCOUNT";
@@ -37,7 +37,7 @@ public class AtMention extends CommandLineHandler implements Runnable
   /**
    * Constructor.
    */
-  public AtMention()
+  public SendEntityJson()
   {
     withFlag('s',   SERVICE_ACCOUNT,  ALLEGRO + SERVICE_ACCOUNT,  String.class,   false, true,   (v) -> serviceAccount_       = v);
     withFlag('p',   POD_URL,          ALLEGRO + POD_URL,          String.class,   false, true,   (v) -> podUrl_               = v);
@@ -56,11 +56,34 @@ public class AtMention extends CommandLineHandler implements Runnable
 //      .withTrustedSslCertResources(IAllegroApi.SYMPHONY_DEV_QA_ROOT_CERT)
       .build();
     
-    String messageML     = "<messageML><p>I am <mention email=\"" + allegroApi_.getUserInfo().getEmailAddress() + "\"/></p></messageML>";
+    String presentationML     = "<div data-format=\"PresentationML\" data-version=\"2.0\" class=\"wysiwyg\"><p>This was sent as PresentationML + EntityJSON. <span class=\"entity\" data-entity-id=\"0\">@Bruce Skingle</span> <span class=\"entity\" data-entity-id=\"1\">@Bruce Bot</span> </p></div>";
 
+    String entityJson = "{\n" + 
+        "  \"0\":{\n" + 
+        "    \"id\":[\n" + 
+        "      {\n" + 
+        "        \"type\":\"com.symphony.user.userId\",\n" + 
+        "        \"value\":\"11476152617525\"\n" + 
+        "      }\n" + 
+        "    ],\n" + 
+        "    \"type\":\"com.symphony.user.mention\"\n" + 
+        "  },\n" + 
+        "  \"1\":{\n" + 
+        "    \"id\":[\n" + 
+        "      {\n" + 
+        "        \"type\":\"com.symphony.user.userId\",\n" + 
+        "        \"value\":\"11407433183256\"\n" + 
+        "      }\n" + 
+        "    ],\n" + 
+        "    \"type\":\"com.symphony.user.mention\"\n" + 
+        "  },\n" + 
+        "  \"_type\":\"com.symphony.s2.model.allegro.EntityJson\"\n" + 
+        "}";
+    
     IChatMessage chatMessage = allegroApi_.newChatMessageBuilder()
         .withThreadId(threadId_)
-        .withMessageML(messageML)
+        .withPresentationML(presentationML)
+        .withEntityJson(entityJson)
         .build();
     
     allegroApi_.sendMessage(chatMessage);
@@ -73,7 +96,7 @@ public class AtMention extends CommandLineHandler implements Runnable
    */
   public static void main(String[] args)
   {
-    AtMention program = new AtMention();
+    SendEntityJson program = new SendEntityJson();
     
     program.process(args);
     

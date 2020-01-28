@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Symphony Communication Services, LLC.
+ * Copyright 2019-2020 Symphony Communication Services, LLC.
  *
  * All Rights Reserved
  */
@@ -13,6 +13,7 @@ import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.ConsumerManager;
 import com.symphony.oss.allegro.api.request.FetchRecentMessagesRequest;
 import com.symphony.oss.models.allegro.canon.facade.IReceivedChatMessage;
+import com.symphony.oss.models.allegro.canon.facade.IReceivedSocialMessage;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 
 /**
@@ -61,26 +62,9 @@ public class FetchRecentMessages extends CommandLineHandler implements Runnable
       .withObjectStoreUrl(objectStoreUrl_)
       .withUserName(serviceAccount_)
       .withRsaPemCredentialFile(credentialFile_)
+      .withTrustAllSslCerts()
 //      .withTrustedSslCertResources(IAllegroApi.SYMPHONY_DEV_QA_ROOT_CERT)
       .build();
-    
-//    System.out.println("Fetch messages from object store...");
-//    allegroApi_.fetchRecentMessages(
-//        new FetchRecentMessagesRequest()
-//          .withThreadId(threadId_)
-//          .withMaxMessages(maxMessages_)
-//          .withConsumer(IReceivedSocialMessage.class, (message, trace) ->
-//          {
-//            System.out.println("SocialMessage: " + message.getMessageId() + " " + message.getText());
-//          })
-//          .withConsumer(IReceivedChatMessage.class, (message, trace) ->
-//          {
-//            System.out.println(message.getClass().getSimpleName() + ": " + message.getMessageId() + " " + message.getText());
-////            System.out.println("ThreadId       = " + message.getThreadId());
-////            System.out.println("PresentationML = " + message.getPresentationML());
-////            System.out.println("EntityJson     = " + message.getEntityJson());
-//          })
-//        );
     
     System.out.println("Fetch messages from pod...");
     allegroApi_.fetchRecentMessagesFromPod(
@@ -90,7 +74,13 @@ public class FetchRecentMessages extends CommandLineHandler implements Runnable
           .withConsumerManager(new ConsumerManager.Builder()
               .withConsumer(IReceivedChatMessage.class, (message, trace) ->
               {
-                System.out.println(message.getMessageId() + " " + message.getText());
+                System.out.println("M " + message.getMessageId() + " " + message.getText());
+              }
+              )
+              .withConsumer(IReceivedSocialMessage.class, (message, trace) ->
+              {
+                System.out.println("S " + message.getMessageId() + " " + message.getText() + " " + message.getMentions());
+                System.out.println("S " + message.getPresentationML());
               }
               )
               .build()

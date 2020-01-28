@@ -14,8 +14,8 @@ import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.ConsumerManager;
 import com.symphony.oss.allegro.api.request.FetchRecentMessagesRequest;
 import com.symphony.oss.allegro.api.request.ReceivedChatMessageAdaptor;
-import com.symphony.oss.models.allegro.canon.IReceivedMaestroMessage;
-import com.symphony.oss.models.allegro.canon.IReceivedSocialMessage;
+import com.symphony.oss.models.allegro.canon.facade.IReceivedMaestroMessage;
+import com.symphony.oss.models.allegro.canon.facade.IReceivedSocialMessage;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 
 /**
