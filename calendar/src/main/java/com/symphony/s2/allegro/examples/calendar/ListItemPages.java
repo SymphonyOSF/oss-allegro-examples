@@ -157,8 +157,7 @@ public class ListItemPages extends CommandLineHandler implements Runnable
             .withName(ToDoItem.TYPE_ID)
             .withOwner(ownerUserId)
             .withSortKeyPrefix(sortKeyPrefix_)
-            .withAfter(lastPage.getBefore())
-            .withScanForwards(false)
+            .withBefore(lastPage.getBefore())
             .build()
             );
       }
