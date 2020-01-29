@@ -36,6 +36,8 @@ import com.symphony.oss.models.object.canon.facade.IStoredApplicationObject;
  */
 public class ListItemPages extends CommandLineHandler implements Runnable
 {
+  private static final boolean EASY_WAY        = true;
+  
   private static final String ALLEGRO          = "ALLEGRO_";
   private static final String SERVICE_ACCOUNT  = "SERVICE_ACCOUNT";
   private static final String POD_URL          = "POD_URL";
@@ -109,14 +111,58 @@ public class ListItemPages extends CommandLineHandler implements Runnable
       }
       
       lastPage = page;
-      page = page.fetchNextPage();
+      
+      if(EASY_WAY)
+      {
+        page = page.fetchNextPage();
+      }
+      else
+      {
+        if(page.getAfter() == null)
+        {
+          page = null;
+        }
+        else
+        {
+          page = allegroApi_.fetchPartitionObjectPage(new PartitionQuery.Builder()
+              .withMaxItems(pageSize_)
+              .withName(ToDoItem.TYPE_ID)
+              .withOwner(ownerUserId)
+              .withSortKeyPrefix(sortKeyPrefix_)
+              .withAfter(page.getAfter())
+              .build()
+              );
+        }
+      }
     }while(page != null);
     
 
     System.out.println();
     System.out.println("PENULTIMATE PAGE --------------------------------");
     
-    page = lastPage.fetchPrevPage();
+    if(EASY_WAY)
+    {
+      page = lastPage.fetchPrevPage();
+    }
+    else
+    {
+      if(lastPage.getBefore() == null)
+      {
+        page = null;
+      }
+      else
+      {
+        page = allegroApi_.fetchPartitionObjectPage(new PartitionQuery.Builder()
+            .withMaxItems(pageSize_)
+            .withName(ToDoItem.TYPE_ID)
+            .withOwner(ownerUserId)
+            .withSortKeyPrefix(sortKeyPrefix_)
+            .withAfter(lastPage.getBefore())
+            .withScanForwards(false)
+            .build()
+            );
+      }
+    }
     
     for(IStoredApplicationObject item : page.getData())
     {
