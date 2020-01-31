@@ -16,8 +16,6 @@
 
 package com.symphony.s2.allegro.examples.calendar;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
 import com.symphony.oss.allegro.api.AllegroApi;
@@ -25,13 +23,8 @@ import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.ConsumerManager;
 import com.symphony.oss.allegro.api.request.FeedQuery;
 import com.symphony.oss.allegro.api.request.FetchFeedObjectsRequest;
-import com.symphony.oss.allegro.api.request.FetchPartitionRequest;
-import com.symphony.oss.allegro.api.request.PartitionId;
-import com.symphony.oss.allegro.api.request.UpsertFeedRequest;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
-import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
-import com.symphony.oss.models.object.canon.IFeed;
 
 /**
  * Retrieve all objects on the given Sequence.
@@ -41,8 +34,6 @@ import com.symphony.oss.models.object.canon.IFeed;
  */
 public class FetchFeedItems extends CommandLineHandler implements Runnable
 {
-  private static final Logger log_ = LoggerFactory.getLogger(FetchFeedItems.class);
-  
   private static final String ALLEGRO          = "ALLEGRO_";
   private static final String SERVICE_ACCOUNT  = "SERVICE_ACCOUNT";
   private static final String POD_URL          = "POD_URL";

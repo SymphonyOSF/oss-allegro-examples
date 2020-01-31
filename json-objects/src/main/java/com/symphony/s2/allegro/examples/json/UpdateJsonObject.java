@@ -25,10 +25,9 @@ import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.ConsumerManager;
 import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
 import com.symphony.oss.allegro.api.request.PartitionQuery;
-import com.symphony.oss.models.fundamental.canon.facade.IFundamentalObject;
 import com.symphony.oss.models.object.canon.facade.ApplicationObjectPayload;
 import com.symphony.oss.models.object.canon.facade.IApplicationObjectPayload;
-import com.symphony.oss.models.object.canon.facade.StoredApplicationObject;
+import com.symphony.oss.models.object.canon.facade.IStoredApplicationObject;
 
 /**
  * Retrieve all objects on the given Sequence.
@@ -98,7 +97,7 @@ public class UpdateJsonObject extends CommandLineHandler implements JsonObjectEx
       
     System.out.println("About to update item " + updatedItem);
     
-    StoredApplicationObject toDoObject = allegroApi_.newApplicationObjectUpdater(item)
+    IStoredApplicationObject toDoObject = allegroApi_.newApplicationObjectUpdater(item)
         .withPayload(updatedItem)
       .build();
     

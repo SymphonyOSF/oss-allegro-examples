@@ -29,7 +29,7 @@ import com.symphony.oss.allegro.api.request.PartitionQuery;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
-import com.symphony.oss.models.object.canon.facade.StoredApplicationObject;
+import com.symphony.oss.models.object.canon.facade.IStoredApplicationObject;
 
 /**
  * Retrieve all objects on the given Sequence.
@@ -110,7 +110,7 @@ public class RescheduleItems extends CommandLineHandler implements Runnable
       
     System.out.println("About to update item " + toDoItem);
     
-    StoredApplicationObject toDoObject = allegroApi_.newApplicationObjectUpdater(item)
+    IStoredApplicationObject toDoObject = allegroApi_.newApplicationObjectUpdater(item)
         .withPayload(toDoItem)
         .withSortKey(due_.toString())
       .build();

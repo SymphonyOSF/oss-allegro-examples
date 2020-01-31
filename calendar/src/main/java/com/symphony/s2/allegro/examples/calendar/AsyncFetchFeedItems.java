@@ -22,7 +22,6 @@ import java.io.InputStreamReader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.symphonyoss.s2.fugue.IFugueLifecycleComponent;
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
 import com.symphony.oss.allegro.api.AllegroApi;
@@ -41,9 +40,9 @@ import com.symphony.oss.models.core.canon.facade.PodAndUserId;
  * @author Bruce Skingle
  *
  */
-public class SubscribeFeedItems extends CommandLineHandler implements Runnable
+public class AsyncFetchFeedItems extends CommandLineHandler implements Runnable
 {
-  private static final Logger log_ = LoggerFactory.getLogger(SubscribeFeedItems.class);
+  private static final Logger log_ = LoggerFactory.getLogger(AsyncFetchFeedItems.class);
   
   private static final String ALLEGRO          = "ALLEGRO_";
   private static final String SERVICE_ACCOUNT  = "SERVICE_ACCOUNT";
@@ -63,7 +62,7 @@ public class SubscribeFeedItems extends CommandLineHandler implements Runnable
   /**
    * Constructor.
    */
-  public SubscribeFeedItems()
+  public AsyncFetchFeedItems()
   {
     withFlag('s',   SERVICE_ACCOUNT,  ALLEGRO + SERVICE_ACCOUNT,  String.class,   false, true,   (v) -> serviceAccount_       = v);
     withFlag('p',   POD_URL,          ALLEGRO + POD_URL,          String.class,   false, true,   (v) -> podUrl_               = v);
@@ -142,7 +141,7 @@ public class SubscribeFeedItems extends CommandLineHandler implements Runnable
    */
   public static void main(String[] args)
   {
-    SubscribeFeedItems program = new SubscribeFeedItems();
+    AsyncFetchFeedItems program = new AsyncFetchFeedItems();
     
     program.process(args);
     

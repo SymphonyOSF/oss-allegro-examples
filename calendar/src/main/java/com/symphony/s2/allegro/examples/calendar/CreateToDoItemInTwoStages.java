@@ -33,6 +33,7 @@ import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 import com.symphony.oss.models.object.canon.AffectedUsers;
 import com.symphony.oss.models.object.canon.IAffectedUsers;
+import com.symphony.oss.models.object.canon.IEncryptedApplicationPayloadAndHeader;
 import com.symphony.oss.models.object.canon.facade.IPartition;
 import com.symphony.oss.models.object.canon.facade.IStoredApplicationObject;
 
@@ -42,7 +43,7 @@ import com.symphony.oss.models.object.canon.facade.IStoredApplicationObject;
  * @author Bruce Skingle
  *
  */
-public class CreateToDoItem extends CommandLineHandler implements Runnable
+public class CreateToDoItemInTwoStages extends CommandLineHandler implements Runnable
 {
   private static final String ALLEGRO         = "ALLEGRO_";
   private static final String SERVICE_ACCOUNT = "SERVICE_ACCOUNT";
@@ -66,7 +67,7 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
   /**
    * Constructor.
    */
-  public CreateToDoItem()
+  public CreateToDoItemInTwoStages()
   {
     withFlag('s',   SERVICE_ACCOUNT,  ALLEGRO + SERVICE_ACCOUNT,  String.class,   false, true,   (v) -> serviceAccount_       = v);
     withFlag('p',   POD_URL,          ALLEGRO + POD_URL,          String.class,   false, true,   (v) -> podUrl_               = v);
@@ -112,6 +113,7 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
     
     System.out.println("partition is " + partition);
     
+    // Create the payload
     IToDoItem toDoItem = new ToDoItem.Builder()
       .withDue(Instant.now())
       .withTimeTaken(new BigDecimal(1000.0 / 3.0))
@@ -121,12 +123,14 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
     
     System.out.println("About to create item " + toDoItem);
     
+    // Create the header
     IAffectedUsers affectedUsers = new AffectedUsers.Builder()
         .withRequestingUser(allegroApi_.getUserId())
         .withAffectedUsers(allegroApi_.getUserId())
         .withEffectiveDate(Instant.now())
         .build();
     
+    // Create an encrypted StoredApplicationObject in a single step.
     IStoredApplicationObject toDoObject = allegroApi_.newApplicationObjectBuilder()
         .withThreadId(threadId_)
         .withHeader(affectedUsers)
@@ -139,7 +143,40 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
         .withSortKey(toDoItem.getDue().toString())
       .build();
     
-    allegroApi_.store(toDoObject);
+    /*
+     * If for some reason you wanted to encrypt the object on the client and then send it to the server for a process
+     * there to decide how to store it, you would create an IEncryptedApplicationPayload or an IEncryptedApplicationPayloadAndHeader
+     * on the client like this....
+     */
+    IEncryptedApplicationPayloadAndHeader toDoPayload = allegroApi_.newEncryptedApplicationPayloadAndHeaderBuilder()
+        .withThreadId(threadId_)
+        .withHeader(affectedUsers)
+        .withPayload(toDoItem)
+      .build();
+    
+    /*
+     * Then on the server you could create a StoredApplicationObject from the given encrypted payload like this:
+     */
+    IStoredApplicationObject toDoObject2 = allegroApi_.newApplicationObjectBuilder()
+        .withEncryptedPayloadAndHeader(toDoPayload)
+        .withPartition(new PartitionId.Builder()
+          .withName(ToDoItem.TYPE_ID)
+          .build()
+          .getHash(ownerUserId)
+          )
+        .withSortKey(toDoItem.getDue().toString())
+      .build();
+    
+    System.out.println();
+    System.out.println("These two objects should be the same except for the encrypted payload (which differ because there is a");
+    System.out.println("random initialization vector in the encryption process):");
+    System.out.println();
+    System.out.println(toDoObject);
+    System.out.println();
+    System.out.println(toDoObject2);
+    System.out.println();
+    
+    allegroApi_.store(toDoObject2);
     
     System.out.println("Created " + toDoObject);
   }
@@ -151,7 +188,7 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
    */
   public static void main(String[] args)
   {
-    CreateToDoItem program = new CreateToDoItem();
+    CreateToDoItemInTwoStages program = new CreateToDoItemInTwoStages();
     
     program.process(args);
     
