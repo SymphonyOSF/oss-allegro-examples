@@ -84,7 +84,7 @@ public class PurgeFirstItem extends CommandLineHandler implements Runnable
               System.out.println("Payload: " + item);
               System.out.println("Stored:  " + item.getStoredApplicationObject());
               
-              allegroApi_.delete(item, DeletionType.PHYSICAL);
+              allegroApi_.delete(item.getStoredApplicationObject(), DeletionType.PHYSICAL);
             })
             .build()
             )

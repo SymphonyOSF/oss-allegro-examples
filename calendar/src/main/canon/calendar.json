@@ -35,6 +35,36 @@
             "$ref": "https://models.oss.symphony.com/core.json#/components/schemas/BigDecimal"
           }
         }
+      },
+      
+      
+      
+      
+      "ToDoHeader": {
+        "type": "object",
+        "extends": "https://models.oss.symphony.com/object.json#/components/schemas/ApplicationObjectHeader",
+        "facade": false,
+        "builderFacade": false,
+        "description": "Header type for calendar objects.",
+
+        "properties": {
+          "requestingUser": {
+            "$ref": "https://models.oss.symphony.com/core.json#/components/schemas/PodAndUserId"
+          },
+          "affectedUsers": {
+            "type": "array",
+            "x-canon-cardinality": "SET",
+            "items": {
+              "$ref": "https://models.oss.symphony.com/core.json#/components/schemas/PodAndUserId"
+            }
+          },
+          "podId": {
+            "$ref": "https://models.oss.symphony.com/core.json#/components/schemas/PodId"
+          },
+          "effectiveDate": {
+            "$ref": "https://models.oss.symphony.com/core.json#/components/schemas/Instant"
+          }
+        }
       }
     }
 	}

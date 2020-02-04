@@ -84,7 +84,7 @@ public class DeleteFirstItem extends CommandLineHandler implements Runnable
               System.out.println("Payload: " + item);
               System.out.println("Stored:  " + item.getStoredApplicationObject());
               
-              allegroApi_.delete(item, DeletionType.LOGICAL);
+              allegroApi_.delete(item.getStoredApplicationObject(), DeletionType.LOGICAL);
             })
             .build()
             )

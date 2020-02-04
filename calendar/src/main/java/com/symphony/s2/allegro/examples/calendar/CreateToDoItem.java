@@ -27,12 +27,12 @@ import com.symphony.oss.allegro.api.Permission;
 import com.symphony.oss.allegro.api.ResourcePermissions;
 import com.symphony.oss.allegro.api.request.PartitionId;
 import com.symphony.oss.allegro.api.request.UpsertPartitionRequest;
+import com.symphony.oss.allegro.examples.calendar.canon.IToDoHeader;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
+import com.symphony.oss.allegro.examples.calendar.canon.ToDoHeader;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
-import com.symphony.oss.models.object.canon.AffectedUsers;
-import com.symphony.oss.models.object.canon.IAffectedUsers;
 import com.symphony.oss.models.object.canon.facade.IPartition;
 import com.symphony.oss.models.object.canon.facade.IStoredApplicationObject;
 
@@ -121,7 +121,7 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
     
     System.out.println("About to create item " + toDoItem);
     
-    IAffectedUsers affectedUsers = new AffectedUsers.Builder()
+    IToDoHeader header = new ToDoHeader.Builder()
         .withRequestingUser(allegroApi_.getUserId())
         .withAffectedUsers(allegroApi_.getUserId())
         .withEffectiveDate(Instant.now())
@@ -129,7 +129,7 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
     
     IStoredApplicationObject toDoObject = allegroApi_.newApplicationObjectBuilder()
         .withThreadId(threadId_)
-        .withHeader(affectedUsers)
+        .withHeader(header)
         .withPayload(toDoItem)
         .withPartition(new PartitionId.Builder()
             .withName(ToDoItem.TYPE_ID)
