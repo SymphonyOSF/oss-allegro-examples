@@ -105,7 +105,7 @@ public class ListItemPages extends CommandLineHandler implements Runnable
       
       for(IStoredApplicationObject item : page.getData())
       {
-        IApplicationObjectPayload payload = allegroApi_.open(item);
+        IApplicationObjectPayload payload = allegroApi_.decryptObject(item);
         
         System.out.println(item.getAbsoluteHash() + " " + item.getCanonType() + " " + payload.getCanonType());
       }
@@ -165,7 +165,7 @@ public class ListItemPages extends CommandLineHandler implements Runnable
     
     for(IStoredApplicationObject item : page.getData())
     {
-      IApplicationObjectPayload payload = allegroApi_.open(item);
+      IApplicationObjectPayload payload = allegroApi_.decryptObject(item);
       
       System.out.println(item.getAbsoluteHash() + " " + item.getCanonType() + " " + payload.getCanonType());
     }

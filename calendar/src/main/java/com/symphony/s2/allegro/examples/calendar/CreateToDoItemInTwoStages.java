@@ -22,7 +22,9 @@ import java.time.Instant;
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 
 import com.symphony.oss.allegro.api.AllegroApi;
+import com.symphony.oss.allegro.api.AllegroMultiTenantApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
+import com.symphony.oss.allegro.api.IAllegroMultiTenantApi;
 import com.symphony.oss.allegro.api.Permission;
 import com.symphony.oss.allegro.api.ResourcePermissions;
 import com.symphony.oss.allegro.api.request.PartitionId;
@@ -45,24 +47,28 @@ import com.symphony.oss.models.object.canon.facade.IStoredApplicationObject;
  */
 public class CreateToDoItemInTwoStages extends CommandLineHandler implements Runnable
 {
-  private static final String ALLEGRO         = "ALLEGRO_";
-  private static final String SERVICE_ACCOUNT = "SERVICE_ACCOUNT";
-  private static final String POD_URL         = "POD_URL";
-  private static final String OBJECT_STORE_URL = "OBJECT_STORE_URL";
-  private static final String CREDENTIAL_FILE = "CREDENTIAL_FILE";
-  private static final String THREAD_ID       = "THREAD_ID";
-  private static final String OWNER_USER_ID    = "OWNER_USER_ID";
-  private static final String OTHER_USER_ID    = "OTHER_USER_ID";
-  
-  private String              serviceAccount_;
-  private String              podUrl_;
-  private String              objectStoreUrl_;
-  private String              credentialFile_;
-  private ThreadId            threadId_;
-  private Long                ownerId_;
-  private PodAndUserId        otherUserId_;
-  
-  private IAllegroApi         allegroApi_;
+  private static final String    ALLEGRO          = "ALLEGRO_";
+  private static final String    SERVICE_ACCOUNT  = "SERVICE_ACCOUNT";
+  private static final String    POD_URL          = "POD_URL";
+  private static final String    OBJECT_STORE_URL = "OBJECT_STORE_URL";
+  private static final String    CREDENTIAL_FILE  = "CREDENTIAL_FILE";
+  private static final String    MT_CREDENTIAL    = "MT_CREDENTIAL_FILE";
+  private static final String    THREAD_ID        = "THREAD_ID";
+  private static final String    OWNER_USER_ID    = "OWNER_USER_ID";
+  private static final String    OTHER_USER_ID    = "OTHER_USER_ID";
+
+  private String                 serviceAccount_;
+  private String                 podUrl_;
+  private String                 objectStoreUrl_;
+  private String                 credentialFile_;
+  private String                 mtCredentialFile_;
+  private ThreadId               threadId_;
+  private Long                   ownerId_;
+  private PodAndUserId           otherUserId_;
+  private PodAndUserId           multiTenantUserId_;
+
+  private IAllegroApi            allegroApi_;
+  private IAllegroMultiTenantApi multiTenantApi_;
 
   /**
    * Constructor.
@@ -73,6 +79,7 @@ public class CreateToDoItemInTwoStages extends CommandLineHandler implements Run
     withFlag('p',   POD_URL,          ALLEGRO + POD_URL,          String.class,   false, true,   (v) -> podUrl_               = v);
     withFlag('o',   OBJECT_STORE_URL, ALLEGRO + OBJECT_STORE_URL, String.class,   false, true,   (v) -> objectStoreUrl_       = v);
     withFlag('f',   CREDENTIAL_FILE,  ALLEGRO + CREDENTIAL_FILE,  String.class,   false, false,  (v) -> credentialFile_       = v);
+    withFlag('m',   MT_CREDENTIAL,    ALLEGRO + MT_CREDENTIAL,    String.class,   false, true,   (v) -> mtCredentialFile_ = v);
     withFlag('t',   THREAD_ID,        ALLEGRO + THREAD_ID,        String.class,   false, true,   (v) -> threadId_             = ThreadId.newBuilder().build(v));
     withFlag('u',   OWNER_USER_ID,    ALLEGRO + OWNER_USER_ID,    Long.class,     false, false,  (v) -> ownerId_              = v);
     withFlag(null,  OTHER_USER_ID,    ALLEGRO + OTHER_USER_ID,    Long.class,     false, false,  (v) -> otherUserId_          = PodAndUserId.newBuilder().build(v));
@@ -89,25 +96,32 @@ public class CreateToDoItemInTwoStages extends CommandLineHandler implements Run
       .withTrustAllSslCerts()
       .build();
     
+    multiTenantApi_ = new AllegroMultiTenantApi.Builder()
+        .withObjectStoreUrl(objectStoreUrl_)
+        .withPrincipalCredentialFile(mtCredentialFile_)
+        //.withFactories(ObjectStoreTestModel.FACTORIES)
+        .withTrustAllSslCerts()
+        .build();
+    
+    multiTenantUserId_  = multiTenantApi_.getUserId();
+    
     PodAndUserId ownerUserId = ownerId_ == null ? allegroApi_.getUserId() : PodAndUserId.newBuilder().build(ownerId_);
     
     System.out.println("CallerId is " + allegroApi_.getUserId());
     System.out.println("OwnerId is " + ownerUserId);
     System.out.println("PodId is " + allegroApi_.getPodId());
+    System.out.println("multiTenantUserId is " + multiTenantUserId_);
     
-    ResourcePermissions permissions = null;
+    ResourcePermissions.Builder permissions = new ResourcePermissions.Builder()
+        .withUser(multiTenantUserId_, Permission.Read, Permission.Write)
+        ;
     
     if(otherUserId_ != null)
-    {
-      permissions = new ResourcePermissions.Builder()
-          .withUser(otherUserId_, Permission.Read)
-          .build()
-          ;
-    }
+      permissions.withUser(otherUserId_, Permission.Read, Permission.Write);
     
     IPartition partition = allegroApi_.upsertPartition(new UpsertPartitionRequest.Builder()
           .withName(ToDoItem.TYPE_ID)
-          .withPermissions(permissions)
+          .withPermissions(permissions.build())
           .build()
         );
     
@@ -157,7 +171,7 @@ public class CreateToDoItemInTwoStages extends CommandLineHandler implements Run
     /*
      * Then on the server you could create a StoredApplicationObject from the given encrypted payload like this:
      */
-    IStoredApplicationObject toDoObject2 = allegroApi_.newApplicationObjectBuilder()
+    IStoredApplicationObject toDoObject2 = multiTenantApi_.newEncryptedApplicationObjectBuilder()
         .withEncryptedPayloadAndHeader(toDoPayload)
         .withPartition(new PartitionId.Builder()
           .withName(ToDoItem.TYPE_ID)
@@ -176,7 +190,7 @@ public class CreateToDoItemInTwoStages extends CommandLineHandler implements Run
     System.out.println(toDoObject2);
     System.out.println();
     
-    allegroApi_.store(toDoObject2);
+    multiTenantApi_.store(toDoObject2);
     
     System.out.println("Created " + toDoObject);
   }
