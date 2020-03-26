@@ -97,7 +97,7 @@ public class UpdateJsonObject extends CommandLineHandler implements JsonObjectEx
       
     System.out.println("About to update item " + updatedItem);
     
-    IStoredApplicationObject toDoObject = allegroApi_.newApplicationObjectUpdater(item)
+    IStoredApplicationObject toDoObject = allegroApi_.newApplicationObjectUpdater(item.getStoredApplicationObject())
         .withPayload(updatedItem)
       .build();
     

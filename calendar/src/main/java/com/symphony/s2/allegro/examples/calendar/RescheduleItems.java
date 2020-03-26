@@ -110,7 +110,7 @@ public class RescheduleItems extends CommandLineHandler implements Runnable
       
     System.out.println("About to update item " + toDoItem);
     
-    IStoredApplicationObject toDoObject = allegroApi_.newApplicationObjectUpdater(item)
+    IStoredApplicationObject toDoObject = allegroApi_.newApplicationObjectUpdater(item.getStoredApplicationObject())
         .withPayload(toDoItem)
         .withSortKey(due_.toString())
       .build();

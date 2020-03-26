@@ -109,7 +109,7 @@ public class UpdateItems extends CommandLineHandler implements Runnable
       
     System.out.println("About to update item " + toDoItem);
     
-    IStoredApplicationObject toDoObject = allegroApi_.newApplicationObjectUpdater(item)
+    IStoredApplicationObject toDoObject = allegroApi_.newApplicationObjectUpdater(item.getStoredApplicationObject())
         .withPayload(toDoItem)
       .build();
     
