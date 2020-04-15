@@ -27,6 +27,7 @@ import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
+import com.symphony.oss.models.object.canon.facade.IApplicationObjectPayload;
 import com.symphony.oss.models.object.canon.facade.IStoredApplicationObject;
 
 /**
@@ -95,6 +96,9 @@ public class ListItems extends CommandLineHandler implements Runnable
           .withConsumerManager(new ConsumerManager.Builder()
               .withConsumer(IToDoItem.class, (item, trace) ->
               {
+                IStoredApplicationObject sao = item.getStoredApplicationObject();
+                IApplicationObjectPayload payload = allegroApi_.decryptObject(sao);
+                
                 System.out.println("Header:  " + item.getStoredApplicationObject().getHeader());
                 System.out.println("Payload: " + item);
               })

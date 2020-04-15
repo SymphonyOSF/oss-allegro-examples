@@ -21,11 +21,5 @@
       <artifactId>allegro-api</artifactId>
     </dependency>
     
-    <dependency>
-      <groupId>com.symphony.oss.models</groupId>
-      <artifactId>fundamental-model</artifactId>
-      <version>${oss.models.version}</version>
-    </dependency>
-    
   </dependencies>
 </project>
