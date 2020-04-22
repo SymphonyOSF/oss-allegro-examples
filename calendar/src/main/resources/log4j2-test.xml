@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{yyyy-MM-dd}{GMT+0}T%d{HH:mm:ss.nnnnnnnnn}{GMT+0}Z [%-19.19t] %-5level %logger{36} - %msg%n" />
+    </Console>
+    <File name="MyFile" fileName="/tmp/object-test.log">
+      <PatternLayout pattern="%d{yyyy-MM-dd}{GMT+0}T%d{HH:mm:ss.nnnnnnnnn}{GMT+0}Z [%-19.19t] %-5level %logger{36} - %msg%n" />
+      <append>false</append>
+    </File>
+  </Appenders>
+  <Loggers>
+    <Logger name="com.symphony.s2" level="DEBUG" />
+    <Logger name="org.symphonyoss.s2" level="DEBUG" />
+    <Logger name="org.symphonyoss.s2.fugue.core.trace.log" level="DEBUG" />
+    <Root level="INFO">
+      <AppenderRef ref="Console" />
+      <AppenderRef ref="MyFile" />
+    </Root>
+  </Loggers>
+</Configuration>

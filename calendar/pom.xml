@@ -144,8 +144,8 @@
   <dependencies>
     <dependency>
       <groupId>com.symphony.oss.allegro</groupId>
-      <version>${allegro.version}</version>
       <artifactId>allegro-api</artifactId>
+      <version>${allegro.version}</version>
     </dependency>
     
     <dependency>
@@ -153,11 +153,49 @@
       <artifactId>object-model</artifactId>
       <version>${oss.models.version}</version>
     </dependency>
-    <!-- <dependency>
+    <dependency>
       <groupId>com.symphony.oss.models</groupId>
-      <artifactId>calendar-model</artifactId>
+      <artifactId>core-model</artifactId>
       <version>${oss.models.version}</version>
-    </dependency> -->
+    </dependency>
+
+    <dependency>
+      <groupId>org.symphonyoss.s2.canon</groupId>
+      <artifactId>canon-runtime-java</artifactId>
+       <version>${canon.version}</version>
+    </dependency>
     
+    <dependency>
+      <groupId>org.symphonyoss.s2.fugue</groupId>
+      <artifactId>fugue-core</artifactId>
+       <version>${fugue.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.symphonyoss.s2.common</groupId>
+      <artifactId>S2-common-core</artifactId>
+       <version>${s2.common.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.symphonyoss.s2.common</groupId>
+      <artifactId>S2-common-dom</artifactId>
+       <version>${s2.common.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.symphonyoss.s2.fugue</groupId>
+      <artifactId>fugue-launch</artifactId>
+      <version>${fugue.version}</version>
+    </dependency>
   </dependencies>
 </project>
