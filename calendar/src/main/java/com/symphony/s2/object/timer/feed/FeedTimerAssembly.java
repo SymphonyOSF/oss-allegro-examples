@@ -147,8 +147,8 @@ public class FeedTimerAssembly extends CommandLineHandler
 
     if(credentialFile_ != null)
     {
-      log_.info("SessionToken " + allegroApi_.getSessionToken());
-      log_.info("KeyManagerToken " + allegroApi_.getKeyManagerToken());
+      System.out.println("SessionToken " + allegroApi_.getSessionToken());
+      System.out.println("KeyManagerToken " + allegroApi_.getKeyManagerToken());
     }
     
     try(ITraceContextTransaction txn = traceFactory_.createTransaction("FeedTimer", UUID.randomUUID().toString()))
