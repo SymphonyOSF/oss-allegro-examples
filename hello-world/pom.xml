@@ -17,8 +17,14 @@
   <dependencies>
     <dependency>
       <groupId>com.symphony.oss.allegro</groupId>
-      <version>${allegro.version}</version>
       <artifactId>allegro-api</artifactId>
+      <version>${allegro.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.symphonyoss.s2.fugue</groupId>
+      <artifactId>fugue-core</artifactId>
+       <version>${fugue.version}</version>
     </dependency>
   </dependencies>
   
