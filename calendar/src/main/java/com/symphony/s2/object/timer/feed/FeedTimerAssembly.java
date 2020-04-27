@@ -20,8 +20,10 @@ package com.symphony.s2.object.timer.feed;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -29,6 +31,7 @@ import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.s2.canon.runtime.exception.CanonException;
 import org.symphonyoss.s2.common.hash.Hash;
 import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
 import org.symphonyoss.s2.fugue.core.trace.ITraceContext;
@@ -171,7 +174,7 @@ public class FeedTimerAssembly extends CommandLineHandler
       log_.info("Create " + objectCount_ + " objects with " + createThreads_ + " threads.");
       log_.info(BANNER);
       
-      List<ReceivedObject> resultList = new LinkedList<>();
+      Map<Hash, List<ReceivedObject>> resultMap = new HashMap<>();
       CountDownLatch latch = new CountDownLatch(objectCount_);
       
       
@@ -190,10 +193,21 @@ public class FeedTimerAssembly extends CommandLineHandler
                 
                 allegroTrace.trace("RECEIVED_OBJECT", item);
                 
-                synchronized(resultList)
+                synchronized(resultMap)
                 {
+                  List<ReceivedObject> resultList = resultMap.get(item.getAbsoluteHash());
+                  
+                  if(resultList == null)
+                  {
+                    resultList = new LinkedList<>();
+                    resultMap.put(item.getAbsoluteHash(), resultList);
+                  }
+                  else
+                  {
+                    log_.warn("Duplicate notification for " + item.getAbsoluteHash());
+                  }
                   resultList.add(receivedObject);
-                  log_.info("Received " + resultList.size() + " objects so far...");
+                  log_.info("Received " + resultMap.size() + " objects so far...");
                 }
 
                 latch.countDown();
@@ -249,7 +263,7 @@ public class FeedTimerAssembly extends CommandLineHandler
       
       
       
-      while(getResultSize(resultList) < objectCount_)
+      while(getResultSize(resultMap) < objectCount_)
       {
         
         
@@ -265,7 +279,10 @@ public class FeedTimerAssembly extends CommandLineHandler
       }
       
       log_.info(BANNER);
-      log_.info("Received " + resultList.size() + " objects.");
+      log_.info("Received " + resultMap.size() + " objects.");
+      
+      log_.info("Deleting objects...");
+      deletePartitionObjects();
       
       queryManager.stop();
     
@@ -274,16 +291,28 @@ public class FeedTimerAssembly extends CommandLineHandler
       long totalTime = 0L;
       long maxTime = 0L;
       
-      for(ReceivedObject receivedObject : resultList)
+      for(List<ReceivedObject> resultList : resultMap.values())
       {
-        ToDoHeader header = ((ToDoHeader)receivedObject.object.getHeader());
-        Instant effectiveDate = header.getEffectiveDate();
-        long elapsedTime = Duration.between(effectiveDate, receivedObject.received).toMillis();
-        totalTime += elapsedTime;
-        maxTime = Math.max(maxTime, elapsedTime);
+        StringBuilder s = null;
         
-        log_.info(receivedObject.object.getAbsoluteHash() + " | " + 
-            effectiveDate + " | " + receivedObject.received + " | " + elapsedTime + " ms.");
+        for(ReceivedObject receivedObject : resultList)
+        {
+          ToDoHeader header = ((ToDoHeader)receivedObject.object.getHeader());
+          Instant effectiveDate = header.getEffectiveDate();
+          long elapsedTime = Duration.between(effectiveDate, receivedObject.received).toMillis();
+          
+          if(s == null)
+          {
+            totalTime += elapsedTime;
+            maxTime = Math.max(maxTime, elapsedTime);
+            
+            s = new StringBuilder();
+            s.append(receivedObject.object.getAbsoluteHash() + " | " + 
+              effectiveDate);
+          }
+          s.append(" | " + elapsedTime + " ms.");
+        }
+        log_.info(s.toString());
       }
       
       log_.info(BANNER);
@@ -305,7 +334,7 @@ public class FeedTimerAssembly extends CommandLineHandler
     }
   }
   
-  private int getResultSize(List<ReceivedObject> resultList)
+  private int getResultSize(Map<?,?> resultList)
   {
     synchronized(resultList)
     {
@@ -436,7 +465,16 @@ public class FeedTimerAssembly extends CommandLineHandler
   {
     IStoredApplicationObject toDoObject = encryptItem(n, trace);
     
-    allegroApi_.store(toDoObject);
+    try
+    {
+      allegroApi_.store(toDoObject);
+    }
+    catch(CanonException e)
+    {
+      System.err.println("HERE " + toDoObject.getAbsoluteHash());
+      e.printStackTrace();
+      System.err.println("HERE " + toDoObject.getAbsoluteHash());
+    }
     trace.trace("STORED", toDoObject);
     
     return toDoObject;
