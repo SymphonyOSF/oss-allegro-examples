@@ -48,6 +48,9 @@
         "description": "Header type for calendar objects.",
 
         "properties": {
+          "due": {
+            "$ref": "https://models.oss.symphony.com/core.json#/components/schemas/Instant"
+          },
           "requestingUser": {
             "$ref": "https://models.oss.symphony.com/core.json#/components/schemas/PodAndUserId"
           },

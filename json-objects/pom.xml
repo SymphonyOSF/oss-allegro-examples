@@ -23,8 +23,19 @@
     
     <dependency>
       <groupId>com.symphony.oss.models</groupId>
-      <artifactId>fundamental-model</artifactId>
+      <artifactId>object-model</artifactId>
       <version>${oss.models.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.symphony.oss.models</groupId>
+      <artifactId>core-model</artifactId>
+      <version>${oss.models.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.symphonyoss.s2.fugue</groupId>
+      <artifactId>fugue-core</artifactId>
+       <version>${fugue.version}</version>
     </dependency>
     
   </dependencies>

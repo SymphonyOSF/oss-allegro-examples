@@ -11,7 +11,7 @@
   <parent>
 		<groupId>com.symphony.oss</groupId>
 		<artifactId>oss-parent-pom</artifactId>
-		<version>0.0.6</version>
+		<version>0.0.7</version>
   </parent>
   
   <groupId>com.symphony.oss.allegro</groupId>
@@ -26,10 +26,10 @@
     <maven.compiler.target>1.8</maven.compiler.target>
 
     <s2.common.version>0.2.8</s2.common.version>
-    <canon.version>0.2.20</canon.version>
-    <fugue.version>0.2.46</fugue.version>
-    <oss.models.version>0.3.18-SNAPSHOT</oss.models.version>
-    <allegro.version>0.1.18-SNAPSHOT</allegro.version>
+    <canon.version>0.2.22</canon.version>
+    <fugue.version>0.2.53</fugue.version>
+    <oss.models.version>0.4.2</oss.models.version>
+    <allegro.version>0.2.2</allegro.version>
     
     <canon.template.groupid>org.symphonyoss.s2.canon</canon.template.groupid>
     <canon.template.java>canon-template-java</canon.template.java>
@@ -42,42 +42,4 @@
   	<module>calendar</module>
   	<module>json-objects</module>
   </modules>
-  
-  <repositories>
-    <repository>
-      <id>symphony</id>
-      <name>symphony releases</name>
-      <url>https://repo.symphony.com/artifactory/libs-release</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>snapshots</id>
-      <url>https://repo.symphony.com/artifactory/libs-snapshot</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-  </repositories>
-  
-  <dependencies>
-    <dependency>
-      <groupId>com.symphony.oss.allegro</groupId>
-      <version>${allegro.version}</version>
-      <artifactId>allegro-api</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>com.symphony.oss.models</groupId>
-      <artifactId>allegro-model</artifactId>
-      <version>${oss.models.version}</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.symphonyoss.s2.fugue</groupId>
-      <artifactId>fugue-launch</artifactId>
-      <version>${fugue.version}</version>
-    </dependency>
-  </dependencies>
 </project>
