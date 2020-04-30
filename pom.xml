@@ -25,11 +25,11 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
 
-    <s2.common.version>0.2.8</s2.common.version>
-    <canon.version>0.2.22</canon.version>
-    <fugue.version>0.2.53</fugue.version>
-    <oss.models.version>0.4.2</oss.models.version>
-    <allegro.version>0.2.2</allegro.version>
+    <oss.commons.version>0.0.1-SNAPSHOT</oss.commons.version>
+    <canon.version>0.2.23-SNAPSHOT</canon.version>
+    <fugue.version>0.2.54-SNAPSHOT</fugue.version>
+    <oss.models.version>0.4.3-SNAPSHOT</oss.models.version>
+    <allegro.version>0.2.3-SNAPSHOT</allegro.version>
     
     <canon.template.groupid>org.symphonyoss.s2.canon</canon.template.groupid>
     <canon.template.java>canon-template-java</canon.template.java>
