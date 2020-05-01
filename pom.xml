@@ -11,7 +11,7 @@
   <parent>
 		<groupId>com.symphony.oss</groupId>
 		<artifactId>oss-parent-pom</artifactId>
-		<version>0.0.8-SNAPSHOT</version><!-- oss-parent-pom -->
+		<version>0.0.8</version><!-- oss-parent-pom -->
   </parent>
   
   <groupId>com.symphony.oss.allegro</groupId>
@@ -25,9 +25,9 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
 
-    <oss.commons.version>0.0.1-SNAPSHOT</oss.commons.version>
-    <canon.version>0.2.23-SNAPSHOT</canon.version>
-    <fugue.version>0.2.54-SNAPSHOT</fugue.version>
+    <oss.commons.version>0.0.1</oss.commons.version>
+    <oss.canon.version>0.0.1-SNAPSHOT</oss.canon.version>
+    <oss.fugue.version>0.0.1</oss.fugue.version>
     <oss.models.version>0.4.3-SNAPSHOT</oss.models.version>
     <allegro.version>0.2.3-SNAPSHOT</allegro.version>
     
