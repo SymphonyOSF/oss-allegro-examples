@@ -18,11 +18,10 @@ package com.symphony.s2.allegro.examples.json;
 
 import java.time.Instant;
 
-import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
-
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.UpsertPartitionRequest;
+import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 import com.symphony.oss.models.object.canon.facade.ApplicationObjectPayload;
 import com.symphony.oss.models.object.canon.facade.IApplicationObjectPayload;

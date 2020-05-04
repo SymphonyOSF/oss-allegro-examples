@@ -16,14 +16,13 @@
 
 package com.symphony.s2.allegro.examples.calendar;
 
-import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
-
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.IObjectPage;
 import com.symphony.oss.allegro.api.request.PartitionQuery;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
+import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.object.canon.facade.IApplicationObjectPayload;
 import com.symphony.oss.models.object.canon.facade.IStoredApplicationObject;

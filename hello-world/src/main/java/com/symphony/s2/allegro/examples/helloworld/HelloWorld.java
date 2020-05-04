@@ -6,10 +6,9 @@
 
 package com.symphony.s2.allegro.examples.helloworld;
 
-import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
-
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
+import com.symphony.oss.fugue.cmd.CommandLineHandler;
 
 /**
  * Simple Allegro example program which authenticates and then exits.
