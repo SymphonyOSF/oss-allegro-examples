@@ -32,7 +32,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.symphonyoss.s2.canon.runtime.exception.CanonException;
 
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.AsyncConsumerManager;
@@ -51,13 +50,14 @@ import com.symphony.oss.allegro.examples.calendar.canon.IToDoHeader;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoHeader;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
+import com.symphony.oss.canon.runtime.exception.CanonException;
 import com.symphony.oss.commons.hash.Hash;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
-import com.symphony.oss.fugue.core.trace.ITraceContext;
-import com.symphony.oss.fugue.core.trace.ITraceContextTransaction;
-import com.symphony.oss.fugue.core.trace.ITraceContextTransactionFactory;
-import com.symphony.oss.fugue.core.trace.log.LoggerTraceContextTransactionFactory;
 import com.symphony.oss.fugue.pipeline.ISimpleThreadSafeConsumer;
+import com.symphony.oss.fugue.trace.ITraceContext;
+import com.symphony.oss.fugue.trace.ITraceContextTransaction;
+import com.symphony.oss.fugue.trace.ITraceContextTransactionFactory;
+import com.symphony.oss.fugue.trace.log.LoggerTraceContextTransactionFactory;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 import com.symphony.oss.models.object.canon.DeletionType;
