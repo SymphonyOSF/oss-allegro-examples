@@ -104,7 +104,7 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
     }
     
     IPartition partition = allegroApi_.upsertPartition(new UpsertPartitionRequest.Builder()
-          .withName(ToDoItem.TYPE_ID)
+          .withName(CalendarApp.PARTITION_NAME)
           .withPermissions(permissions)
           .build()
         );
@@ -131,11 +131,12 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
         .withHeader(header)
         .withPayload(toDoItem)
         .withPartition(new PartitionId.Builder()
-            .withName(ToDoItem.TYPE_ID)
+            .withName(CalendarApp.PARTITION_NAME)
             .withOwner(ownerUserId)
             .build()
             )
         .withSortKey(toDoItem.getDue().toString())
+//        .withPurgeDate(Instant.now().plusMillis(60000))
       .build();
     
     allegroApi_.store(toDoObject);

@@ -85,7 +85,7 @@ public class CreatePartition extends CommandLineHandler implements Runnable
     }
     
     IPartition partition = allegroApi_.upsertPartition(new UpsertPartitionRequest.Builder()
-          .withName(ToDoItem.TYPE_ID)
+          .withName(CalendarApp.PARTITION_NAME)
           .withPermissions(permissions)
           .build()
         );

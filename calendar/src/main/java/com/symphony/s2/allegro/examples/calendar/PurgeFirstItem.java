@@ -73,7 +73,7 @@ public class PurgeFirstItem extends CommandLineHandler implements Runnable
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
         .withQuery(new PartitionQuery.Builder()
             .withMaxItems(1)
-            .withName(ToDoItem.TYPE_ID)
+            .withName(CalendarApp.PARTITION_NAME)
             .build()
             )
         .withConsumerManager(new ConsumerManager.Builder()

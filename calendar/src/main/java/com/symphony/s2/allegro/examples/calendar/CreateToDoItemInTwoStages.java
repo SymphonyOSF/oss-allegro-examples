@@ -119,7 +119,7 @@ public class CreateToDoItemInTwoStages extends CommandLineHandler implements Run
       permissions.withUser(otherUserId_, Permission.Read, Permission.Write);
     
     IPartition partition = allegroApi_.upsertPartition(new UpsertPartitionRequest.Builder()
-          .withName(ToDoItem.TYPE_ID)
+          .withName(CalendarApp.PARTITION_NAME)
           .withPermissions(permissions.build())
           .build()
         );
@@ -149,7 +149,7 @@ public class CreateToDoItemInTwoStages extends CommandLineHandler implements Run
         .withHeader(affectedUsers)
         .withPayload(toDoItem)
         .withPartition(new PartitionId.Builder()
-            .withName(ToDoItem.TYPE_ID)
+            .withName(CalendarApp.PARTITION_NAME)
             .withOwner(ownerUserId)
             .build()
             )
@@ -173,7 +173,7 @@ public class CreateToDoItemInTwoStages extends CommandLineHandler implements Run
     IStoredApplicationObject toDoObject2 = multiTenantApi_.newEncryptedApplicationObjectBuilder()
         .withEncryptedPayloadAndHeader(toDoPayload)
         .withPartition(new PartitionId.Builder()
-          .withName(ToDoItem.TYPE_ID)
+          .withName(CalendarApp.PARTITION_NAME)
           .build()
           .getHash(ownerUserId)
           )

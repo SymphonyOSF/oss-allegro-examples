@@ -72,7 +72,7 @@ public class DeleteFirstItem extends CommandLineHandler implements Runnable
     
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
         .withQuery(new PartitionQuery.Builder()
-            .withName(ToDoItem.TYPE_ID)
+            .withName(CalendarApp.PARTITION_NAME)
             .withMaxItems(1)
             .build()
             )

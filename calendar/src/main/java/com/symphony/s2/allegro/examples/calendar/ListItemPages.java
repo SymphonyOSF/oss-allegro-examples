@@ -21,7 +21,6 @@ import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.IObjectPage;
 import com.symphony.oss.allegro.api.request.PartitionQuery;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
-import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.object.canon.facade.IApplicationObjectPayload;
@@ -87,15 +86,15 @@ public class ListItemPages extends CommandLineHandler implements Runnable
     System.out.println("CallerId is " + allegroApi_.getUserId());
     System.out.println("OwnerId is " + ownerUserId);
     
-    IObjectPage page = allegroApi_.fetchPartitionObjectPage(new PartitionQuery.Builder()
+    IObjectPage<IStoredApplicationObject> page = allegroApi_.fetchPartitionObjectPage(new PartitionQuery.Builder()
             .withMaxItems(pageSize_)
-            .withName(ToDoItem.TYPE_ID)
+            .withName(CalendarApp.PARTITION_NAME)
             .withOwner(ownerUserId)
             .withSortKeyPrefix(sortKeyPrefix_)
             .build()
             );
     
-    IObjectPage lastPage;
+    IObjectPage<IStoredApplicationObject> lastPage;
     
     do
     {
@@ -125,7 +124,7 @@ public class ListItemPages extends CommandLineHandler implements Runnable
         {
           page = allegroApi_.fetchPartitionObjectPage(new PartitionQuery.Builder()
               .withMaxItems(pageSize_)
-              .withName(ToDoItem.TYPE_ID)
+              .withName(CalendarApp.PARTITION_NAME)
               .withOwner(ownerUserId)
               .withSortKeyPrefix(sortKeyPrefix_)
               .withAfter(page.getAfter())
@@ -153,10 +152,11 @@ public class ListItemPages extends CommandLineHandler implements Runnable
       {
         page = allegroApi_.fetchPartitionObjectPage(new PartitionQuery.Builder()
             .withMaxItems(pageSize_)
-            .withName(ToDoItem.TYPE_ID)
+            .withName(CalendarApp.PARTITION_NAME)
             .withOwner(ownerUserId)
             .withSortKeyPrefix(sortKeyPrefix_)
-            .withBefore(lastPage.getBefore())
+            .withAfter(lastPage.getBefore())
+            .withScanForwards(false)
             .build()
             );
       }

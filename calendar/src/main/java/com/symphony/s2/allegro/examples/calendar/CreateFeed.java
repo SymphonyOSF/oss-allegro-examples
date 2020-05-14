@@ -102,7 +102,7 @@ public class CreateFeed extends CommandLineHandler implements Runnable
         .withPermissions(permissions)
         .withPartitionIds(
             new PartitionId.Builder()
-            .withName(ToDoItem.TYPE_ID)
+            .withName(CalendarApp.PARTITION_NAME)
             .withOwner(ownerId_)
             .build()
             )

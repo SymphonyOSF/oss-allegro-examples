@@ -81,7 +81,7 @@ public class RescheduleItems extends CommandLineHandler implements Runnable
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
         .withQuery(new PartitionQuery.Builder()
             .withMaxItems(10)
-            .withName(ToDoItem.TYPE_ID)
+            .withName(CalendarApp.PARTITION_NAME)
             .withOwner(allegroApi_.getUserId())
             .build()
             )
