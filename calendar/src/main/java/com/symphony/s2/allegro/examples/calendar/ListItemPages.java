@@ -86,7 +86,7 @@ public class ListItemPages extends CommandLineHandler implements Runnable
     System.out.println("CallerId is " + allegroApi_.getUserId());
     System.out.println("OwnerId is " + ownerUserId);
     
-    IObjectPage<IStoredApplicationObject> page = allegroApi_.fetchPartitionObjectPage(new PartitionQuery.Builder()
+    IObjectPage page = allegroApi_.fetchPartitionObjectPage(new PartitionQuery.Builder()
             .withMaxItems(pageSize_)
             .withName(CalendarApp.PARTITION_NAME)
             .withOwner(ownerUserId)
@@ -94,7 +94,7 @@ public class ListItemPages extends CommandLineHandler implements Runnable
             .build()
             );
     
-    IObjectPage<IStoredApplicationObject> lastPage;
+    IObjectPage lastPage;
     
     do
     {
