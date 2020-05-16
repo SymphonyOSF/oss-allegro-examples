@@ -19,8 +19,6 @@ package com.symphony.s2.allegro.examples.calendar;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
-
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.AllegroMultiTenantApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
@@ -31,6 +29,7 @@ import com.symphony.oss.allegro.api.request.PartitionId;
 import com.symphony.oss.allegro.api.request.UpsertPartitionRequest;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
+import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 import com.symphony.oss.models.object.canon.AffectedUsers;
@@ -120,7 +119,7 @@ public class CreateToDoItemInTwoStages extends CommandLineHandler implements Run
       permissions.withUser(otherUserId_, Permission.Read, Permission.Write);
     
     IPartition partition = allegroApi_.upsertPartition(new UpsertPartitionRequest.Builder()
-          .withName(ToDoItem.TYPE_ID)
+          .withName(CalendarApp.PARTITION_NAME)
           .withPermissions(permissions.build())
           .build()
         );
@@ -150,7 +149,7 @@ public class CreateToDoItemInTwoStages extends CommandLineHandler implements Run
         .withHeader(affectedUsers)
         .withPayload(toDoItem)
         .withPartition(new PartitionId.Builder()
-            .withName(ToDoItem.TYPE_ID)
+            .withName(CalendarApp.PARTITION_NAME)
             .withOwner(ownerUserId)
             .build()
             )
@@ -174,7 +173,7 @@ public class CreateToDoItemInTwoStages extends CommandLineHandler implements Run
     IStoredApplicationObject toDoObject2 = multiTenantApi_.newEncryptedApplicationObjectBuilder()
         .withEncryptedPayloadAndHeader(toDoPayload)
         .withPartition(new PartitionId.Builder()
-          .withName(ToDoItem.TYPE_ID)
+          .withName(CalendarApp.PARTITION_NAME)
           .build()
           .getHash(ownerUserId)
           )

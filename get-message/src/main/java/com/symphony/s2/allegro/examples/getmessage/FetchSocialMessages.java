@@ -6,14 +6,13 @@
 
 package com.symphony.s2.allegro.examples.getmessage;
 
-import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
-import org.symphonyoss.s2.fugue.core.trace.ITraceContext;
-
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.ConsumerManager;
 import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.ReceivedChatMessageAdaptor;
 import com.symphony.oss.allegro.api.request.FetchRecentMessagesRequest;
+import com.symphony.oss.fugue.cmd.CommandLineHandler;
+import com.symphony.oss.fugue.trace.ITraceContext;
 import com.symphony.oss.models.allegro.canon.facade.IReceivedSocialMessage;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 

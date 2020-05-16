@@ -16,14 +16,12 @@
 
 package com.symphony.s2.allegro.examples.calendar;
 
-import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
-
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.IObjectPage;
 import com.symphony.oss.allegro.api.request.PartitionQuery;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
-import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
+import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.object.canon.facade.IApplicationObjectPayload;
 import com.symphony.oss.models.object.canon.facade.IStoredApplicationObject;
@@ -90,7 +88,7 @@ public class ListItemPages extends CommandLineHandler implements Runnable
     
     IObjectPage page = allegroApi_.fetchPartitionObjectPage(new PartitionQuery.Builder()
             .withMaxItems(pageSize_)
-            .withName(ToDoItem.TYPE_ID)
+            .withName(CalendarApp.PARTITION_NAME)
             .withOwner(ownerUserId)
             .withSortKeyPrefix(sortKeyPrefix_)
             .build()
@@ -126,7 +124,7 @@ public class ListItemPages extends CommandLineHandler implements Runnable
         {
           page = allegroApi_.fetchPartitionObjectPage(new PartitionQuery.Builder()
               .withMaxItems(pageSize_)
-              .withName(ToDoItem.TYPE_ID)
+              .withName(CalendarApp.PARTITION_NAME)
               .withOwner(ownerUserId)
               .withSortKeyPrefix(sortKeyPrefix_)
               .withAfter(page.getAfter())
@@ -154,10 +152,11 @@ public class ListItemPages extends CommandLineHandler implements Runnable
       {
         page = allegroApi_.fetchPartitionObjectPage(new PartitionQuery.Builder()
             .withMaxItems(pageSize_)
-            .withName(ToDoItem.TYPE_ID)
+            .withName(CalendarApp.PARTITION_NAME)
             .withOwner(ownerUserId)
             .withSortKeyPrefix(sortKeyPrefix_)
-            .withBefore(lastPage.getBefore())
+            .withAfter(lastPage.getBefore())
+            .withScanForwards(false)
             .build()
             );
       }

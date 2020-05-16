@@ -26,7 +26,7 @@
 package com.symphony.oss.allegro.examples.calendar.canon.facade;
 
 
-import org.symphonyoss.s2.canon.runtime.IEntity;
+import com.symphony.oss.canon.runtime.IEntity;
 
 /**
  * Base interface for Calendar model entities.

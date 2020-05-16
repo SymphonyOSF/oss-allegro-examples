@@ -16,8 +16,6 @@
 
 package com.symphony.s2.allegro.examples.calendar;
 
-import org.symphonyoss.s2.fugue.cmd.CommandLineHandler;
-
 import com.symphony.oss.allegro.api.AllegroApi;
 import com.symphony.oss.allegro.api.ConsumerManager;
 import com.symphony.oss.allegro.api.IAllegroApi;
@@ -26,6 +24,7 @@ import com.symphony.oss.allegro.api.request.PartitionQuery;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
+import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.object.canon.DeletionType;
 
 /**
@@ -74,7 +73,7 @@ public class PurgeFirstItem extends CommandLineHandler implements Runnable
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
         .withQuery(new PartitionQuery.Builder()
             .withMaxItems(1)
-            .withName(ToDoItem.TYPE_ID)
+            .withName(CalendarApp.PARTITION_NAME)
             .build()
             )
         .withConsumerManager(new ConsumerManager.Builder()
