@@ -31,14 +31,20 @@ $ mvn clean package
 [INFO] hello-world
 [INFO] get-message
 [INFO] calendar
+[INFO] json-objects
 [INFO] 
 [INFO] ------------------------------------------------------------------------
-[INFO] Building oss-allegro-examples 0.0.1-SNAPSHOT
+[INFO] Building oss-allegro-examples 0.1.3-SNAPSHOT
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-clean-plugin:3.0.0:clean (default-clean) @ oss-allegro-examples ---
 [INFO] 
 [INFO] --- maven-remote-resources-plugin:1.5:process (process-resource-bundles) @ oss-allegro-examples ---
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building hello-world 0.1.3-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+
 ```
 
 Many lines of log output not shown
@@ -47,16 +53,17 @@ Many lines of log output not shown
 [INFO] ------------------------------------------------------------------------
 [INFO] Reactor Summary:
 [INFO] 
-[INFO] oss-allegro-examples ............................... SUCCESS [  2.890 s]
-[INFO] hello-world ........................................ SUCCESS [  2.327 s]
-[INFO] get-message ........................................ SUCCESS [  0.911 s]
-[INFO] calendar ........................................... SUCCESS [  1.018 s]
+[INFO] oss-allegro-examples ............................... SUCCESS [  0.849 s]
+[INFO] hello-world ........................................ SUCCESS [  3.183 s]
+[INFO] get-message ........................................ SUCCESS [  1.080 s]
+[INFO] calendar ........................................... SUCCESS [ 30.745 s]
+[INFO] json-objects ....................................... SUCCESS [  0.656 s]
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 7.348 s
-[INFO] Finished at: 2019-08-06T08:52:11-07:00
-[INFO] Final Memory: 27M/120M
+[INFO] Total time: 36.721 s
+[INFO] Finished at: 2020-06-09T07:43:37+01:00
+[INFO] Final Memory: 70M/260M
 [INFO] ------------------------------------------------------------------------
 $ 
 ```

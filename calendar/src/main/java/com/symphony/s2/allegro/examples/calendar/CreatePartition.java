@@ -21,7 +21,6 @@ import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.Permission;
 import com.symphony.oss.allegro.api.ResourcePermissions;
 import com.symphony.oss.allegro.api.request.UpsertPartitionRequest;
-import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.object.canon.facade.IPartition;

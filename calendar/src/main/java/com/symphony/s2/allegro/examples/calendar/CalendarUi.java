@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
 import com.symphony.oss.allegro.ui.AllegroUi;
-import com.symphony.oss.allegro.ui.Projection;
 import com.symphony.oss.fugue.server.http.ui.FugueHttpUiServer;
 
 public class CalendarUi extends AllegroUi
@@ -65,7 +64,7 @@ public class CalendarUi extends AllegroUi
           .withProjector(IToDoItem.class, (projection, object) ->
           {
             projection
-                .with(Projection.ATTRIBUTE_PAYLOAD, object.getDescription())
+                .with("Description", "description", object.getDescription())
                 ;
           })
           .withFactories(CalendarModel.FACTORIES)

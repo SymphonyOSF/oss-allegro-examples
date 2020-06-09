@@ -1,41 +1,21 @@
-/*
- * Copyright 2019 Symphony Communication Services, LLC.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+---
+nav_order: 58
+parent: ToDo List Example
+---
+# Create Feed
 
-package com.symphony.s2.allegro.examples.calendar;
+The Create Feed example creates a Feed, which it subscribes to the partition containing our ToDoItems.
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+A Feed is a queue, which provides at least once delivery of objects which are created or updated in the Object Store.
+A Feed can be subscribed to one or more Partitions, which means that whenever an object is created which
+is a member of one of those Partitions, the new object will be placed onto the Feed to be read.
 
-import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.IAllegroApi;
-import com.symphony.oss.allegro.api.Permission;
-import com.symphony.oss.allegro.api.ResourcePermissions;
-import com.symphony.oss.allegro.api.request.PartitionId;
-import com.symphony.oss.allegro.api.request.UpsertFeedRequest;
-import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
-import com.symphony.oss.fugue.cmd.CommandLineHandler;
-import com.symphony.oss.models.core.canon.facade.PodAndUserId;
-import com.symphony.oss.models.object.canon.IFeed;
+The first part of the program is almost identical to the [Hello World Example](/HelloWorld.html), see the description
+there for more details.
 
-/**
- * Retrieve all objects on the given Sequence.
- * 
- * @author Bruce Skingle
- *
- */
+In this case we also need to provide the Object Store URL, since these examples use that API.
+
+```java
 public class CreateFeed extends CommandLineHandler implements Runnable
 {
   private static final Logger log_ = LoggerFactory.getLogger(CreateFeed.class);
@@ -85,7 +65,12 @@ public class CreateFeed extends CommandLineHandler implements Runnable
     System.out.println("CallerId is " + allegroApi_.getUserId());
     System.out.println("OwnerId is " + otherUserId_);
     System.out.println("OtherUserId is " + otherUserId_);
-    
+```
+
+In the next part of the program we create a **ResourcePermissions** object if the optional OTHER\_USER\_ID parameter is provided
+to grant that user read access to the feed:
+
+```java
     ResourcePermissions permissions = null;
     
     if(otherUserId_ != null)
@@ -95,7 +80,12 @@ public class CreateFeed extends CommandLineHandler implements Runnable
           .build()
           ;
     }
-    
+```
+
+Next we call the __upsertFeed__ method to create the feed and its subscription to the Partition. As
+this is an upsert operation:
+
+```java  
     UpsertFeedRequest.Builder builder = new UpsertFeedRequest.Builder()
         .withName("myCalendarFeed")
         .withPermissions(permissions)
@@ -110,19 +100,36 @@ public class CreateFeed extends CommandLineHandler implements Runnable
     IFeed feed = allegroApi_.upsertFeed(builder.build());
     
     log_.info("Feed is " + feed);
-  }
-  
-  /**
-   * Main.
-   * 
-   * @param args Command line arguments.
-   */
-  public static void main(String[] args)
-  {
-    CreateFeed program = new CreateFeed();
-    
-    program.process(args);
-    
-    program.run();
-  }
+```
+
+When we run the program the first thing we see is some preliminary log messages:
+
+
+```
+2020-06-09T10:55:38.085000000Z [main               ] INFO  com.symphony.oss.allegro.api.AllegroApi - AllegroApi constructor start
+2020-06-09T10:55:38.305000000Z [main               ] INFO  com.symphony.oss.allegro.api.AllegroApi - sbe auth....
+2020-06-09T10:55:39.029000000Z [main               ] INFO  com.symphony.oss.allegro.api.AllegroApi - fetch podInfo_....
+2020-06-09T10:55:39.150000000Z [main               ] INFO  com.symphony.oss.allegro.api.AllegroApi - keymanager auth....
+2020-06-09T10:55:39.313000000Z [main               ] INFO  com.symphony.oss.allegro.api.AllegroApi - getAccountInfo....
+2020-06-09T10:55:39.622000000Z [main               ] INFO  com.symphony.oss.allegro.api.AllegroApi - userId_ = 351775001412007
+2020-06-09T10:55:39.626000000Z [main               ] INFO  com.symphony.oss.allegro.api.AllegroApi - allegroApi constructor done.
+CallerId is 351775001412007
+OwnerId is null
+OtherUserId is null
+```
+Then we see the feed meta data:
+
+```
+2020-06-09T10:55:40.540000000Z [main               ] INFO  com.symphony.s2.allegro.examples.calendar.CreateFeed - Feed is {
+  "_type":"com.symphony.s2.model.object.Feed",
+  "_version":"1.0",
+  "hashType":1,
+  "id":{
+    "_type":"com.symphony.s2.model.object.NamedUserIdObject",
+    "_version":"1.0",
+    "hashType":1,
+    "name":"myCalendarFeed",
+    "userId":351775001412007
+  },
+  "queueName":"sym-s2-dev-s2smoke2-object-feed-cMUuB1d1Px8pmrIc8EB7ZX"
 }

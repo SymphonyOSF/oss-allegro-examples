@@ -4,147 +4,180 @@ parent: ToDo List Example
 ---
 # List Items
 
-The List Items example lists all the items in both sequences.
+The List Items example lists all the items in the Partition.
 
 The first part of the program is almost identical to the [Hello World Example](/HelloWorld.html), see the description
 there for more details.
 
 In this case we also need to provide the Object Store URL, since these examples use that API.
 
+The optional OWNER\_USER\_ID parameter allows you to test this program as an additional user of the Partition rather than
+the user who created (and therefore owns) the Partition.
+
 ```java
-public class CreateToDoItem extends CommandLineHandler implements Runnable
+public class ListItems extends CommandLineHandler implements Runnable
 {
-  private static final String ALLEGRO         = "ALLEGRO_";
-  private static final String SERVICE_ACCOUNT = "SERVICE_ACCOUNT";
-  private static final String POD_URL         = "POD_URL";
+  private static final String ALLEGRO          = "ALLEGRO_";
+  private static final String SERVICE_ACCOUNT  = "SERVICE_ACCOUNT";
+  private static final String POD_URL          = "POD_URL";
   private static final String OBJECT_STORE_URL = "OBJECT_STORE_URL";
-  private static final String CREDENTIAL_FILE = "CREDENTIAL_FILE";
-  private static final String THREAD_ID       = "THREAD_ID";
+  private static final String CREDENTIAL_FILE  = "CREDENTIAL_FILE";
+  private static final String OWNER_USER_ID    = "OWNER_USER_ID";
+  private static final String SORT_KEY_PREFIX  = "SORT_KEY_PREFIX";
   
   private String              serviceAccount_;
   private String              podUrl_;
   private String              objectStoreUrl_;
   private String              credentialFile_;
-  private ThreadId            threadId_;
+  private String              sortKeyPrefix_;
+  private Long                ownerId_;
   
   private IAllegroApi         allegroApi_;
 
   /**
    * Constructor.
    */
-  public CreateToDoItem()
+  public ListItems()
   {
     withFlag('s',   SERVICE_ACCOUNT,  ALLEGRO + SERVICE_ACCOUNT,  String.class,   false, true,   (v) -> serviceAccount_       = v);
     withFlag('p',   POD_URL,          ALLEGRO + POD_URL,          String.class,   false, true,   (v) -> podUrl_               = v);
     withFlag('o',   OBJECT_STORE_URL, ALLEGRO + OBJECT_STORE_URL, String.class,   false, true,   (v) -> objectStoreUrl_       = v);
-    withFlag('f',   CREDENTIAL_FILE,  ALLEGRO + CREDENTIAL_FILE,  String.class,   false, false,  (v) -> credentialFile_       = v);
-    withFlag('t',   THREAD_ID,        ALLEGRO + THREAD_ID,        String.class,   false, true,   (v) -> threadId_             = ThreadId.newBuilder().build(v));
+    withFlag('f',   CREDENTIAL_FILE,  ALLEGRO + CREDENTIAL_FILE,  String.class,   false, true,   (v) -> credentialFile_       = v);
+    withFlag('u',   OWNER_USER_ID,    ALLEGRO + OWNER_USER_ID,    Long.class,     false, false,  (v) -> ownerId_              = v);
+    withFlag('k',   SORT_KEY_PREFIX,  ALLEGRO + SORT_KEY_PREFIX,  String.class,   false, false,  (v) -> sortKeyPrefix_        = v);
   }
   
   @Override
   public void run()
-  { 
+  {
     allegroApi_ = new AllegroApi.Builder()
       .withPodUrl(podUrl_)
       .withObjectStoreUrl(objectStoreUrl_)
       .withUserName(serviceAccount_)
       .withRsaPemCredentialFile(credentialFile_)
+      .withFactories(CalendarModel.FACTORIES)
       .build();
-```
-
-In the next part of the program we fetch the metadata for the absolute sequence:
-
-```java 
-    ISequence absoluteSequence = allegroApi_.fetchSequenceMetaData(new FetchSequenceMetaDataRequest()
-        .withSequenceType(SequenceType.ABSOLUTE)
-        .withContentType(ToDoItem.TYPE_ID)
-      );
-  
-    System.out.println("absoluteSequence is " + absoluteSequence.getBaseHash() + " " + absoluteSequence);
     
+    PodAndUserId ownerUserId = ownerId_ == null ? allegroApi_.getUserId() : PodAndUserId.newBuilder().build(ownerId_);
+    
+    System.out.println("CallerId is " + allegroApi_.getUserId());
+    System.out.println("OwnerId is " + ownerUserId);
 ```
 
-The we call the __fetchSequence__ method to retrieve the objects on the sequence. We pass a limit of
-10 as a safety precaution in case the sequence is large.
+In the next part of the program we call the __fetchPartitionObjects__ method to retrieve the objects in the Partition. We pass a limit of
+10 as a safety precaution in case the Partition is large.
 
-This method takes a lambda as one of its parameters which is used to process the items in the sequence.
-In this example we simply open (decrypt) the returned object, and print it to standard output.
+This method takes a ConsumerManager to process the retrieved objects, in this example we provide
+Consumers for **IToDoITem** and **IStoredApplicationObject**.
+
+When Allegro returns objects the ConsumerManager finds the Consumer with a closest match to the actual object retrieved, decrypting
+it if necessary. Since we know that all objects in this Partition are **ToDoItem**s, we expect that the **StoredApplicationObject** 
+Consumer will never be called. If the program were run as a user which has access to the Partition but is not a member of the 
+thread (conversation) with which the objects are encrypted, then Allegro would be unable to fetch keys to decrypt the objects
+and in this case they would be returned as (encrypted) **StoredApplicationObject**s.
 
 
-```java   
-    allegroApi_.fetchSequence(new FetchSequenceRequest()
-          .withMaxItems(10)
-          .withSequenceHash(absoluteSequence.getBaseHash())
-          .withConsumer(IToDoItem.class, (item, trace) ->
-          {
-            System.out.println(item);
-          }));
+```java
+    allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
+        .withQuery(new PartitionQuery.Builder()
+            .withMaxItems(10)
+            .withName(CalendarApp.PARTITION_NAME)
+            .withOwner(ownerUserId)
+            .withSortKeyPrefix(sortKeyPrefix_)
+            .build()
+            )
+          .withConsumerManager(new ConsumerManager.Builder()
+              .withConsumer(IToDoItem.class, (item, trace) ->
+              {
+                System.out.println("Header:  " + item.getStoredApplicationObject().getHeader());
+                System.out.println("Payload: " + item);
+              })
+              .withConsumer(IStoredApplicationObject.class, (item, trace) ->
+              {
+                System.out.println("StoredApplicationObject:  " + item);
+              })
+              .build()
+              )
+          .build()
+          );
+  }
 ```
-
-We then repeat this process for the current sequence. Since we have created a single object, the absolute and current sequences contain the same thing.
 
 When we run the program the first thig we see is some preliminary log messages:
 
 
 ```
-16:15:15.133 [main] INFO  com.symphony.oss.allegro.api.AllegroApi - AllegroApi constructor start
-16:15:15.569 [main] INFO  com.symphony.oss.allegro.api.AllegroApi - sbe auth....
-16:15:16.243 [main] INFO  com.symphony.oss.allegro.api.AllegroApi - fetch podInfo_....
-16:15:16.376 [main] INFO  com.symphony.oss.allegro.api.AllegroApi - keymanager auth....
-16:15:16.791 [main] INFO  com.symphony.oss.allegro.api.AllegroApi - principalHash_ = 1XEPBZKPz3gY+sVyn1QiEoWCfYr/RUATByAtBuqzkiwBAQ==
-16:15:16.791 [main] INFO  com.symphony.oss.allegro.api.AllegroApi - userId_ = 11407433183256
-16:15:16.791 [main] INFO  com.symphony.oss.allegro.api.AllegroApi - allegroApi constructor done.
+2020-06-09T10:17:47.480000000Z [main               ] INFO  com.symphony.oss.allegro.api.AllegroApi - AllegroApi constructor start
+2020-06-09T10:17:47.700000000Z [main               ] INFO  com.symphony.oss.allegro.api.AllegroApi - sbe auth....
+2020-06-09T10:17:48.451000000Z [main               ] INFO  com.symphony.oss.allegro.api.AllegroApi - fetch podInfo_....
+2020-06-09T10:17:48.570000000Z [main               ] INFO  com.symphony.oss.allegro.api.AllegroApi - keymanager auth....
+2020-06-09T10:17:48.731000000Z [main               ] INFO  com.symphony.oss.allegro.api.AllegroApi - getAccountInfo....
+2020-06-09T10:17:49.044000000Z [main               ] INFO  com.symphony.oss.allegro.api.AllegroApi - userId_ = 351775001412007
+2020-06-09T10:17:49.048000000Z [main               ] INFO  com.symphony.oss.allegro.api.AllegroApi - allegroApi constructor done.
+CallerId is 351775001412007
+OwnerId is 351775001412007
+2020-06-09T10:17:50.294000000Z [main               ] INFO  com.gs.ti.wpt.lc.security.cryptolib.Utils - Arch: mac os x/x86_64
+2020-06-09T10:17:50.317000000Z [main               ] INFO  com.symphony.security.utils.DynamicLibraryLoader - java.library.path=/var/folders/4k/0sfqq6v1605547b2gjcldk2h0000gn/T:/Users/bruce/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.
+2020-06-09T10:17:50.550000000Z [main               ] INFO  com.gs.ti.wpt.lc.security.cryptolib.Utils - Arch: mac os x/x86_64
 ```
-Then we see the absolute sequence meta data:
+Then we see the contents of the Partition with both the Header and (decrypted) Payload shown:
 
 ```
-absoluteSequence is vh3O2VsObaYQHvYCUxOfdWyLExY3ypmD8I2ju0JNcb4BAQ== {
-  "_type":"com.symphony.s2.model.fundamental.Sequence",
+Header:  {
+  "_type":"com.symphony.s2.model.calendar.ToDoHeader",
   "_version":"1.0",
-  "baseHash":"vh3O2VsObaYQHvYCUxOfdWyLExY3ypmD8I2ju0JNcb4BAQ==",
-  "createdDate":"2019-08-07T23:12:50.765Z",
-  "prevHash":"vh3O2VsObaYQHvYCUxOfdWyLExY3ypmD8I2ju0JNcb4BAQ==",
-  "securityContextHash":"Bek1dWzL0C3NXy1qOpTiEyL6QKUaJG68bAik3U0zTDMBAQ==",
-  "signingKeyHash":"uaBGE9UNUeraOSmtd46mncYQb8ppsWg4CNV5im/q++4BAQ==",
-  "type":"ABSOLUTE"
+  "affectedUsers":[
+    351775001412007
+  ],
+  "effectiveDate":"2020-05-13T14:47:15.341Z",
+  "requestingUser":351775001412007
 }
-```
-Followed by the contents of the sequence (just the one ToDo item at the moment):
 
-```
-
-{
+Payload: {
   "_type":"com.symphony.s2.model.calendar.ToDoItem",
   "_version":"1.0",
   "description":"Since we are creating this item with a due date of Instant.now() we are already late!",
-  "due":"2019-08-07T23:12:52.645Z",
+  "due":"2020-05-13T14:47:15.309Z",
+  "timeTaken":"333.33333333333331438552704639732837677001953125",
+  "title":"An example TODO Item"
+}
+
+Header:  {
+  "_type":"com.symphony.s2.model.calendar.ToDoHeader",
+  "_version":"1.0",
+  "affectedUsers":[
+    351775001412007
+  ],
+  "effectiveDate":"2020-06-01T13:32:52.605Z",
+  "requestingUser":351775001412007
+}
+
+Payload: {
+  "_type":"com.symphony.s2.model.calendar.ToDoItem",
+  "_version":"1.0",
+  "description":"Since we are creating this item with a due date of Instant.now() we are already late!",
+  "due":"2020-06-01T13:32:52.585Z",
+  "timeTaken":"333.33333333333331438552704639732837677001953125",
+  "title":"An example TODO Item"
+}
+
+Header:  {
+  "_type":"com.symphony.s2.model.calendar.ToDoHeader",
+  "_version":"1.0",
+  "affectedUsers":[
+    351775001412007
+  ],
+  "effectiveDate":"2020-06-09T10:08:19.112Z",
+  "requestingUser":351775001412007
+}
+
+Payload: {
+  "_type":"com.symphony.s2.model.calendar.ToDoItem",
+  "_version":"1.0",
+  "description":"Since we are creating this item with a due date of Instant.now() we are already late!",
+  "due":"2020-06-09T10:08:19.092Z",
+  "timeTaken":"333.33333333333331438552704639732837677001953125",
   "title":"An example TODO Item"
 }
 
 ```
-
-The the process is repeated for the current sequence, with the same results.
-
-```
-currentSequence is lABENMBAwyZYcetgaYOFRIa6TL+FwmiYsC7oGmqhZkcBAQ== {
-  "_type":"com.symphony.s2.model.fundamental.Sequence",
-  "_version":"1.0",
-  "baseHash":"lABENMBAwyZYcetgaYOFRIa6TL+FwmiYsC7oGmqhZkcBAQ==",
-  "createdDate":"2019-08-07T23:12:51.948Z",
-  "prevHash":"lABENMBAwyZYcetgaYOFRIa6TL+FwmiYsC7oGmqhZkcBAQ==",
-  "securityContextHash":"Bek1dWzL0C3NXy1qOpTiEyL6QKUaJG68bAik3U0zTDMBAQ==",
-  "signingKeyHash":"uaBGE9UNUeraOSmtd46mncYQb8ppsWg4CNV5im/q++4BAQ==",
-  "type":"CURRENT"
-}
-
-{
-  "_type":"com.symphony.s2.model.calendar.ToDoItem",
-  "_version":"1.0",
-  "description":"Since we are creating this item with a due date of Instant.now() we are already late!",
-  "due":"2019-08-07T23:12:52.645Z",
-  "title":"An example TODO Item"
-}
-
-
-```
-

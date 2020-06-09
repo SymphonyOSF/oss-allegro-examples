@@ -4,44 +4,48 @@ parent: ToDo List Example
 ---
 # Update Items
 
-The Update Items example updates all items in the current sequence to have the current time as their
-due date.
+The Update Items example updates all items in the current sequence to have the current time in their
+description.
 
 This program is almost identical to the [List Items Example](ListItems.md), except for the logic in the
-handler lambda in the call to fetchSequence:
+consumer:
 
 ```java  
-    allegroApi_.fetchSequence(new FetchSequenceRequest()
-          .withMaxItems(10)
-          .withSequenceHash(currentSequence.getBaseHash())
-        ,
-        (item) ->
-        {
-          System.out.println(item);
-          
-          IEntity payload = allegroApi_.open(item);
-          
-          if(payload instanceof IToDoItem)
-            update((IToDoItem)payload);
-          
-        });
+    allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
+        .withQuery(new PartitionQuery.Builder()
+            .withMaxItems(10)
+            .withName(CalendarApp.PARTITION_NAME)
+            .withOwner(allegroApi_.getUserId())
+            .build()
+            )
+          .withConsumerManager(new ConsumerManager.Builder()
+              .withConsumer(IToDoItem.class, (item, trace) ->
+              {
+                System.out.println("Header:  " + item.getStoredApplicationObject().getHeader());
+                System.out.println("Payload: " + item);
+                System.out.println("Stored:  " + item.getStoredApplicationObject());
+                
+                update(item);
+              })
+              .build()
+              )
+          .build()
+          );
 ```
 
-In the consumer lambda we open the item to decrypt it and then call an update routine if the item is a
-ToDo item (which of course it will be).
+In the consumer lambda we call an update routine:
 
 
 ```java 
   private void update(IToDoItem item)
   {
     IToDoItem toDoItem = new ToDoItem.Builder(item)
-        .withDue(Instant.now())
-        .withDescription("Updated to Instant.now() so we are still late!")
+        .withDescription("Updated at " + Instant.now() + ", item " + count_++)
         .build();
       
     System.out.println("About to update item " + toDoItem);
     
-    IFundamentalObject toDoObject = allegroApi_.newApplicationObjectUpdater(item)
+    IStoredApplicationObject toDoObject = allegroApi_.newApplicationObjectUpdater(item.getStoredApplicationObject())
         .withPayload(toDoItem)
       .build();
     
@@ -50,68 +54,51 @@ ToDo item (which of course it will be).
 ```
 
 The update routine creates a new ToDoItem.Builder, passing the existing item as a parameter, which initialises
-all fields of the builder to the values in the current object. It then updatesthe due date and description and
+all fields of the builder to the values in the current object. It then updates the description and
 builds a new ToDo object.
 
-The actual update is performed by an ApplicationObjectUpdater which uses the existing (unencrypted)
-FundamentalObject to identify the object to be updated and takes the new payload. The new FundamentalObject
+The actual update is performed by an **ApplicationObjectUpdater** which uses the existing (encrypted)
+StoredApplicationObject to identify the object to be updated and takes the new payload. The new StoredApplicationObject
 is then stored in the Object Store.
 
 
-When we run this program we see the sequence meta data, the existing FundamentalObject and the updated payload.
+When we run this program we see the existing StoredApplicationObject and the updated payload.
 
 ```
-currentSequence is {
-  "_type":"com.symphony.s2.model.fundamental.Sequence",
+Stored:  {
+  "_type":"com.symphony.s2.model.object.StoredApplicationObject",
   "_version":"1.0",
-  "baseHash":"lABENMBAwyZYcetgaYOFRIa6TL+FwmiYsC7oGmqhZkcBAQ==",
-  "createdDate":"2019-08-07T23:12:51.948Z",
-  "prevHash":"lABENMBAwyZYcetgaYOFRIa6TL+FwmiYsC7oGmqhZkcBAQ==",
-  "securityContextHash":"Bek1dWzL0C3NXy1qOpTiEyL6QKUaJG68bAik3U0zTDMBAQ==",
-  "signingKeyHash":"uaBGE9UNUeraOSmtd46mncYQb8ppsWg4CNV5im/q++4BAQ==",
-  "type":"CURRENT"
-}
-
-{
-  "_type":"com.symphony.s2.model.fundamental.FundamentalObject",
-  "_version":"1.0",
+  "cipherSuiteId":"RSA2048_AES256",
+  "createdDate":"2020-06-09T10:08:19.858Z",
+  "encryptedPayload":"FkSqD5xCqpKMexH1nZw0pkGyuBMsxBdbhdo+yWwFdt1hCbheoqbryndChFUMkp0AWwGDpmftXotm7Vl+qLSAlsAVRbyVDMBUPGBNvFCgkKQ7wwDm8FeNQ9Uuw5O7aFxkmzKt602PMmJVKNeC9vh6EXT/fC3mtRCRuZPGia/2JttPUF+y3kQxEUNbE0wnTGRCfxrb84GskKq0f7uj36G6g52Tm/EL8GxC28juBb6xVBQXUXcZd7YfF2bqu8oIBQSlWkvkhOCC6JdOQ/9AvoZn3OEUowuwkOmdaX3jwNWO2MCrSqjmMEGO76XvyE6CgM67Wa+cVB8g51LTfh2z1A2sWco9C5/LM60ANSAr94n8yu3Yo3u/Vw2yeeYOpqdJ5qj2nLjh3Agnz6gN5KbgiBkW+RbbSXxyRc2nJs129X8MXeSTHEZ7Lmy2WZxtIdB6FEbinkcOcFX3004bz6ObkIrl43DXcN+VdRdz10S5Hmw=",
   "hashType":1,
-  "payload":{
-    "_type":"com.symphony.s2.model.fundamental.Blob",
+  "header":{
+    "_type":"com.symphony.s2.model.calendar.ToDoHeader",
     "_version":"1.0",
-    "baseHash":"AA==",
-    "createdDate":"2019-08-07T23:12:52.925Z",
-    "encryptedPayload":"/KCjv4mi6bUq6deppucc5qLtSDsrkVb8Y9cBSbwgv1K8B1eP5DdT0Mj+/a4Ahqwg3d1CpHMsZnmgFelfoD9GPLOtgRUlNkK2YW/EtOpH1gynZOoDgjkajfyi1wX42VoYvBN9LjsItcYKEKffqi0es4wymNFEGnybYa1dsjkFbD/hnkhd15x3DCVsGZPWSLzwhBcXP+OzByNdZ+TBiaflVimzld7sWM4Krlkmf+NgSqPOzSMDZIgTfL1CtIr69RitsaMcYlODDszdIgtbwhSNLoWk0Zb91YdKF0sskQbmFJf1Z31ClTBQqBPn9yuy610XkVcVsIjeI5sVL49BvkbY2L6wUIiY5KaF+n+m93E2u80jUkDHnKXbJEvQhGusgcveK6N0nsLc+PORvUY=",
-    "payloadType":"com.symphony.s2.model.calendar.ToDoItem",
-    "podId":166,
-    "prevHash":"AA==",
-    "securityContextHash":"8jeJFwLEJxSRn6IgQUt0FbMaV89mkDPE8VbqvT+2MhQBAQ==",
-    "sequences":{
-      "_type":"com.symphony.s2.model.fundamental.SequenceHashes",
-      "_version":"1.0",
-      "absolute":[
-        "vh3O2VsObaYQHvYCUxOfdWyLExY3ypmD8I2ju0JNcb4BAQ=="
-      ],
-      "current":[
-        "lABENMBAwyZYcetgaYOFRIa6TL+FwmiYsC7oGmqhZkcBAQ=="
-      ],
-      "hashCurrent":[]
-    },
-    "signingKeyHash":"uaBGE9UNUeraOSmtd46mncYQb8ppsWg4CNV5im/q++4BAQ=="
+    "affectedUsers":[
+      351775001412007
+    ],
+    "effectiveDate":"2020-06-09T10:08:19.112Z",
+    "requestingUser":351775001412007
   },
-  "signature":"SnUWsWVcnhKTm1k9nzrWGdkpX1zkOxFAAm6FZQR8/kqlSoM0bBRVjA+B8zjusURwTClABjmXKYoIFOV21MuSkgz8LADjsROe+e6tyZBXcxMgGktaUfeLdQ8UGfO48ZqfwrP/lKlsGbyEyVJsPuU0Xis8vP+XNwUym5hoHUnkonbSqFWiubnpQZ48S4Re7bMTah1BjsxMYiFbyud1EQRRvxyCz7w6TuqQRx8pt+PITkgGLfqNFwqvEaiQQB32r/06CEbaSL7Ljkjhu2RLD2aer3D7FPMU+CLo76mtryBQYloW03NgTK59OdjH4uLD7lvZ6uxRCtiqY/2GJkxIWn3RUA=="
+  "owner":351775001412007,
+  "partitionHash":"j/vNnRtcln7uKIixRBWuqCjimkm5VxO4WLYKJVUT00oBAQ==",
+  "rotationId":0,
+  "sortKey":"2020-06-09T10:08:19.092Z",
+  "threadId":"+ZNefHakKm9vK7WREHHLEn///pEOR60jdA=="
 }
 
 About to update item {
   "_type":"com.symphony.s2.model.calendar.ToDoItem",
   "_version":"1.0",
-  "description":"Updated to Instant.now() so we are still late!",
-  "due":"2019-08-07T23:20:53.972Z",
+  "description":"Updated at 2020-06-09T10:39:00.311Z, item 3",
+  "due":"2020-06-09T10:08:19.092Z",
+  "timeTaken":"333.33333333333331438552704639732837677001953125",
   "title":"An example TODO Item"
 }
 ```
 
-If we run the List Items Example again now, we will see that the current sequence contains only the updated version of 
-our ToDoItem but the the absolute sequence contains both versions.
+If we run the List Items Example again now, we will see that the Partition now contains the updated version of 
+each ToDoItem .
  
 

@@ -23,7 +23,6 @@ import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
 import com.symphony.oss.allegro.api.request.PartitionQuery;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
-import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.object.canon.DeletionType;
 
@@ -68,6 +67,7 @@ public class DeleteFirstItem extends CommandLineHandler implements Runnable
       .withUserName(serviceAccount_)
       .withRsaPemCredentialFile(credentialFile_)
       .withFactories(CalendarModel.FACTORIES)
+      .withTrustAllSslCerts()
       .build();
     
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()

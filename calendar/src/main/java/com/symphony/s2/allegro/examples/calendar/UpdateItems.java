@@ -101,7 +101,6 @@ public class UpdateItems extends CommandLineHandler implements Runnable
   
   private void update(IToDoItem item)
   {
-    
     IToDoItem toDoItem = new ToDoItem.Builder(item)
         .withDescription("Updated at " + Instant.now() + ", item " + count_++)
         .build();

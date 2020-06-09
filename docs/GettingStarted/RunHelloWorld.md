@@ -14,19 +14,12 @@ $ mvn exec:java
 [INFO] Scanning for projects...
 [INFO] 
 [INFO] ------------------------------------------------------------------------
-[INFO] Building hello-world 0.0.1-SNAPSHOT
+[INFO] Building hello-world 0.1.3-SNAPSHOT
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- exec-maven-plugin:1.4.0:java (default-cli) @ hello-world ---
-21:16:18.291 [com.symphony.s2.allegro.examples.helloworld.HelloWorld.main()] INFO  com.symphony.oss.allegro.api.AllegroApi - AllegroApi constructor start
-21:16:18.733 [com.symphony.s2.allegro.examples.helloworld.HelloWorld.main()] INFO  com.symphony.oss.allegro.api.AllegroApi - sbe auth....
-21:16:19.516 [com.symphony.s2.allegro.examples.helloworld.HelloWorld.main()] INFO  com.symphony.oss.allegro.api.AllegroApi - fetch podInfo_....
-21:16:19.629 [com.symphony.s2.allegro.examples.helloworld.HelloWorld.main()] INFO  com.symphony.oss.allegro.api.AllegroApi - fetch 
-21:16:19.629 [com.symphony.s2.allegro.examples.helloworld.HelloWorld.main()] INFO  com.symphony.oss.allegro.api.AllegroApi - keymanager auth....
-21:16:20.081 [com.symphony.s2.allegro.examples.helloworld.HelloWorld.main()] INFO  com.symphony.oss.allegro.api.AllegroApi - principalHash_ = rvnLsBmjsnGaKUW2HQWfERkM+Fjv5eNvE2hePJA/vFkBAQ==
-21:16:20.081 [com.symphony.s2.allegro.examples.helloworld.HelloWorld.main()] INFO  com.symphony.oss.allegro.api.AllegroApi - userId_ = 11476152617609
-21:16:20.081 [com.symphony.s2.allegro.examples.helloworld.HelloWorld.main()] INFO  com.symphony.oss.allegro.api.AllegroApi - allegroApi constructor done.
 {
+  "accountType":"SYSTEM",
   "avatars":[
     {
       "size":"original",
@@ -37,10 +30,13 @@ $ mvn exec:java
       "url":"../avatars/static/50/default.png"
     }
   ],
+  "company":"Symphony",
   "displayName":"Allegro Bot",
-  "id":11476152617609,
+  "emailAddress":"allegroBit@symphony.com",
+  "id":351775001412007,
   "roles":[
-    "INDIVIDUAL"
+    "INDIVIDUAL",
+    "USER_PROVISIONING"
   ],
   "username":"allegroBot"
 }
@@ -48,9 +44,9 @@ $ mvn exec:java
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 4.643 s
-[INFO] Finished at: 2019-08-06T21:16:20-07:00
-[INFO] Final Memory: 27M/577M
+[INFO] Total time: 3.866 s
+[INFO] Finished at: 2020-06-09T07:48:26+01:00
+[INFO] Final Memory: 23M/640M
 [INFO] ------------------------------------------------------------------------
 $ 
  
