@@ -119,6 +119,7 @@ public class CreateToDoItem extends CommandLineHandler implements Runnable
     allegroApi_.store(toDoObject);
     
     System.out.println("Created " + toDoObject);
+    System.out.println("absoluteHash " + toDoObject.getAbsoluteHash());
   }
   
   /**
