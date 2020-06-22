@@ -26,7 +26,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
 
     <oss.commons.version>0.1.1</oss.commons.version>
-    <oss.canon.version>0.1.1</oss.canon.version>
+    <oss.canon.version>0.1.2</oss.canon.version>
     <oss.fugue.version>0.1.1</oss.fugue.version>
     <oss.models.version>0.5.1</oss.models.version>
     <allegro.version>0.3.2</allegro.version>
