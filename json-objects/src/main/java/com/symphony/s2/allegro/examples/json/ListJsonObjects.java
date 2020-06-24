@@ -22,6 +22,9 @@ import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
 import com.symphony.oss.allegro.api.request.PartitionQuery;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
+import com.symphony.oss.models.allegro.canon.SslTrustStrategy;
+import com.symphony.oss.models.allegro.canon.facade.AllegroConfiguration;
+import com.symphony.oss.models.allegro.canon.facade.ConnectionSettings;
 import com.symphony.oss.models.object.canon.facade.IApplicationObjectPayload;
 
 /**
@@ -37,6 +40,11 @@ public class ListJsonObjects extends CommandLineHandler implements JsonObjectExa
   private static final String POD_URL          = "POD_URL";
   private static final String OBJECT_STORE_URL = "OBJECT_STORE_URL";
   private static final String CREDENTIAL_FILE  = "CREDENTIAL_FILE";
+  private static final String CERT_FILE        = "CERT_FILE";
+  private static final String CERT_PASSWORD    = "CERT_PASSWORD";
+  private static final String SESSION_AUTH_URL = "SESSION_AUTH_URL";
+  private static final String KEY_AUTH_URL     = "KEY_AUTH_URL";
+  private static final String PROXY_URL        = "PROXY_URL";
   
   private String              serviceAccount_;
   private String              podUrl_;
@@ -44,28 +52,66 @@ public class ListJsonObjects extends CommandLineHandler implements JsonObjectExa
   private String              credentialFile_;
   
   private IAllegroApi         allegroApi_;
+  private String              certFile_;
+  private String              certPassword_;
+  private String              sessionAuthUrl_;
+  private String              keyAuthUrl_;
+  private String              proxyUrl_;
 
   /**
    * Constructor.
    */
   public ListJsonObjects()
   {
-    withFlag('s',   SERVICE_ACCOUNT,  ALLEGRO + SERVICE_ACCOUNT,  String.class,   false, true,   (v) -> serviceAccount_       = v);
+    withFlag('s',   SERVICE_ACCOUNT,  ALLEGRO + SERVICE_ACCOUNT,  String.class,   false, false,  (v) -> serviceAccount_       = v);
     withFlag('p',   POD_URL,          ALLEGRO + POD_URL,          String.class,   false, true,   (v) -> podUrl_               = v);
     withFlag('o',   OBJECT_STORE_URL, ALLEGRO + OBJECT_STORE_URL, String.class,   false, true,   (v) -> objectStoreUrl_       = v);
-    withFlag('f',   CREDENTIAL_FILE,  ALLEGRO + CREDENTIAL_FILE,  String.class,   false, true,   (v) -> credentialFile_       = v);
+    withFlag('f',   CREDENTIAL_FILE,  ALLEGRO + CREDENTIAL_FILE,  String.class,   false, false,  (v) -> credentialFile_       = v);
+    withFlag(null,  CERT_FILE,        ALLEGRO + CERT_FILE,        String.class,   false, false,  (v) -> certFile_             = v);
+    withFlag(null,  CERT_PASSWORD,    ALLEGRO + CERT_PASSWORD,    String.class,   false, false,  (v) -> certPassword_         = v);
+    withFlag(null,  SESSION_AUTH_URL, ALLEGRO + SESSION_AUTH_URL, String.class,   false, false,  (v) -> sessionAuthUrl_       = v);
+    withFlag(null,  KEY_AUTH_URL,     ALLEGRO + KEY_AUTH_URL,     String.class,   false, false,  (v) -> keyAuthUrl_           = v);
+    withFlag(null,  PROXY_URL,        ALLEGRO + PROXY_URL,        String.class,   false, false,  (v) -> proxyUrl_           = v);
   }
   
   @Override
   public void run()
   {
     allegroApi_ = new AllegroApi.Builder()
-      .withPodUrl(podUrl_)
-      .withObjectStoreUrl(objectStoreUrl_)
-      .withUserName(serviceAccount_)
-      .withRsaPemCredentialFile(credentialFile_)
-      .withTrustAllSslCerts()
+      .withConfiguration("{\n" + 
+          "  \"_type\":\"com.symphony.s2.model.allegro.AllegroConfiguration\",\n" + 
+          "  \"_version\":\"1.0\",\n" + 
+          "  \"apiConnectionSettings\":{\n" + 
+          "    \"_type\":\"com.symphony.s2.model.allegro.ConnectionSettings\",\n" + 
+          "    \"_version\":\"1.0\",\n" + 
+          "    \"maxHttpConnections\":200,\n" + 
+          "    \"sslTrustStrategy\":\"TRUST_ALL_CERTS\"\n" + 
+          "  },\n" + 
+          "  \"apiUrl\":\"https://dev.api.symphony.com\",\n" + 
+          "  \"authCertFile\":\"/Users/bruce/credentials/allegroCerts/certs/allegroBot.p12\",\n" + 
+          "  \"authCertFilePassword\":\"changeit\",\n" + 
+          "  \"keyAuthUrl\":\"https://psdev-api.symphony.com:8444\",\n" + 
+          "  \"podUrl\":\"https://psdev.symphony.com\",\n" + 
+          "  \"sessionAuthUrl\":\"https://psdev-api.symphony.com:8444\"\n" + 
+          "}")
+//      .withConfiguration(new AllegroConfiguration.Builder()
+//          .withPodUrl(podUrl_)
+//          .withApiUrl(objectStoreUrl_)
+//          .withUserName(serviceAccount_)
+//          .withRsaPemCredentialFile(credentialFile_)
+//          .withAuthCertFile(certFile_)
+//          .withAuthCertFilePassword(certPassword_)
+//          .withSessionAuthUrl(sessionAuthUrl_)
+//          .withKeyAuthUrl(keyAuthUrl_)
+//          .withApiConnectionSettings(new ConnectionSettings.Builder()
+//              .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
+//              .withProxyUrl(proxyUrl_)
+//              .build())
+//          .build())
+      
       .build();
+    
+   System.out.println("Allegro configuration = " + allegroApi_.getConfiguration());
   
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()
         .withQuery(new PartitionQuery.Builder()
