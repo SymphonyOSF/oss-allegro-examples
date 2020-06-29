@@ -77,6 +77,8 @@ public class ListItems extends CommandLineHandler implements Runnable
       .withTrustAllSslCerts()
       .build();
     
+    System.out.println("Allegro configuration = " + allegroApi_.getConfiguration());
+    
     PodAndUserId ownerUserId = ownerId_ == null ? allegroApi_.getUserId() : PodAndUserId.newBuilder().build(ownerId_);
     
     System.out.println("CallerId is " + allegroApi_.getUserId());

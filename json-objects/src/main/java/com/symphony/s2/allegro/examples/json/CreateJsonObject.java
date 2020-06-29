@@ -65,6 +65,7 @@ public class CreateJsonObject extends CommandLineHandler implements JsonObjectEx
       .withObjectStoreUrl(objectStoreUrl_)
       .withUserName(serviceAccount_)
       .withRsaPemCredentialFile(credentialFile_)
+      .withTrustAllSslCerts()
       .build();
     
     String now = Instant.now().toString();

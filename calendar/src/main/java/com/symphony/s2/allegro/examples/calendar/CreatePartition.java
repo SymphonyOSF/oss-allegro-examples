@@ -90,6 +90,8 @@ public class CreatePartition extends CommandLineHandler implements Runnable
         );
     
     System.out.println("partition is " + partition);
+    
+    System.out.println("partition hash is " + partition.getId().getHash());
   }
   
   /**
