@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Symphony Communication Services, LLC.
+ * Copyright 2020 Symphony Communication Services, LLC.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import com.symphony.oss.models.object.canon.facade.IPartition;
 /**
  * An example application which creates a ToDoItem, adding it to a current and absolute sequence.
  * 
- * @author Bruce Skingle
+ * @author Geremia Longobardo
  *
  */
 public class FetchPartitionUsers extends CommandLineHandler implements Runnable
