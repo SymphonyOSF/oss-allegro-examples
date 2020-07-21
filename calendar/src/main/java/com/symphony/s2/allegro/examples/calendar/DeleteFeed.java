@@ -185,7 +185,8 @@ public class DeleteFeed extends CommandLineHandler implements Runnable
     	    
     	    allegroApi_.deleteFeed(new FeedId.Builder()
     	        .withId(feed.getId())
-    	        .build(), allegroApi_.getUserId());
+    	        .build()
+    	        );
     	    
     	    try {
     	    allegroApi_.fetchFeedObjects(new FetchFeedObjectsRequest.Builder()
