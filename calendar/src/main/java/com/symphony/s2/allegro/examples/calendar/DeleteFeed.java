@@ -133,7 +133,7 @@ public class DeleteFeed extends CommandLineHandler implements Runnable
       
     
     UpsertFeedRequest.Builder builder1 = new UpsertFeedRequest.Builder()
-        .withName(CalendarApp.FEED_NAME+1)
+        .withName(CalendarApp.FEED_NAME)
         .withPermissions(permissions)
         .withPartitionIds(
             new PartitionId.Builder()
@@ -142,22 +142,11 @@ public class DeleteFeed extends CommandLineHandler implements Runnable
             .build()
             )
         ;
-    
-    UpsertFeedRequest.Builder builder2 = new UpsertFeedRequest.Builder()
-            .withName(CalendarApp.FEED_NAME+2)
-            .withPermissions(permissions)
-            .withPartitionIds(
-                new PartitionId.Builder()
-                .withName(CalendarApp.PARTITION_NAME)
-                .withOwner(ownerId_)
-                .build()
-                )
-            ;
    
-    IFeed feed1 = allegroApi_.upsertFeed(builder1.build());
+    IFeed feed = allegroApi_.upsertFeed(builder1.build());
 
     
-    log_.info("Feed1 is " + feed1);
+    log_.info("Feed1 is " + feed);
 
     IToDoItem toDoItem = new ToDoItem.Builder()
     	      .withDue(Instant.now())
@@ -188,50 +177,20 @@ public class DeleteFeed extends CommandLineHandler implements Runnable
     	      .build();
     	    
     	   allegroApi_.store(toDoObject);
-    	    IFeed feed2 = allegroApi_.upsertFeed(builder2.build());
-    	//    allegroApi_.deleteFeed(new FeedId.Builder().withId(feed1.getId()).build());
+    	    log_.info("Feed1 is " + feed);
     	    
-    	    log_.info("Feed1 is " + feed1);
-    	    
-    	    log_.info("Feed2 is " + feed2);
-    	    
-    	    IToDoItem toDoItem2 = new ToDoItem.Builder()
-    	    	      .withDue(Instant.now())
-    	    	      .withTimeTaken(new BigDecimal(1000.0 / 3.0))
-    	    	      .withTitle("An example TODO Item")
-    	    	      .withDescription("Since we are creating this item with a due date of Instant.now() we are already late!")
-    	    	      .build();
-    	    	    
-    	    	    System.out.println("About to create item " + toDoItem);
-    	    	    
-    	    	    IToDoHeader header2 = new ToDoHeader.Builder()
-    	    	        .withRequestingUser(allegroApi_.getUserId())
-    	    	        .withAffectedUsers(allegroApi_.getUserId())
-    	    	        .withEffectiveDate(Instant.now())
-    	    	        .build();
-    	    	    
-    	    	    IStoredApplicationObject toDoObject2 = allegroApi_.newApplicationObjectBuilder()
-    	    	        .withThreadId(threadId_)
-    	    	        .withHeader(header2)
-    	    	        .withPayload(toDoItem2)
-    	    	        .withPartition(new PartitionId.Builder()
-    	    	            .withName(CalendarApp.PARTITION_NAME)
-    	    	            .withOwner(ownerId_)
-    	    	            .build()
-    	    	            )
-    	    	        .withSortKey(toDoItem.getDue().toString()+"XXXXXX")
-//    	    	        .withPurgeDate(Instant.now().plusMillis(60000))
-    	    	      .build();
-    	    	    
-    	    	   allegroApi_.store(toDoObject2);
     	    
     	    System.out.println("Created " + toDoObject);
     	    System.out.println("absoluteHash " + toDoObject.getAbsoluteHash());
     	    
+    	    allegroApi_.deleteFeed(new FeedId.Builder()
+    	        .withId(feed.getId())
+    	        .build(), allegroApi_.getUserId());
+    	    
     	    try {
     	    allegroApi_.fetchFeedObjects(new FetchFeedObjectsRequest.Builder()
     	            .withQuery(new FeedQuery.Builder()
-    	                .withName(CalendarApp.FEED_NAME+1)
+    	                .withName(CalendarApp.FEED_NAME)
     	                .withOwner(ownerId_)
     	                .withMaxItems(10)
     	                .build())
@@ -239,6 +198,7 @@ public class DeleteFeed extends CommandLineHandler implements Runnable
     	                .withConsumer(Object.class, (object, trace) ->
     	                {
     	                  System.out.println("FEED 1 - RECEIVED --> "+object);
+    	                  throw new IllegalStateException("The feed should have been already deleted!");
     	                })
     	                .build())
     	            .build()
@@ -246,23 +206,8 @@ public class DeleteFeed extends CommandLineHandler implements Runnable
                 }
                 catch (NotFoundException e)
                 {
-                  System.out.println("FEED NOT FOUND, SINCE IT WAS DELETED");
+                  System.out.println("OK, FEED NOT FOUND, SINCE IT WAS DELETED");
                 }
-    	    
-    	    allegroApi_.fetchFeedObjects(new FetchFeedObjectsRequest.Builder()
-    	            .withQuery(new FeedQuery.Builder()
-    	                .withName(CalendarApp.FEED_NAME+2)
-    	                .withOwner(ownerId_)
-    	                .withMaxItems(10)
-    	                .build())
-    	            .withConsumerManager(new ConsumerManager.Builder()
-    	                .withConsumer(Object.class, (object, trace) ->
-    	                {
-    	                  System.out.println("FEED 2 - RECEIVED --> "+object);
-    	                })
-    	                .build())
-    	            .build()
-    	            );
     
   }
 
