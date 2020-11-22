@@ -41,5 +41,6 @@
   	<module>get-message</module>
   	<module>calendar</module>
   	<module>json-objects</module>
+  	<module>benchmark</module>
   </modules>
 </project>
