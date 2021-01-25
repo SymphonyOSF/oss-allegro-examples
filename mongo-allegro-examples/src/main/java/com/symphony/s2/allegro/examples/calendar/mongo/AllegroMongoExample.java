@@ -16,8 +16,8 @@
 
 package com.symphony.s2.allegro.examples.calendar.mongo;
 
-import com.symphony.oss.allegro.api.AllegroPodApi;
-import com.symphony.oss.allegro.api.IAllegroPodApi;
+import com.symphony.oss.allegro.api.AllegroApi;
+import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.allegro.canon.facade.AllegroConfiguration;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
@@ -47,7 +47,7 @@ public abstract class AllegroMongoExample extends CommandLineHandler
   private Long                   ownerId_;
 
 
-  private IAllegroPodApi         allegroPodApi_;
+  private IAllegroApi         allegroPodApi_;
   
   private String                 mongoHost_;
   private String mongoUser_;
@@ -76,7 +76,7 @@ public abstract class AllegroMongoExample extends CommandLineHandler
   {
     process(args);
     
-    allegroPodApi_ = new AllegroPodApi.Builder()
+    allegroPodApi_ = new AllegroApi.Builder()
         .withConfiguration(new AllegroConfiguration.Builder()
                 .withPodUrl(podUrl_)
                 .withUserName(serviceAccount_)
@@ -96,5 +96,5 @@ public abstract class AllegroMongoExample extends CommandLineHandler
     }
   }
   
-  protected abstract void run(String mongoUser, String mongoPassword, String mongoHost, PodAndUserId ownerUserId, IAllegroPodApi allegroPodApi, ThreadId threadId);
+  protected abstract void run(String mongoUser, String mongoPassword, String mongoHost, PodAndUserId ownerUserId, IAllegroApi allegroPodApi, ThreadId threadId);
 }

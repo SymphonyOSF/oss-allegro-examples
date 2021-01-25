@@ -6,8 +6,8 @@
 
 package com.symphony.s2.allegro.examples.getmessage;
 
-import com.symphony.oss.allegro.api.AllegroPodApi;
-import com.symphony.oss.allegro.api.IAllegroPodApi;
+import com.symphony.oss.allegro.api.AllegroApi;
+import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.allegro.canon.facade.AllegroConfiguration;
 import com.symphony.oss.models.allegro.canon.facade.IChatMessage;
@@ -32,7 +32,7 @@ public class AtMention extends CommandLineHandler implements Runnable
   private String              credentialFile_;
   private ThreadId            threadId_;
   
-  private IAllegroPodApi         allegroApi_;
+  private IAllegroApi         allegroApi_;
 
   /**
    * Constructor.
@@ -48,7 +48,7 @@ public class AtMention extends CommandLineHandler implements Runnable
   @Override
   public void run()
   {
-    allegroApi_ = new AllegroPodApi.Builder()
+    allegroApi_ = new AllegroApi.Builder()
         .withConfiguration(new AllegroConfiguration.Builder()
                 .withPodUrl(podUrl_)
                 .withUserName(serviceAccount_)

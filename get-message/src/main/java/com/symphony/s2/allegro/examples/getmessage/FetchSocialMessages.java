@@ -6,8 +6,8 @@
 
 package com.symphony.s2.allegro.examples.getmessage;
 
-import com.symphony.oss.allegro.api.AllegroPodApi;
-import com.symphony.oss.allegro.api.IAllegroPodApi;
+import com.symphony.oss.allegro.api.AllegroApi;
+import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.FetchRecentMessagesRequest;
 import com.symphony.oss.allegro.objectstore.ConsumerManager;
 import com.symphony.oss.allegro.objectstore.ReceivedChatMessageAdaptor;
@@ -38,7 +38,7 @@ public class FetchSocialMessages extends CommandLineHandler implements Runnable
   private ThreadId            threadId_;
   private int                 maxMessages_ = 5;
   
-  private IAllegroPodApi         allegroApi_;
+  private IAllegroApi         allegroApi_;
 
   /**
    * Constructor.
@@ -55,7 +55,7 @@ public class FetchSocialMessages extends CommandLineHandler implements Runnable
   @Override
   public void run()
   {
-    allegroApi_ = new AllegroPodApi.Builder()
+    allegroApi_ = new AllegroApi.Builder()
         .withConfiguration(new AllegroConfiguration.Builder()
                 .withPodUrl(podUrl_)
                 .withUserName(serviceAccount_)

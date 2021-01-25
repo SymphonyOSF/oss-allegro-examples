@@ -12,8 +12,8 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.symphony.oss.allegro.api.AllegroPodApi;
-import com.symphony.oss.allegro.api.IAllegroPodApi;
+import com.symphony.oss.allegro.api.AllegroApi;
+import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.allegro.canon.facade.AllegroConfiguration;
@@ -35,7 +35,7 @@ public abstract class AllegroMongoBenchmarkExample extends CommandLineHandler im
   private String                      credentialFile_;
 
   protected ThreadId                  threadId_;
-  protected IAllegroPodApi            allegroPodApi_;
+  protected IAllegroApi            allegroPodApi_;
   protected String                    mongoHost_;
   protected String                    mongoUser_;
   protected String                    mongoPassword_;
@@ -67,7 +67,7 @@ public abstract class AllegroMongoBenchmarkExample extends CommandLineHandler im
   {
     process(args);
     
-    allegroPodApi_ = new AllegroPodApi.Builder()
+    allegroPodApi_ = new AllegroApi.Builder()
         .withFactories(CalendarModel.FACTORIES)
         .withConfiguration(new AllegroConfiguration.Builder()
                 .withPodUrl(podUrl_)
