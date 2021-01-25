@@ -16,15 +16,15 @@
 
 package com.symphony.s2.allegro.examples.calendar;
 
-import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.IAllegroApi;
-import com.symphony.oss.allegro.api.Permission;
-import com.symphony.oss.allegro.api.ResourcePermissions;
 import com.symphony.oss.allegro.api.request.UpsertPartitionRequest;
+import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
+import com.symphony.oss.allegro.objectstore.AllegroObjectStoreApi;
+import com.symphony.oss.allegro.objectstore.IAllegroObjectStoreApi;
+import com.symphony.oss.allegro.objectstore.Permission;
+import com.symphony.oss.allegro.objectstore.ResourcePermissions;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
-import com.symphony.oss.models.allegro.canon.SslTrustStrategy;
 import com.symphony.oss.models.allegro.canon.facade.AllegroConfiguration;
-import com.symphony.oss.models.allegro.canon.facade.ConnectionSettings;
+import com.symphony.oss.models.allegro.canon.facade.AllegroObjectStoreConfiguration;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.object.canon.facade.IPartition;
 
@@ -49,7 +49,7 @@ public class CreatePartition extends CommandLineHandler implements Runnable
   private String              credentialFile_;
   private PodAndUserId        otherUserId_;
   
-  private IAllegroApi         allegroApi_;
+  private IAllegroObjectStoreApi         allegroApi_;
 
   /**
    * Constructor.
@@ -66,17 +66,20 @@ public class CreatePartition extends CommandLineHandler implements Runnable
   @Override
   public void run()
   { 
-    allegroApi_ = new AllegroApi.Builder()
-            .withConfiguration(new AllegroConfiguration.Builder()
-                    .withPodUrl(podUrl_)
-                    .withApiUrl(objectStoreUrl_)
-                    .withUserName(serviceAccount_)
-                    .withRsaPemCredentialFile(credentialFile_)
-                    .withApiConnectionSettings(new ConnectionSettings.Builder()
-                        .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
-                        .build())
-                    .build())
-            .build();
+    allegroApi_ = new AllegroObjectStoreApi.Builder()
+        .withFactories(CalendarModel.FACTORIES)
+        .withConfiguration(new AllegroObjectStoreConfiguration.Builder()
+            .withApiUrl(objectStoreUrl_)
+//            .withApiConnectionSettings(new ConnectionSettings.Builder()
+//                .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
+//                .build())
+            .withAllegroConfiguration(new AllegroConfiguration.Builder()
+                .withPodUrl(podUrl_)
+                .withUserName(serviceAccount_)
+                .withRsaPemCredentialFile(credentialFile_)
+                .build())
+            .build())
+    .build();
     
     System.out.println("PodId is " + allegroApi_.getPodId());
     

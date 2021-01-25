@@ -6,11 +6,12 @@
 
 package com.symphony.s2.allegro.examples.helloworld;
 
-import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.IAllegroApi;
+import com.symphony.oss.allegro.objectstore.AllegroObjectStoreApi;
+import com.symphony.oss.allegro.objectstore.IAllegroObjectStoreApi;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.allegro.canon.SslTrustStrategy;
 import com.symphony.oss.models.allegro.canon.facade.AllegroConfiguration;
+import com.symphony.oss.models.allegro.canon.facade.AllegroObjectStoreConfiguration;
 import com.symphony.oss.models.allegro.canon.facade.ConnectionSettings;
 
 /**
@@ -30,7 +31,7 @@ public class HelloWorld extends CommandLineHandler implements Runnable
   private String              podUrl_;
   private String              credentialFile_;
   
-  private IAllegroApi         allegroApi_;
+  private IAllegroObjectStoreApi         allegroApi_;
 
   /**
    * Constructor.
@@ -45,15 +46,29 @@ public class HelloWorld extends CommandLineHandler implements Runnable
   @Override
   public void run()
   {
-	 allegroApi_ = new AllegroApi.Builder()
-	            .withConfiguration(new AllegroConfiguration.Builder()
-	                    .withPodUrl(podUrl_)
-	                    .withRsaPemCredentialFile(credentialFile_)
-	                    .withApiConnectionSettings(new ConnectionSettings.Builder()
-	                        .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
-	                        .build())
-	                    .build())
-	            .build();
+// old configuration:
+//	 allegroApi_ = new AllegroApi.Builder()
+//	            .withConfiguration(new AllegroConfiguration.Builder()
+//	                    .withPodUrl(podUrl_)
+//	                    .withRsaPemCredentialFile(credentialFile_)
+//	                    .withApiConnectionSettings(new ConnectionSettings.Builder()
+//	                        .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
+//	                        .build())
+//	                    .build())
+//	            .build();
+    
+    allegroApi_ = new AllegroObjectStoreApi.Builder()
+        .withConfiguration(new AllegroObjectStoreConfiguration.Builder()
+            .withAllegroConfiguration(new AllegroConfiguration.Builder()
+                .withPodUrl(podUrl_)
+                .withRsaPemCredentialFile(credentialFile_)
+                .withUserName(userName_)
+                .build())
+                .withApiConnectionSettings(new ConnectionSettings.Builder()
+                    .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
+                    .build())
+                .build())
+        .build();
 	    
     System.out.println(allegroApi_.getSessioninfo());
   }

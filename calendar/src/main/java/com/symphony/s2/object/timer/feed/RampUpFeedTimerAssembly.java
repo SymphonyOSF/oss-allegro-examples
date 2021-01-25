@@ -25,20 +25,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.AsyncConsumerManager;
-import com.symphony.oss.allegro.api.ConsumerManager;
-import com.symphony.oss.allegro.api.IAllegroApi;
-import com.symphony.oss.allegro.api.IAllegroQueryManager;
-import com.symphony.oss.allegro.api.ResourcePermissions;
 import com.symphony.oss.allegro.api.request.FeedQuery;
 import com.symphony.oss.allegro.api.request.FetchFeedObjectsRequest;
 import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
@@ -50,6 +42,12 @@ import com.symphony.oss.allegro.examples.calendar.canon.IToDoHeader;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoHeader;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
+import com.symphony.oss.allegro.objectstore.AllegroObjectStoreApi;
+import com.symphony.oss.allegro.objectstore.AsyncConsumerManager;
+import com.symphony.oss.allegro.objectstore.ConsumerManager;
+import com.symphony.oss.allegro.objectstore.IAllegroObjectStoreApi;
+import com.symphony.oss.allegro.objectstore.IAllegroQueryManager;
+import com.symphony.oss.allegro.objectstore.ResourcePermissions;
 import com.symphony.oss.canon.runtime.exception.CanonException;
 import com.symphony.oss.commons.hash.Hash;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
@@ -58,6 +56,8 @@ import com.symphony.oss.fugue.trace.ITraceContext;
 import com.symphony.oss.fugue.trace.ITraceContextTransaction;
 import com.symphony.oss.fugue.trace.ITraceContextTransactionFactory;
 import com.symphony.oss.fugue.trace.log.LoggerTraceContextTransactionFactory;
+import com.symphony.oss.models.allegro.canon.facade.AllegroConfiguration;
+import com.symphony.oss.models.allegro.canon.facade.AllegroObjectStoreConfiguration;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 import com.symphony.oss.models.object.canon.DeletionType;
@@ -103,7 +103,7 @@ public class RampUpFeedTimerAssembly extends CommandLineHandler
   private PodAndUserId                     userId_;
   private ThreadId                         threadId_;
 
-  private IAllegroApi                      allegroApi_;
+  private IAllegroObjectStoreApi                      allegroApi_;
 
   private Thread                           mainThread_                = Thread.currentThread();
 
@@ -140,17 +140,32 @@ public class RampUpFeedTimerAssembly extends CommandLineHandler
    */
   public String run()
   {
-      allegroApi_ = new AllegroApi.Builder()
-        .withPodUrl(podUrl_)
-        .withObjectStoreUrl(objectStoreUrl_)
-        .withUserName(serviceAccount_)
-        .withRsaPemCredentialFile(credentialFile_)
+    allegroApi_ = new AllegroObjectStoreApi.Builder()
         .withFactories(CalendarModel.FACTORIES)
-        .withTrustAllSslCerts()
         .withTraceFactory(traceFactory_)
-        .withSessionToken(sessionToken_)
-        .withKeymanagerToken(keymanagerToken_)
-        .build();
+        .withConfiguration(new AllegroObjectStoreConfiguration.Builder()
+            .withApiUrl(objectStoreUrl_)
+//            .withApiConnectionSettings(new ConnectionSettings.Builder()
+//                .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
+//                .build())
+            .withAllegroConfiguration(new AllegroConfiguration.Builder()
+                .withPodUrl(podUrl_)
+                .withUserName(serviceAccount_)
+                .withRsaPemCredentialFile(credentialFile_)
+                .build())
+            .build())
+    .build();
+//      allegroApi_ = new AllegroObjectStoreApi.Builder()
+//        .withPodUrl(podUrl_)
+//        .withObjectStoreUrl(objectStoreUrl_)
+//        .withUserName(serviceAccount_)
+//        .withRsaPemCredentialFile(credentialFile_)
+//        .withFactories(CalendarModel.FACTORIES)
+//        .withTrustAllSslCerts()
+//        .withTraceFactory(traceFactory_)
+//        .withSessionToken(sessionToken_)
+//        .withKeymanagerToken(keymanagerToken_)
+//        .build();
       
     userId_         = allegroApi_.getUserId();
     

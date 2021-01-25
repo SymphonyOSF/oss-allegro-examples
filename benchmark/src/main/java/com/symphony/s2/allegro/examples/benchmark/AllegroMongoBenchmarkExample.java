@@ -16,7 +16,7 @@ import com.symphony.oss.allegro.api.AllegroPodApi;
 import com.symphony.oss.allegro.api.IAllegroPodApi;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
-import com.symphony.oss.models.allegro.canon.facade.AllegroPodConfiguration;
+import com.symphony.oss.models.allegro.canon.facade.AllegroConfiguration;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 
 public abstract class AllegroMongoBenchmarkExample extends CommandLineHandler implements Runnable
@@ -69,7 +69,7 @@ public abstract class AllegroMongoBenchmarkExample extends CommandLineHandler im
     
     allegroPodApi_ = new AllegroPodApi.Builder()
         .withFactories(CalendarModel.FACTORIES)
-        .withConfiguration(new AllegroPodConfiguration.Builder()
+        .withConfiguration(new AllegroConfiguration.Builder()
                 .withPodUrl(podUrl_)
                 .withUserName(serviceAccount_)
                 .withRsaPemCredentialFile(credentialFile_)

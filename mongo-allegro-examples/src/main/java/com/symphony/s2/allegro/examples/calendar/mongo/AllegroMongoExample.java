@@ -19,7 +19,7 @@ package com.symphony.s2.allegro.examples.calendar.mongo;
 import com.symphony.oss.allegro.api.AllegroPodApi;
 import com.symphony.oss.allegro.api.IAllegroPodApi;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
-import com.symphony.oss.models.allegro.canon.facade.AllegroPodConfiguration;
+import com.symphony.oss.models.allegro.canon.facade.AllegroConfiguration;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 
@@ -77,7 +77,7 @@ public abstract class AllegroMongoExample extends CommandLineHandler
     process(args);
     
     allegroPodApi_ = new AllegroPodApi.Builder()
-        .withConfiguration(new AllegroPodConfiguration.Builder()
+        .withConfiguration(new AllegroConfiguration.Builder()
                 .withPodUrl(podUrl_)
                 .withUserName(serviceAccount_)
                 .withRsaPemCredentialFile(credentialFile_)

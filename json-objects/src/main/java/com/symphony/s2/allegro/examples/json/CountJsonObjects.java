@@ -16,14 +16,15 @@
 
 package com.symphony.s2.allegro.examples.json;
 
-import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.ConsumerManager;
-import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
 import com.symphony.oss.allegro.api.request.PartitionQuery;
+import com.symphony.oss.allegro.objectstore.AllegroObjectStoreApi;
+import com.symphony.oss.allegro.objectstore.ConsumerManager;
+import com.symphony.oss.allegro.objectstore.IAllegroObjectStoreApi;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.allegro.canon.SslTrustStrategy;
 import com.symphony.oss.models.allegro.canon.facade.AllegroConfiguration;
+import com.symphony.oss.models.allegro.canon.facade.AllegroObjectStoreConfiguration;
 import com.symphony.oss.models.allegro.canon.facade.ConnectionSettings;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.object.canon.facade.IApplicationObjectPayload;
@@ -54,7 +55,7 @@ public class CountJsonObjects extends CommandLineHandler implements JsonObjectEx
   private String              objectStoreUrl_;
   private String              credentialFile_;
   
-  private IAllegroApi         allegroApi_;
+  private IAllegroObjectStoreApi         allegroApi_;
   private String              certFile_;
   private String              certPassword_;
   private String              sessionAuthUrl_;
@@ -83,25 +84,28 @@ public class CountJsonObjects extends CommandLineHandler implements JsonObjectEx
   @Override
   public void run()
   {
-    allegroApi_ = new AllegroApi.Builder()
-      .withConfiguration(new AllegroConfiguration.Builder()
-          .withPodUrl(podUrl_)
-          .withApiUrl(objectStoreUrl_)
-          .withUserName(serviceAccount_)
-          .withRsaPemCredentialFile(credentialFile_)
-          .withAuthCertFile(certFile_)
-          .withAuthCertFilePassword(certPassword_)
-          .withSessionAuthUrl(sessionAuthUrl_)
-          .withKeyAuthUrl(keyAuthUrl_)
-          .withDefaultConnectionSettings(new ConnectionSettings.Builder()
-              .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
-              .withProxyUrl(proxyUrl_)
-              .build())
-          .build())
-      .build();
+    allegroApi_ = new AllegroObjectStoreApi.Builder()
+        .withConfiguration(new AllegroObjectStoreConfiguration.Builder()
+            .withApiUrl(objectStoreUrl_)
+//            .withApiConnectionSettings(new ConnectionSettings.Builder()
+//                .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
+//                .build())
+            .withAllegroConfiguration(new AllegroConfiguration.Builder()
+                .withPodUrl(podUrl_)
+                .withUserName(serviceAccount_)
+                .withRsaPemCredentialFile(credentialFile_)
+                .withAuthCertFile(certFile_)
+                .withAuthCertFilePassword(certPassword_)
+                .withSessionAuthUrl(sessionAuthUrl_)
+                .withKeyAuthUrl(keyAuthUrl_)
+                .withDefaultConnectionSettings(new ConnectionSettings.Builder()
+//                    .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
+                    .withProxyUrl(proxyUrl_)
+                    .build())
+                .build())
+            .build())
+    .build();
     
-   System.out.println("Allegro configuration = " + allegroApi_.getConfiguration());
-   
    PodAndUserId ownerUserId = ownerId_ == null ? allegroApi_.getUserId() : PodAndUserId.newBuilder().build(ownerId_);
    System.out.println("CallerId is " + allegroApi_.getUserId());
    System.out.println("OwnerId is " + ownerUserId);

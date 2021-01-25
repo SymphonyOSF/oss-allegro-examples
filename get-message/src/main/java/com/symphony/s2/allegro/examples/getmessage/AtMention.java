@@ -6,9 +6,10 @@
 
 package com.symphony.s2.allegro.examples.getmessage;
 
-import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.IAllegroApi;
+import com.symphony.oss.allegro.api.AllegroPodApi;
+import com.symphony.oss.allegro.api.IAllegroPodApi;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
+import com.symphony.oss.models.allegro.canon.facade.AllegroConfiguration;
 import com.symphony.oss.models.allegro.canon.facade.IChatMessage;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 
@@ -31,7 +32,7 @@ public class AtMention extends CommandLineHandler implements Runnable
   private String              credentialFile_;
   private ThreadId            threadId_;
   
-  private IAllegroApi         allegroApi_;
+  private IAllegroPodApi         allegroApi_;
 
   /**
    * Constructor.
@@ -47,13 +48,21 @@ public class AtMention extends CommandLineHandler implements Runnable
   @Override
   public void run()
   {
-    allegroApi_ = new AllegroApi.Builder()
-      .withPodUrl(podUrl_)
-      .withUserName(serviceAccount_)
-      .withRsaPemCredentialFile(credentialFile_)
-      .withTrustAllSslCerts()
-//      .withTrustedSslCertResources(IAllegroApi.SYMPHONY_DEV_QA_ROOT_CERT)
-      .build();
+    allegroApi_ = new AllegroPodApi.Builder()
+        .withConfiguration(new AllegroConfiguration.Builder()
+                .withPodUrl(podUrl_)
+                .withUserName(serviceAccount_)
+                .withRsaPemCredentialFile(credentialFile_)
+                .build())
+        .build();
+    
+//    allegroApi_ = new AllegroObjectStoreApi.Builder()
+//      .withPodUrl(podUrl_)
+//      .withUserName(serviceAccount_)
+//      .withRsaPemCredentialFile(credentialFile_)
+//      .withTrustAllSslCerts()
+////      .withTrustedSslCertResources(IAllegroApi.SYMPHONY_DEV_QA_ROOT_CERT)
+//      .build();
     
     String messageML     = "<messageML><p>I am <mention email=\"" + allegroApi_.getUserInfo().getEmailAddress() + "\"/></p></messageML>";
 

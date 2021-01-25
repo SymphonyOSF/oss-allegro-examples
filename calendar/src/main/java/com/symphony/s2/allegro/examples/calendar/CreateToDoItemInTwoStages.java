@@ -19,21 +19,22 @@ package com.symphony.s2.allegro.examples.calendar;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.AllegroMultiTenantApi;
-import com.symphony.oss.allegro.api.IAllegroApi;
-import com.symphony.oss.allegro.api.IAllegroMultiTenantApi;
-import com.symphony.oss.allegro.api.Permission;
-import com.symphony.oss.allegro.api.ResourcePermissions;
 import com.symphony.oss.allegro.api.request.PartitionId;
 import com.symphony.oss.allegro.api.request.UpsertPartitionRequest;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
+import com.symphony.oss.allegro.objectstore.AllegroObjectStoreApi;
+import com.symphony.oss.allegro.objectstore.ObjectStoreApi;
+import com.symphony.oss.allegro.objectstore.IAllegroObjectStoreApi;
+import com.symphony.oss.allegro.objectstore.IObjectStoreApi;
+import com.symphony.oss.allegro.objectstore.Permission;
+import com.symphony.oss.allegro.objectstore.ResourcePermissions;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.allegro.canon.SslTrustStrategy;
 import com.symphony.oss.models.allegro.canon.facade.AllegroConfiguration;
-import com.symphony.oss.models.allegro.canon.facade.AllegroMultiTenantConfiguration;
+import com.symphony.oss.models.allegro.canon.facade.AllegroObjectStoreConfiguration;
 import com.symphony.oss.models.allegro.canon.facade.ConnectionSettings;
+import com.symphony.oss.models.allegro.canon.facade.ObjectStoreConfiguration;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 import com.symphony.oss.models.object.canon.AffectedUsers;
@@ -70,8 +71,8 @@ public class CreateToDoItemInTwoStages extends CommandLineHandler implements Run
   private PodAndUserId           otherUserId_;
   private PodAndUserId           multiTenantUserId_;
 
-  private IAllegroApi            allegroApi_;
-  private IAllegroMultiTenantApi multiTenantApi_;
+  private IAllegroObjectStoreApi            allegroApi_;
+  private IObjectStoreApi multiTenantApi_;
 
   /**
    * Constructor.
@@ -91,26 +92,28 @@ public class CreateToDoItemInTwoStages extends CommandLineHandler implements Run
   @Override
   public void run()
   { 
-	    allegroApi_ = new AllegroApi.Builder()
-	            .withConfiguration(new AllegroConfiguration.Builder()
-	                    .withPodUrl(podUrl_)
-	                    .withApiUrl(objectStoreUrl_)
-	                    .withUserName(serviceAccount_)
-	                    .withRsaPemCredentialFile(credentialFile_)
-	                    .withApiConnectionSettings(new ConnectionSettings.Builder()
-	                        .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
-	                        .build())
-	                    .build())
-	            .build();
-	    
+	    allegroApi_ = new AllegroObjectStoreApi.Builder()
+	            .withConfiguration(new AllegroObjectStoreConfiguration.Builder()
+                  .withApiUrl(objectStoreUrl_)
+//                  .withApiConnectionSettings(new ConnectionSettings.Builder()
+//                      .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
+//                      .build())
+                  .withAllegroConfiguration(new AllegroConfiguration.Builder()
+                      .withPodUrl(podUrl_)
+                      .withUserName(serviceAccount_)
+                      .withRsaPemCredentialFile(credentialFile_)
+                      .build())
+                  .build())
+          .build();
+	                
     
-    multiTenantApi_ = new AllegroMultiTenantApi.Builder()
-    		 .withConfiguration(new AllegroMultiTenantConfiguration.Builder()
+    multiTenantApi_ = new ObjectStoreApi.Builder()
+    		 .withConfiguration(new ObjectStoreConfiguration.Builder()
 	                    .withApiUrl(objectStoreUrl_)
 	                    .withPrincipalCredentialFile(mtCredentialFile_)
-	                    .withApiConnectionSettings(new ConnectionSettings.Builder()
-	                        .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
-	                        .build())
+//	                    .withApiConnectionSettings(new ConnectionSettings.Builder()
+//	                        .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
+//	                        .build())
 	                    .build())
         //.withFactories(ObjectStoreTestModel.FACTORIES)
         .build();

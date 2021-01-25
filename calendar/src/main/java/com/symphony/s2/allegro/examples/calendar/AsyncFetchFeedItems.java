@@ -23,18 +23,17 @@ import java.io.InputStreamReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.AsyncConsumerManager;
-import com.symphony.oss.allegro.api.IAllegroApi;
-import com.symphony.oss.allegro.api.IAllegroQueryManager;
 import com.symphony.oss.allegro.api.request.FeedQuery;
 import com.symphony.oss.allegro.api.request.FetchFeedObjectsRequest;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
+import com.symphony.oss.allegro.objectstore.AllegroObjectStoreApi;
+import com.symphony.oss.allegro.objectstore.AsyncConsumerManager;
+import com.symphony.oss.allegro.objectstore.IAllegroObjectStoreApi;
+import com.symphony.oss.allegro.objectstore.IAllegroQueryManager;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
-import com.symphony.oss.models.allegro.canon.SslTrustStrategy;
 import com.symphony.oss.models.allegro.canon.facade.AllegroConfiguration;
-import com.symphony.oss.models.allegro.canon.facade.ConnectionSettings;
+import com.symphony.oss.models.allegro.canon.facade.AllegroObjectStoreConfiguration;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 
 /**
@@ -60,7 +59,7 @@ public class AsyncFetchFeedItems extends CommandLineHandler implements Runnable
   private String              credentialFile_;
   private Long                ownerId_;
   
-  private IAllegroApi         allegroApi_;
+  private IAllegroObjectStoreApi         allegroApi_;
 
   /**
    * Constructor.
@@ -77,18 +76,20 @@ public class AsyncFetchFeedItems extends CommandLineHandler implements Runnable
   @Override
   public void run()
   {
-	allegroApi_ = new AllegroApi.Builder()
-	            .withConfiguration(new AllegroConfiguration.Builder()
-	                    .withPodUrl(podUrl_)
-	                    .withApiUrl(objectStoreUrl_)
-	                    .withUserName(serviceAccount_)
-	                    .withRsaPemCredentialFile(credentialFile_)
-	                    .withApiConnectionSettings(new ConnectionSettings.Builder()
-	                        .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
-	                        .build())
-	                    .build())
-	      .withFactories(CalendarModel.FACTORIES)
-	      .build();
+    allegroApi_ = new AllegroObjectStoreApi.Builder()
+        .withFactories(CalendarModel.FACTORIES)
+        .withConfiguration(new AllegroObjectStoreConfiguration.Builder()
+            .withApiUrl(objectStoreUrl_)
+//            .withApiConnectionSettings(new ConnectionSettings.Builder()
+//                .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
+//                .build())
+            .withAllegroConfiguration(new AllegroConfiguration.Builder()
+                .withPodUrl(podUrl_)
+                .withUserName(serviceAccount_)
+                .withRsaPemCredentialFile(credentialFile_)
+                .build())
+            .build())
+    .build();
 
     
     PodAndUserId ownerUserId = ownerId_ == null ? allegroApi_.getUserId() : PodAndUserId.newBuilder().build(ownerId_);

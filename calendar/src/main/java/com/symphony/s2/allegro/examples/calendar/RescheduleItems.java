@@ -19,18 +19,17 @@ package com.symphony.s2.allegro.examples.calendar;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.ConsumerManager;
-import com.symphony.oss.allegro.api.IAllegroApi;
 import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
 import com.symphony.oss.allegro.api.request.PartitionQuery;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
+import com.symphony.oss.allegro.objectstore.AllegroObjectStoreApi;
+import com.symphony.oss.allegro.objectstore.ConsumerManager;
+import com.symphony.oss.allegro.objectstore.IAllegroObjectStoreApi;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
-import com.symphony.oss.models.allegro.canon.SslTrustStrategy;
 import com.symphony.oss.models.allegro.canon.facade.AllegroConfiguration;
-import com.symphony.oss.models.allegro.canon.facade.ConnectionSettings;
+import com.symphony.oss.models.allegro.canon.facade.AllegroObjectStoreConfiguration;
 import com.symphony.oss.models.object.canon.facade.IStoredApplicationObject;
 
 /**
@@ -52,7 +51,7 @@ public class RescheduleItems extends CommandLineHandler implements Runnable
   private String              objectStoreUrl_;
   private String              credentialFile_;
 
-  private IAllegroApi         allegroApi_;
+  private IAllegroObjectStoreApi         allegroApi_;
   
   private Instant             due_ = Instant.now().plus(30, ChronoUnit.MINUTES);
 
@@ -70,18 +69,20 @@ public class RescheduleItems extends CommandLineHandler implements Runnable
   @Override
   public void run()
   {
-	allegroApi_ = new AllegroApi.Builder()
-	            .withConfiguration(new AllegroConfiguration.Builder()
-	                    .withPodUrl(podUrl_)
-	                    .withApiUrl(objectStoreUrl_)
-	                    .withUserName(serviceAccount_)
-	                    .withRsaPemCredentialFile(credentialFile_)
-	                    .withApiConnectionSettings(new ConnectionSettings.Builder()
-	                        .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
-	                        .build())
-	                    .build())
-	            .withFactories(CalendarModel.FACTORIES)
-	            .build();
+    allegroApi_ = new AllegroObjectStoreApi.Builder()
+        .withFactories(CalendarModel.FACTORIES)
+        .withConfiguration(new AllegroObjectStoreConfiguration.Builder()
+            .withApiUrl(objectStoreUrl_)
+//            .withApiConnectionSettings(new ConnectionSettings.Builder()
+//                .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
+//                .build())
+            .withAllegroConfiguration(new AllegroConfiguration.Builder()
+                .withPodUrl(podUrl_)
+                .withUserName(serviceAccount_)
+                .withRsaPemCredentialFile(credentialFile_)
+                .build())
+            .build())
+    .build();
 
     
     allegroApi_.fetchPartitionObjects(new FetchPartitionObjectsRequest.Builder()

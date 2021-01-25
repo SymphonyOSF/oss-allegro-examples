@@ -6,12 +6,10 @@
 
 package com.symphony.s2.allegro.examples.getmessage;
 
-import com.symphony.oss.allegro.api.AllegroApi;
-import com.symphony.oss.allegro.api.IAllegroApi;
+import com.symphony.oss.allegro.api.AllegroPodApi;
+import com.symphony.oss.allegro.api.IAllegroPodApi;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
-import com.symphony.oss.models.allegro.canon.SslTrustStrategy;
 import com.symphony.oss.models.allegro.canon.facade.AllegroConfiguration;
-import com.symphony.oss.models.allegro.canon.facade.ConnectionSettings;
 import com.symphony.oss.models.allegro.canon.facade.IChatMessage;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 
@@ -34,7 +32,7 @@ public class SendEntityJson extends CommandLineHandler implements Runnable
   private String              credentialFile_;
   private ThreadId            threadId_;
   
-  private IAllegroApi         allegroApi_;
+  private IAllegroPodApi         allegroApi_;
 
   /**
    * Constructor.
@@ -50,36 +48,22 @@ public class SendEntityJson extends CommandLineHandler implements Runnable
   @Override
   public void run()
   {
-	allegroApi_ = new AllegroApi.Builder()
-	            .withConfiguration(new AllegroConfiguration.Builder()
-	                    .withPodUrl(podUrl_)
-	                    .withUserName(serviceAccount_)
-	                    .withRsaPemCredentialFile(credentialFile_)
-	                    .withApiConnectionSettings(new ConnectionSettings.Builder()
-	                        .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
-	                        .build())
-	                    .build())
-	            .build();
-	    
-//      .withTrustedSslCertResources(IAllegroApi.SYMPHONY_DEV_QA_ROOT_CERT)
+    allegroApi_ = new AllegroPodApi.Builder()
+        .withConfiguration(new AllegroConfiguration.Builder()
+                .withPodUrl(podUrl_)
+                .withUserName(serviceAccount_)
+                .withRsaPemCredentialFile(credentialFile_)
+                .build())
+        .build();
     
-    String presentationML     = "<div data-format=\"PresentationML\" data-version=\"2.0\" class=\"wysiwyg\"><p>This was sent as PresentationML + EntityJSON. <span class=\"entity\" data-entity-id=\"0\">@Bruce Skingle</span> <span class=\"entity\" data-entity-id=\"1\">@Bruce Bot</span> </p></div>";
+    String presentationML     = "<div data-format=\"PresentationML\" data-version=\"2.0\" class=\"wysiwyg\"><p>This was sent as PresentationML + EntityJSON. <span class=\"entity\" data-entity-id=\"0\">@Me Myself, I</span> </p></div>";
 
     String entityJson = "{\n" + 
         "  \"0\":{\n" + 
         "    \"id\":[\n" + 
         "      {\n" + 
         "        \"type\":\"com.symphony.user.userId\",\n" + 
-        "        \"value\":\"11476152617525\"\n" + 
-        "      }\n" + 
-        "    ],\n" + 
-        "    \"type\":\"com.symphony.user.mention\"\n" + 
-        "  },\n" + 
-        "  \"1\":{\n" + 
-        "    \"id\":[\n" + 
-        "      {\n" + 
-        "        \"type\":\"com.symphony.user.userId\",\n" + 
-        "        \"value\":\"11407433183256\"\n" + 
+        "        \"value\":\"" + allegroApi_.getUserId() + "\"\n" + 
         "      }\n" + 
         "    ],\n" + 
         "    \"type\":\"com.symphony.user.mention\"\n" + 
