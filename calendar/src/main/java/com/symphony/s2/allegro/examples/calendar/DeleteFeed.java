@@ -22,6 +22,7 @@ import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.symphony.oss.allegro.api.ConsumerManager;
 import com.symphony.oss.allegro.api.request.FeedId;
 import com.symphony.oss.allegro.api.request.FeedQuery;
 import com.symphony.oss.allegro.api.request.FetchFeedObjectsRequest;
@@ -34,7 +35,6 @@ import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoHeader;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
 import com.symphony.oss.allegro.objectstore.AllegroObjectStoreApi;
-import com.symphony.oss.allegro.objectstore.ConsumerManager;
 import com.symphony.oss.allegro.objectstore.IAllegroObjectStoreApi;
 import com.symphony.oss.allegro.objectstore.Permission;
 import com.symphony.oss.allegro.objectstore.ResourcePermissions;

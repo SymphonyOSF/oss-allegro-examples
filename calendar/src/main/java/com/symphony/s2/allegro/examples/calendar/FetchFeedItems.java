@@ -16,11 +16,11 @@
 
 package com.symphony.s2.allegro.examples.calendar;
 
+import com.symphony.oss.allegro.api.ConsumerManager;
 import com.symphony.oss.allegro.api.request.FeedQuery;
 import com.symphony.oss.allegro.api.request.FetchFeedObjectsRequest;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.allegro.objectstore.AllegroObjectStoreApi;
-import com.symphony.oss.allegro.objectstore.ConsumerManager;
 import com.symphony.oss.allegro.objectstore.IAllegroObjectStoreApi;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.allegro.canon.facade.AllegroConfiguration;

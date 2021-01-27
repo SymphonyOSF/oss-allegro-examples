@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.symphony.oss.allegro.api.AsyncConsumerManager;
+import com.symphony.oss.allegro.api.ConsumerManager;
 import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
 import com.symphony.oss.allegro.api.request.PartitionId;
 import com.symphony.oss.allegro.api.request.PartitionQuery;
@@ -37,8 +39,6 @@ import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoHeader;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
 import com.symphony.oss.allegro.objectstore.AllegroObjectStoreApi;
-import com.symphony.oss.allegro.objectstore.AsyncConsumerManager;
-import com.symphony.oss.allegro.objectstore.ConsumerManager;
 import com.symphony.oss.allegro.objectstore.IAllegroObjectStoreApi;
 import com.symphony.oss.allegro.objectstore.IAllegroQueryManager;
 import com.symphony.oss.canon.json.JsonParser;

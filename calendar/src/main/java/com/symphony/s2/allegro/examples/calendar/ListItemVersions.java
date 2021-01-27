@@ -16,6 +16,7 @@
 
 package com.symphony.s2.allegro.examples.calendar;
 
+import com.symphony.oss.allegro.api.ConsumerManager;
 import com.symphony.oss.allegro.api.request.FetchObjectVersionsRequest;
 import com.symphony.oss.allegro.api.request.FetchPartitionObjectsRequest;
 import com.symphony.oss.allegro.api.request.PartitionQuery;
@@ -23,7 +24,6 @@ import com.symphony.oss.allegro.api.request.VersionQuery;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
 import com.symphony.oss.allegro.objectstore.AllegroObjectStoreApi;
-import com.symphony.oss.allegro.objectstore.ConsumerManager;
 import com.symphony.oss.allegro.objectstore.IAllegroObjectStoreApi;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.allegro.canon.SslTrustStrategy;
