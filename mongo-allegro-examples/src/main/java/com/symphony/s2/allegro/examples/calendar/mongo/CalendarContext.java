@@ -11,24 +11,24 @@ import org.bson.Document;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.symphony.oss.allegro.api.IAllegroPodApi;
+import com.symphony.oss.allegro2.api.IAllegro2Api;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 
-public class CalendarContext
+class CalendarContext
 {
   MongoClient               mongoClient_;
   PodAndUserId              ownerUserId_;
-  IAllegroPodApi            allegroPodApi_;
+  IAllegro2Api              allegro2Api_;
   ThreadId                  threadId_;
   MongoDatabase             db_;
   MongoCollection<Document> todoItems_;
 
-  CalendarContext(MongoClient mongoClient, PodAndUserId ownerUserId, IAllegroPodApi allegroPodApi, ThreadId threadId)
+  CalendarContext(MongoClient mongoClient, PodAndUserId ownerUserId, IAllegro2Api allegroPodApi, ThreadId threadId)
   {
     mongoClient_ = mongoClient;
     ownerUserId_ = ownerUserId;
-    allegroPodApi_ = allegroPodApi;
+    allegro2Api_ = allegroPodApi;
     threadId_ = threadId;
     db_ = mongoClient.getDatabase("Calendar");
     todoItems_ = db_.getCollection("TodoItems");

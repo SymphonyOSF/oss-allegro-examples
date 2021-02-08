@@ -16,10 +16,10 @@
 
 package com.symphony.s2.allegro.examples.calendar.mongo;
 
-import com.symphony.oss.allegro.api.AllegroPodApi;
-import com.symphony.oss.allegro.api.IAllegroPodApi;
+import com.symphony.oss.allegro2.api.Allegro2Api;
+import com.symphony.oss.allegro2.api.IAllegro2Api;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
-import com.symphony.oss.models.allegro.canon.facade.AllegroPodConfiguration;
+import com.symphony.oss.models.allegro.canon.facade.Allegro2Configuration;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 
@@ -47,7 +47,7 @@ public abstract class AllegroMongoExample extends CommandLineHandler
   private Long                   ownerId_;
 
 
-  private IAllegroPodApi         allegroPodApi_;
+  private IAllegro2Api         allegroPodApi_;
   
   private String                 mongoHost_;
   private String mongoUser_;
@@ -76,8 +76,8 @@ public abstract class AllegroMongoExample extends CommandLineHandler
   {
     process(args);
     
-    allegroPodApi_ = new AllegroPodApi.Builder()
-        .withConfiguration(new AllegroPodConfiguration.Builder()
+    allegroPodApi_ = new Allegro2Api.Builder()
+        .withConfiguration(new Allegro2Configuration.Builder()
                 .withPodUrl(podUrl_)
                 .withUserName(serviceAccount_)
                 .withRsaPemCredentialFile(credentialFile_)
@@ -96,5 +96,5 @@ public abstract class AllegroMongoExample extends CommandLineHandler
     }
   }
   
-  protected abstract void run(String mongoUser, String mongoPassword, String mongoHost, PodAndUserId ownerUserId, IAllegroPodApi allegroPodApi, ThreadId threadId);
+  protected abstract void run(String mongoUser, String mongoPassword, String mongoHost, PodAndUserId ownerUserId, IAllegro2Api allegroPodApi, ThreadId threadId);
 }

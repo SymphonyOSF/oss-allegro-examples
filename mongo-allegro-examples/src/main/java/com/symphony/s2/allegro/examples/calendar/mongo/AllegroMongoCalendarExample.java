@@ -8,15 +8,15 @@ package com.symphony.s2.allegro.examples.calendar.mongo;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import com.symphony.oss.allegro.api.IAllegroPodApi;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
+import com.symphony.oss.allegro2.api.IAllegro2Api;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 
-public abstract class AllegroMongoCalendarExample extends AllegroMongoExample
+abstract class AllegroMongoCalendarExample extends AllegroMongoExample
 {
   @Override
-  public void run(String mongoUser, String mongoPassword, String mongoHost, PodAndUserId ownerUserId, IAllegroPodApi allegroPodApi, ThreadId threadId)
+  public void run(String mongoUser, String mongoPassword, String mongoHost, PodAndUserId ownerUserId, IAllegro2Api allegroPodApi, ThreadId threadId)
   {
     allegroPodApi.getModelRegistry().withFactories(CalendarModel.FACTORIES);
     

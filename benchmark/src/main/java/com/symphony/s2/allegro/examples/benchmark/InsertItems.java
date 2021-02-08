@@ -22,16 +22,15 @@ import java.util.List;
 
 import org.bson.Document;
 
-import com.mongodb.client.model.IndexModel;
 import com.mongodb.client.model.Indexes;
-import com.symphony.oss.allegro.api.StoredRecordConsumerManager;
 import com.symphony.oss.allegro.examples.calendar.canon.IPersonDetails;
 import com.symphony.oss.allegro.examples.calendar.canon.IPersonIndex;
+import com.symphony.oss.allegro2.api.AllegroConsumerManager;
 import com.symphony.oss.canon.runtime.IEntity;
+import com.symphony.oss.models.core.canon.facade.IApplicationRecord;
+import com.symphony.oss.models.core.canon.facade.IEncryptedApplicationRecord;
 import com.symphony.oss.models.object.canon.facade.IApplicationObjectHeader;
 import com.symphony.oss.models.object.canon.facade.IApplicationObjectPayload;
-import com.symphony.oss.models.object.canon.facade.IApplicationRecord;
-import com.symphony.oss.models.object.canon.facade.IStoredApplicationRecord;
 
 /**
  * An example application which creates a ToDoItem, adding it to a current and absolute sequence.
@@ -64,7 +63,7 @@ public class InsertItems extends AllegroMongoBenchmarkExample
       IApplicationRecord record = (IApplicationRecord)entity;
       
    // Create an encrypted StoredApplicationRecord.
-      IStoredApplicationRecord storedRecord = allegroPodApi_.newApplicationRecordBuilder()
+      IEncryptedApplicationRecord storedRecord = allegroPodApi_.newApplicationRecordBuilder()
           .withThreadId(threadId_)
           .withHeader(record.getHeader())
           .withPayload(record.getPayload())
@@ -88,7 +87,7 @@ public class InsertItems extends AllegroMongoBenchmarkExample
     
     
     // Create an encrypted StoredApplicationRecord.
-       IStoredApplicationRecord storedRecord = allegroPodApi_.newApplicationRecordBuilder()
+    IEncryptedApplicationRecord storedRecord = allegroPodApi_.newApplicationRecordBuilder()
            .withThreadId(threadId_)
            .withHeader(record1.getHeader())
            .withPayload(record1.getPayload())
@@ -145,7 +144,7 @@ public class InsertItems extends AllegroMongoBenchmarkExample
     List<IPersonIndex> readIndex = new LinkedList<>();
     List<IPersonDetails> readDetails = new LinkedList<>();
     
-    StoredRecordConsumerManager consumerManager = allegroPodApi_.newConsumerManagerBuilder()
+    AllegroConsumerManager consumerManager = allegroPodApi_.newConsumerManagerBuilder()
         .withConsumer(IPersonIndex.class, IPersonDetails.class, (record, header, payload) ->
         {
           readIndex.add(header);

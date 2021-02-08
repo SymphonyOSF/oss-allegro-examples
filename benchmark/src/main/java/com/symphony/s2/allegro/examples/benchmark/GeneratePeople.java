@@ -14,8 +14,8 @@ import com.symphony.oss.allegro.examples.calendar.canon.IPersonDetails;
 import com.symphony.oss.allegro.examples.calendar.canon.IPersonIndex;
 import com.symphony.oss.allegro.examples.calendar.canon.PersonDetails;
 import com.symphony.oss.allegro.examples.calendar.canon.PersonIndex;
-import com.symphony.oss.models.object.canon.facade.ApplicationRecord;
-import com.symphony.oss.models.object.canon.facade.IApplicationRecord;
+import com.symphony.oss.models.core.canon.facade.ApplicationRecord;
+import com.symphony.oss.models.core.canon.facade.IApplicationRecord;
 
 public class GeneratePeople
 {

@@ -18,8 +18,8 @@ package com.symphony.s2.allegro.examples.calendar.mongo;
 
 import org.bson.Document;
 
-import com.symphony.oss.allegro.api.StoredRecordConsumerManager;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
+import com.symphony.oss.allegro2.api.AllegroConsumerManager;
 import com.symphony.oss.models.object.canon.IAffectedUsers;
 import com.symphony.oss.models.object.canon.facade.IApplicationObjectHeader;
 import com.symphony.oss.models.object.canon.facade.IApplicationObjectPayload;
@@ -49,7 +49,7 @@ public class ListMongoToDoItems extends AllegroMongoCalendarExample
 //      System.out.println("applicationPayload = " + applicationPayload);
     }
     
-    StoredRecordConsumerManager consumerManager = context.allegroPodApi_.newConsumerManagerBuilder()
+    AllegroConsumerManager consumerManager = context.allegro2Api_.newConsumerManagerBuilder()
       .withConsumer(IAffectedUsers.class, IToDoItem.class, (record, header, payload) ->
       {
         System.out.println("Header: " + header);

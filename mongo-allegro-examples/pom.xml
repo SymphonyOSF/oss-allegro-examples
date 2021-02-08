@@ -20,7 +20,7 @@
     
     <dependency>
       <groupId>com.symphony.oss.allegro</groupId>
-      <artifactId>allegro-api</artifactId>
+      <artifactId>allegro2-api</artifactId>
       <version>${allegro.version}</version>
     </dependency>
     

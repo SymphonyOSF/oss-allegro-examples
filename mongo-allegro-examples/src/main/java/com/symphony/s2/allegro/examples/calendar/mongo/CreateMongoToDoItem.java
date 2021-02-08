@@ -25,9 +25,9 @@ import org.bson.Document;
 
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
+import com.symphony.oss.models.core.canon.facade.IEncryptedApplicationRecord;
 import com.symphony.oss.models.object.canon.AffectedUsers;
 import com.symphony.oss.models.object.canon.IAffectedUsers;
-import com.symphony.oss.models.object.canon.facade.IStoredApplicationRecord;
 
 /**
  * An example application which creates a ToDoItem, adding it to a current and absolute sequence.
@@ -66,14 +66,14 @@ public class CreateMongoToDoItem extends AllegroMongoCalendarExample
     
     // Create the header
     IAffectedUsers affectedUsers = new AffectedUsers.Builder()
-        .withRequestingUser(context.allegroPodApi_.getUserId())
-        .withAffectedUsers(context.allegroPodApi_.getUserId())
+        .withRequestingUser(context.allegro2Api_.getUserId())
+        .withAffectedUsers(context.allegro2Api_.getUserId())
         .withEffectiveDate(Instant.now())
         .build();
     
     
     // Create an encrypted StoredApplicationRecord.
-    IStoredApplicationRecord toDoObject = context.allegroPodApi_.newApplicationRecordBuilder()
+    IEncryptedApplicationRecord toDoObject = context.allegro2Api_.newApplicationRecordBuilder()
         .withThreadId(context.threadId_)
         .withHeader(affectedUsers)
         .withPayload(toDoItem)
