@@ -16,47 +16,40 @@
 
 package com.symphony.s2.allegro.examples.calendar.mongo;
 
-import com.symphony.oss.allegro2.api.Allegro2Api;
-import com.symphony.oss.allegro2.api.IAllegro2Api;
+import com.symphony.oss.allegro2.mongo.api.Allegro2MongoApi;
+import com.symphony.oss.allegro2.mongo.api.IAllegro2MongoApi;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.allegro.canon.facade.Allegro2Configuration;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 
-/**
- * An example application which creates a ToDoItem, adding it to a current and absolute sequence.
- * 
- * @author Bruce Skingle
- *
- */
-public abstract class AllegroMongoExample extends CommandLineHandler
+abstract class MongoExample extends CommandLineHandler
 {
-  private static final String    ALLEGRO         = "ALLEGRO_";
-  private static final String    SERVICE_ACCOUNT = "SERVICE_ACCOUNT";
-  private static final String    POD_URL         = "POD_URL";
-  private static final String    MONGO_HOST      = "MONGO_HOST";
-  private static final String    MONGO_USER      = "MONGO_USER";
-  private static final String    MONGO_PASSWORD  = "MONGO_PASSWORD";
-  private static final String    CREDENTIAL_FILE = "CREDENTIAL_FILE";
-  private static final String    THREAD_ID       = "THREAD_ID";
+  private static final String ALLEGRO         = "ALLEGRO_";
+  private static final String SERVICE_ACCOUNT = "SERVICE_ACCOUNT";
+  private static final String POD_URL         = "POD_URL";
+  private static final String MONGO_HOST      = "MONGO_HOST";
+  private static final String MONGO_USER      = "MONGO_USER";
+  private static final String MONGO_PASSWORD  = "MONGO_PASSWORD";
+  private static final String CREDENTIAL_FILE = "CREDENTIAL_FILE";
+  private static final String THREAD_ID       = "THREAD_ID";
 
-  private String                 serviceAccount_;
-  private String                 podUrl_;
-  private String                 credentialFile_;
-  private ThreadId               threadId_;
-  private Long                   ownerId_;
+  private String              serviceAccount_;
+  private String              podUrl_;
+  private String              credentialFile_;
+  private ThreadId            threadId_;
+  private Long                ownerId_;
 
+  private IAllegro2MongoApi   allegroMongoApi_;
 
-  private IAllegro2Api         allegroPodApi_;
-  
-  private String                 mongoHost_;
-  private String mongoUser_;
-  private String mongoPassword_;
+  private String              mongoHost_;
+  private String              mongoUser_;
+  private String              mongoPassword_;
 
   /**
    * Constructor.
    */
-  public AllegroMongoExample()
+  MongoExample()
   {
     withFlag('s',   SERVICE_ACCOUNT,  ALLEGRO + SERVICE_ACCOUNT,  String.class,   false, true,   (v) -> serviceAccount_       = v);
     withFlag('p',   POD_URL,          ALLEGRO + POD_URL,          String.class,   false, true,   (v) -> podUrl_               = v);
@@ -76,7 +69,7 @@ public abstract class AllegroMongoExample extends CommandLineHandler
   {
     process(args);
     
-    allegroPodApi_ = new Allegro2Api.Builder()
+    allegroMongoApi_ = new Allegro2MongoApi.Builder()
         .withConfiguration(new Allegro2Configuration.Builder()
                 .withPodUrl(podUrl_)
                 .withUserName(serviceAccount_)
@@ -84,11 +77,11 @@ public abstract class AllegroMongoExample extends CommandLineHandler
                 .build())
         .build();
     
-    PodAndUserId ownerUserId = ownerId_ == null ? allegroPodApi_.getUserId() : PodAndUserId.newBuilder().build(ownerId_);
+    PodAndUserId ownerUserId = ownerId_ == null ? allegroMongoApi_.getUserId() : PodAndUserId.newBuilder().build(ownerId_);
     
     try
     {
-      run(mongoUser_, mongoPassword_, mongoHost_, ownerUserId, allegroPodApi_, threadId_);
+      run(mongoUser_, mongoPassword_, mongoHost_, ownerUserId, allegroMongoApi_, threadId_);
     }
     catch(RuntimeException e)
     {
@@ -96,5 +89,5 @@ public abstract class AllegroMongoExample extends CommandLineHandler
     }
   }
   
-  protected abstract void run(String mongoUser, String mongoPassword, String mongoHost, PodAndUserId ownerUserId, IAllegro2Api allegroPodApi, ThreadId threadId);
+  protected abstract void run(String mongoUser, String mongoPassword, String mongoHost, PodAndUserId ownerUserId, IAllegro2MongoApi allegroPodApi, ThreadId threadId);
 }

@@ -18,42 +18,25 @@ package com.symphony.s2.allegro.examples.calendar.mongo;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.bson.Document;
 
+import com.symphony.oss.allegro.examples.calendar.canon.IToDoHeader;
 import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
+import com.symphony.oss.allegro.examples.calendar.canon.ToDoHeader;
 import com.symphony.oss.allegro.examples.calendar.canon.ToDoItem;
-import com.symphony.oss.models.core.canon.facade.IEncryptedApplicationRecord;
-import com.symphony.oss.models.object.canon.AffectedUsers;
-import com.symphony.oss.models.object.canon.IAffectedUsers;
 
 /**
- * An example application which creates a ToDoItem, adding it to a current and absolute sequence.
+ * An Allegro2Mongo example application which creates a ToDoItem, adding it to a collection.
  * 
  * @author Bruce Skingle
  *
  */
-public class CreateMongoToDoItem extends AllegroMongoCalendarExample
+public class MongoCreateToDoItem extends MongoCalendarExample
 {
   @Override
   public void run(CalendarContext context)
   {
-    List<Document> databases = context.mongoClient_.listDatabases().into(new ArrayList<>());
-    databases.forEach(db -> System.out.println(db.toJson()));
-
-
-    System.out.println("db = " + context.db_.getName());
-    System.out.println("collection " + context.todoItems_);
-    
-//      FindIterable<Document> cursor = collection.find();
-//      
-//      for(Document doc : cursor)
-//      {
-//        System.out.println("doc = " + doc.getDouble("x"));
-//      }
-    
     // Create the payload
     IToDoItem toDoItem = new ToDoItem.Builder()
       .withDue(Instant.now())
@@ -65,30 +48,23 @@ public class CreateMongoToDoItem extends AllegroMongoCalendarExample
     System.out.println("About to create item " + toDoItem);
     
     // Create the header
-    IAffectedUsers affectedUsers = new AffectedUsers.Builder()
-        .withRequestingUser(context.allegro2Api_.getUserId())
-        .withAffectedUsers(context.allegro2Api_.getUserId())
+    IToDoHeader affectedUsers = new ToDoHeader.Builder()
+        .withRequestingUser(context.allegro2MongoApi_.getUserId())
+        .withAffectedUsers(context.allegro2MongoApi_.getUserId())
         .withEffectiveDate(Instant.now())
         .build();
     
     
     // Create an encrypted StoredApplicationRecord.
-    IEncryptedApplicationRecord toDoObject = context.allegro2Api_.newApplicationRecordBuilder()
+    Document toDoDocument = context.allegro2MongoApi_.newEncryptedDocumentBuilder()
         .withThreadId(context.threadId_)
         .withHeader(affectedUsers)
         .withPayload(toDoItem)
       .build();
     
-    System.out.println("About to store " + toDoObject);
+    System.out.println("About to store " + toDoDocument);
     
-    Document toDoDoc = Document.parse(toDoObject.toString());
-    
-    context.todoItems_.insertOne(toDoDoc);
-    
-    for(Document doc : context.todoItems_.find())
-    {
-      System.out.println("doc = " + doc);
-    }
+    context.todoItems_.insertOne(toDoDocument);
   }
   
   /**
@@ -98,6 +74,6 @@ public class CreateMongoToDoItem extends AllegroMongoCalendarExample
    */
   public static void main(String[] args)
   {
-    new CreateMongoToDoItem().run(args);
+    new MongoCreateToDoItem().run(args);
   }
 }

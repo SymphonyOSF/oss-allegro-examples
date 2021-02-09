@@ -23,7 +23,7 @@
     <artifactId>oss-allegro-examples</artifactId>
     <version>0.1.3-SNAPSHOT</version>
   </parent>
-  <artifactId>mongo-allegro-examples</artifactId>
+  <artifactId>mongo-examples</artifactId>
   
   <dependencies>
     <dependency>
@@ -37,6 +37,11 @@
       <version>4.1.1</version>
    </dependency>
     
+    <dependency>
+      <groupId>com.symphony.oss.allegro</groupId>
+      <artifactId>allegro2-mongo-api</artifactId>
+      <version>${allegro.version}</version>
+    </dependency>
     <dependency>
       <groupId>com.symphony.oss.allegro</groupId>
       <artifactId>allegro2-api</artifactId>
