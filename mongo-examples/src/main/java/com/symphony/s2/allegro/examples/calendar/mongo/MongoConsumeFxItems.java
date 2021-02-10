@@ -16,8 +16,9 @@
 
 package com.symphony.s2.allegro.examples.calendar.mongo;
 
-import com.symphony.oss.allegro.examples.calendar.canon.IToDoHeader;
-import com.symphony.oss.allegro.examples.calendar.canon.IToDoItem;
+import com.symphony.oss.allegro.examples.model.fx.canon.IFxHeader;
+import com.symphony.oss.allegro.examples.model.fx.canon.IQuote;
+import com.symphony.oss.allegro.examples.model.fx.canon.IRfq;
 import com.symphony.oss.allegro2.mongo.api.AllegroMongoConsumerManager;
 import com.symphony.oss.models.core.canon.IApplicationPayload;
 
@@ -27,18 +28,25 @@ import com.symphony.oss.models.core.canon.IApplicationPayload;
  * @author Bruce Skingle
  *
  */
-public class MongoConsumeToDoItems extends MongoCalendarExample
+public class MongoConsumeFxItems extends MongoFxExample
 {
+  MongoConsumeFxItems(String[] args)
+  {
+    super(args);
+  }
+
   @Override
-  public void run(CalendarContext context)
+  public void run()
   {
     
-    AllegroMongoConsumerManager consumerManager = context.allegro2MongoApi_.newConsumerManagerBuilder()
-      .withConsumer(IToDoHeader.class, IToDoItem.class, (record, header, payload) ->
+    AllegroMongoConsumerManager consumerManager = allegro2MongoApi_.newConsumerManagerBuilder()
+      .withConsumer(IFxHeader.class, IRfq.class, (record, header, rfq) ->
       {
-        System.out.println("ToDoHeader: " + header);
-        System.out.println("ToDoItem:   " + payload);
-        System.out.println("EncryptedApplicationRecord: " + record);
+        printRfq(rfq);
+      })
+      .withConsumer(IFxHeader.class, IQuote.class, (record, header, quote) ->
+      {
+        printQuote(quote);
       })
       .withConsumer(IApplicationPayload.class, IApplicationPayload.class, (record, header, payload) ->
       {
@@ -48,14 +56,7 @@ public class MongoConsumeToDoItems extends MongoCalendarExample
       })
       .build();
     
-    consumerManager.accept(context.todoItems_.find());
-    
-//    for(Document doc : context.todoItems_.find())
-//    {
-//      //System.out.println("doc = " + doc);
-//      
-//      consumerManager.accept(doc.toJson());
-//    }
+    consumerManager.accept(fxItems_.find());
   }
 
   /**
@@ -65,6 +66,6 @@ public class MongoConsumeToDoItems extends MongoCalendarExample
    */
   public static void main(String[] args)
   {
-    new MongoConsumeToDoItems().run(args);
+    new MongoConsumeFxItems(args).run();
   }
 }

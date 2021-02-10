@@ -16,33 +16,27 @@
 
 package com.symphony.s2.allegro.examples.calendar.mongo;
 
-import org.bson.Document;
-
-import com.symphony.oss.models.core.canon.facade.IApplicationRecord;
+import com.mongodb.client.model.Indexes;
 
 /**
- * An example application which creates a ToDoItem, adding it to a current and absolute sequence.
+ * An Allegro2Mongo example application which creates a ToDoItem, adding it to a collection.
  * 
  * @author Bruce Skingle
  *
  */
-public class MongoListToDoItems extends MongoCalendarExample
+public class MongoCreateIndexes extends MongoFxExample
 {
-  @Override
-  public void run(CalendarContext context)
+  MongoCreateIndexes(String[] args)
   {
-    
-    for(Document doc : context.todoItems_.find())
-    {
-      System.out.println("doc = " + doc);
-      
-      IApplicationRecord applicationRecord = context.allegro2MongoApi_.decrypt(doc);
-      
-      System.out.println("header = " + applicationRecord.getHeader());
-      System.out.println("payload = " + applicationRecord.getPayload());
-    }
+    super(args);
   }
 
+  @Override
+  protected void run()
+  {
+    fxItems_.createIndex(Indexes.ascending("header.payloadType"));
+  }
+  
   /**
    * Main.
    * 
@@ -50,6 +44,6 @@ public class MongoListToDoItems extends MongoCalendarExample
    */
   public static void main(String[] args)
   {
-    new MongoListToDoItems().run(args);
+    new MongoCreateIndexes(args).run();
   }
 }

@@ -26,11 +26,11 @@
   <artifactId>mongo-examples</artifactId>
   
   <dependencies>
-    <dependency>
+   <!--  <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>calendar</artifactId>
       <version>${project.version}</version>
-   </dependency>
+   </dependency> -->
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongodb-driver-sync</artifactId>
@@ -98,4 +98,109 @@
       <version>${oss.fugue.version}</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.symphony.oss.canon</groupId>
+        <artifactId>canon-maven-plugin</artifactId>
+        <version>${oss.canon.version}</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>generate-sources</goal>
+            </goals>
+            <configuration>
+              <srcDirs>src/main/resources/canon</srcDirs>
+              <proformaCopyDir>src/main</proformaCopyDir>
+              <templateArtifacts>
+                <templateArtifact>
+                  <groupId>${canon.template.groupid}</groupId>
+                  <artifactId>${canon.template.java}</artifactId>
+                  <version>${canon.template.version}</version>
+                </templateArtifact>
+              </templateArtifacts>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>target/generated-sources/java</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>com.symphony.s2.allegro.examples.calendar.ListItems</mainClass>
+            </manifest>
+          </archive>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id> <!-- this is used for inheritance merges -->
+            <phase>package</phase> <!-- bind to the packaging phase -->
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+    <pluginManagement>
+      <plugins>
+        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>
+                      com.symphony.oss.canon
+                    </groupId>
+                    <artifactId>
+                      canon-maven-plugin
+                    </artifactId>
+                    <versionRange>[0.0.1-SNAPSHOT,)</versionRange>
+                    <goals>
+                      <goal>generate-sources</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore />
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>

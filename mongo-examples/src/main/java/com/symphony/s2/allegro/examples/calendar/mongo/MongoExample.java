@@ -18,58 +18,47 @@ package com.symphony.s2.allegro.examples.calendar.mongo;
 
 import com.symphony.oss.allegro2.mongo.api.Allegro2MongoApi;
 import com.symphony.oss.allegro2.mongo.api.IAllegro2MongoApi;
-import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.allegro.canon.facade.Allegro2Configuration;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 
-abstract class MongoExample extends CommandLineHandler
+abstract class MongoExample
 {
-  private static final String ALLEGRO         = "ALLEGRO_";
-  private static final String SERVICE_ACCOUNT = "SERVICE_ACCOUNT";
-  private static final String POD_URL         = "POD_URL";
-  private static final String MONGO_HOST      = "MONGO_HOST";
-  private static final String MONGO_USER      = "MONGO_USER";
-  private static final String MONGO_PASSWORD  = "MONGO_PASSWORD";
-  private static final String CREDENTIAL_FILE = "CREDENTIAL_FILE";
-  private static final String THREAD_ID       = "THREAD_ID";
+  protected final String            serviceAccount_;
+  protected final String            podUrl_;
+  protected final String            credentialFile_;
+  protected final ThreadId          threadId_;
+  protected final Long              ownerId_;
 
-  private String              serviceAccount_;
-  private String              podUrl_;
-  private String              credentialFile_;
-  private ThreadId            threadId_;
-  private Long                ownerId_;
+  protected final IAllegro2MongoApi allegro2MongoApi_;
 
-  private IAllegro2MongoApi   allegroMongoApi_;
-
-  private String              mongoHost_;
-  private String              mongoUser_;
-  private String              mongoPassword_;
+  protected final String            mongoHost_;
+  protected final String            mongoUser_;
+  protected final String            mongoPassword_;
+  protected final PodAndUserId      ownerUserId_;
 
   /**
    * Constructor.
-   */
-  MongoExample()
-  {
-    withFlag('s',   SERVICE_ACCOUNT,  ALLEGRO + SERVICE_ACCOUNT,  String.class,   false, true,   (v) -> serviceAccount_       = v);
-    withFlag('p',   POD_URL,          ALLEGRO + POD_URL,          String.class,   false, true,   (v) -> podUrl_               = v);
-    withFlag('H',   MONGO_HOST,       ALLEGRO + MONGO_HOST,       String.class,   false, true,   (v) -> mongoHost_            = v);
-    withFlag('U',   MONGO_USER,       ALLEGRO + MONGO_USER,       String.class,   false, true,   (v) -> mongoUser_            = v);
-    withFlag('P',   MONGO_PASSWORD,   ALLEGRO + MONGO_PASSWORD,   String.class,   false, true,   (v) -> mongoPassword_        = v);
-    withFlag('f',   CREDENTIAL_FILE,  ALLEGRO + CREDENTIAL_FILE,  String.class,   false, false,  (v) -> credentialFile_       = v);
-    withFlag('t',   THREAD_ID,        ALLEGRO + THREAD_ID,        String.class,   false, true,   (v) -> threadId_             = ThreadId.newBuilder().build(v));
-  }
-  
-  /**
-   * Method to be called from Main().
    * 
    * @param args Command line arguments.
    */
-  public void run(String[] args)
+  MongoExample(String[] args)
   {
-    process(args);
+    MongoExampleCommandLineHandler handler = new MongoExampleCommandLineHandler();
     
-    allegroMongoApi_ = new Allegro2MongoApi.Builder()
+    handler.process(args);
+
+    serviceAccount_ = handler.serviceAccount_;
+    podUrl_         = handler.podUrl_;
+    credentialFile_ = handler.credentialFile_;
+    threadId_       = handler.threadId_;
+    ownerId_        = handler.ownerId_;
+    mongoHost_      = handler.mongoHost_;
+    mongoUser_      = handler.mongoUser_;
+    mongoPassword_  = handler.mongoPassword_;
+  
+    
+    allegro2MongoApi_ = new Allegro2MongoApi.Builder()
         .withConfiguration(new Allegro2Configuration.Builder()
                 .withPodUrl(podUrl_)
                 .withUserName(serviceAccount_)
@@ -77,17 +66,8 @@ abstract class MongoExample extends CommandLineHandler
                 .build())
         .build();
     
-    PodAndUserId ownerUserId = ownerId_ == null ? allegroMongoApi_.getUserId() : PodAndUserId.newBuilder().build(ownerId_);
-    
-    try
-    {
-      run(mongoUser_, mongoPassword_, mongoHost_, ownerUserId, allegroMongoApi_, threadId_);
-    }
-    catch(RuntimeException e)
-    {
-      e.printStackTrace();
-    }
+    ownerUserId_ = ownerId_ == null ? allegro2MongoApi_.getUserId() : PodAndUserId.newBuilder().build(ownerId_);
   }
   
-  protected abstract void run(String mongoUser, String mongoPassword, String mongoHost, PodAndUserId ownerUserId, IAllegro2MongoApi allegroPodApi, ThreadId threadId);
+  protected abstract void run();
 }
