@@ -39,6 +39,9 @@ import com.symphony.oss.commons.dom.json.MutableJsonObject;
  *
  * Base of FX objects.
  * Generated from ObjectSchema(FxBase) at #/components/schemas/FxBase
+ * 
+ * Everything in this file was generated as a proforma by Canon except for the getHeader() method
+ * which was hand written.
  */
 @Immutable
 public class FxBase extends FxBaseEntity implements IFxBase

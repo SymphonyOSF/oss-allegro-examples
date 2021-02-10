@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Symphony Communication Services, LLC.
+ * Copyright 2021 Symphony Communication Services, LLC.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,54 +16,40 @@
 
 package com.symphony.s2.allegro.examples.calendar.mongo;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.bson.Document;
 
-import com.symphony.oss.allegro.examples.model.fx.canon.Ccy;
-import com.symphony.oss.allegro.examples.model.fx.canon.IRfq;
-import com.symphony.oss.allegro.examples.model.fx.canon.Rfq;
-import com.symphony.oss.allegro.examples.model.fx.canon.facade.CcyPair;
-import com.symphony.oss.allegro.examples.model.fx.canon.facade.ICcyPair;
-
 /**
- * An example application which creates a ToDoItem, adding it to a current and absolute sequence.
+ * Create an RFQ using raw JSON.
  * 
  * @author Bruce Skingle
  *
  */
 public class MongoCreateJsonRfq extends MongoFxExample
 {
-  MongoCreateJsonRfq(String[] args)
+  private MongoCreateJsonRfq(String[] args)
   {
     super(args);
   }
 
-  @Override
-  public void run()
+  private void run()
   {
-    ICcyPair ccyPair = new CcyPair.Builder()
-        .withBase(Ccy.GBP)
-        .withCounter(Ccy.USD)
-        .build();
+    /* The _type and _version attributes are added by Canon generated code and are discriminators to allow objects to be deserialised.
+     * This JSON was generated from a serialised Canon model object but the type and version attributes have been removed to demonstrate 
+     * the effects of using JSON generated without Canon support.
+     * 
+     * Of course callers wishing to avoid Canon would probably have some other model support, but for the purpose of this example
+     * we will construct the Json by String concatenation.
+     * 
+     * The only restriction on the values passed as the header and payload are that they are valid JSON objects.
+     */
     
-    IRfq rfqItem = new Rfq.Builder()
-      .withCcyPair(ccyPair)
-      .withId(Instant.now().toString())
-      .withQuantity(1000000L)
-      .withStreamFor(10)
-      .build();
-    
-    System.out.println("About to create item " + rfqItem);
-
-    System.out.println("About to create item " + rfqItem.getHeader());
-    
+    // We use a timestamp as an ID as a simple way of generating unique IDs, this is obviously not what one would do for a real application.
     String now = Instant.now().toString();
+    
+    // Create the RFQ Payload which will be encrypted.
     String item = "{\n" + 
 //        "  \"_type\":\"com.symphony.oss.allegro.examples.model.fx.Rfq\",\n" + 
 //        "  \"_version\":\"1.0\",\n" + 
@@ -79,6 +65,7 @@ public class MongoCreateJsonRfq extends MongoFxExample
         "  \"streamFor\":10\n" + 
         "}"; 
 
+    // Create the header which will be stored unencrypted.
     String header = "{\n" + 
 //        "  \"_type\":\"com.symphony.oss.allegro.examples.model.fx.FxHeader\",\n" + 
 //        "  \"_version\":\"1.0\",\n" + 
@@ -95,7 +82,7 @@ public class MongoCreateJsonRfq extends MongoFxExample
     System.out.println("About to create item " + item);
     System.out.println("with header " + header);
     
-    // Create an encrypted StoredApplicationRecord.
+    // Create an encrypted BSON Document.
     Document toDoDoc = allegro2MongoApi_.newEncryptedDocumentBuilder()
         .withThreadId(threadId_)
         .withHeader(header)

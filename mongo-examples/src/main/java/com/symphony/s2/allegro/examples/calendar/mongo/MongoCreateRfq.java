@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Symphony Communication Services, LLC.
+ * Copyright 2021 Symphony Communication Services, LLC.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,20 +28,19 @@ import com.symphony.oss.allegro.examples.model.fx.canon.facade.CcyPair;
 import com.symphony.oss.allegro.examples.model.fx.canon.facade.ICcyPair;
 
 /**
- * An Allegro2Mongo example application which creates a ToDoItem, adding it to a collection.
+ * Create a new RFQ object and add it to the FX collection.
  * 
  * @author Bruce Skingle
  *
  */
 public class MongoCreateRfq extends MongoFxExample
 {
-  MongoCreateRfq(String[] args)
+  private MongoCreateRfq(String[] args)
   {
     super(args);
   }
 
-  @Override
-  protected void run()
+  private void run()
   {
     // Create the payload
     
@@ -60,7 +59,7 @@ public class MongoCreateRfq extends MongoFxExample
     
     System.out.println("About to create item " + rfqItem);
     
-    // Create an encrypted StoredApplicationRecord.
+    // Create an encrypted BSON Document.
     Document toDoDocument = allegro2MongoApi_.newEncryptedDocumentBuilder()
         .withThreadId(threadId_)
         .withHeader(rfqItem.getHeader())
@@ -69,6 +68,7 @@ public class MongoCreateRfq extends MongoFxExample
     
     System.out.println("About to store " + toDoDocument);
     
+    // Store the document to Mongodb
     fxItems_.insertOne(toDoDocument);
   }
   

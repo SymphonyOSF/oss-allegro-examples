@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Symphony Communication Services, LLC.
+ * Copyright 2021 Symphony Communication Services, LLC.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,19 @@ package com.symphony.s2.allegro.examples.calendar.mongo;
 import com.mongodb.client.model.Indexes;
 
 /**
- * An Allegro2Mongo example application which creates a ToDoItem, adding it to a collection.
+ * Create indexes on the FX collection. The stream prices example does a query which will use the  header.payloadType index.
  * 
  * @author Bruce Skingle
  *
  */
 public class MongoCreateIndexes extends MongoFxExample
 {
-  MongoCreateIndexes(String[] args)
+  private MongoCreateIndexes(String[] args)
   {
     super(args);
   }
 
-  @Override
-  protected void run()
+  private void run()
   {
     fxItems_.createIndex(Indexes.ascending("header.payloadType"));
   }

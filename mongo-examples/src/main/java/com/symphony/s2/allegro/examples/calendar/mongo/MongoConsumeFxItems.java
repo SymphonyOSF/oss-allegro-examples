@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Symphony Communication Services, LLC.
+ * Copyright 2021 Symphony Communication Services, LLC.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,39 +23,48 @@ import com.symphony.oss.allegro2.mongo.api.AllegroMongoConsumerManager;
 import com.symphony.oss.models.core.canon.IApplicationPayload;
 
 /**
- * An example application which creates a ToDoItem, adding it to a current and absolute sequence.
+ * USe an Allegro consumer to process all objects in the Fx collection and print a one line summary of each one.
  * 
  * @author Bruce Skingle
  *
  */
 public class MongoConsumeFxItems extends MongoFxExample
 {
-  MongoConsumeFxItems(String[] args)
+  private MongoConsumeFxItems(String[] args)
   {
     super(args);
   }
 
-  @Override
-  public void run()
+  private void run()
   {
-    
+    // A consumer manager is a container of consumers and routes each object to the consumer with the closest type to each actual record.
     AllegroMongoConsumerManager consumerManager = allegro2MongoApi_.newConsumerManagerBuilder()
       .withConsumer(IFxHeader.class, IRfq.class, (record, header, rfq) ->
       {
+        // Consumer for RFQ objects, call the standard print routine.
         printRfq(rfq);
       })
       .withConsumer(IFxHeader.class, IQuote.class, (record, header, quote) ->
       {
+        // Consumer for Quote objects, call the standard print routine.
         printQuote(quote);
       })
       .withConsumer(IApplicationPayload.class, IApplicationPayload.class, (record, header, payload) ->
       {
+        /* Consumer for any other object type, although the consumer is defined as taking IApplicationPayload the passed objects
+         * will actually be typed if the model registry has appropriate factories for the serialised types encountered, so
+         * it would be reasonable to do instandeof(TypeName) checks, although it would probably be easier to register typed consumers.
+         * 
+         * There is an error consumer which will be called if any consumer throws a RuntimeException or if no appropriate consumer exists.
+         * The default error consumer logs and error but different logic can be configured by calling withErrorConsumer()
+         */
         System.out.println("Untyped Header:  " + header);
         System.out.println("Untyped Payload: " + payload);
         System.out.println("EncryptedApplicationRecord:  " + record);
       })
       .build();
     
+    // Find all items in the collection and process them via the above consumers.
     consumerManager.accept(fxItems_.find());
   }
 

@@ -34,6 +34,10 @@ import com.symphony.oss.allegro.examples.model.fx.canon.ICcyPairEntity;
  *
  * A Currency Pair.
  * Generated from ObjectSchema(CcyPair) at #/components/schemas/CcyPair
+ * 
+ * In this example application a currency pair is represented as a base and counter currency object.
+ * You might prefer to actually store a currency pair as a 6 character string, this example simply
+ * serves to demonstrate how to a Canon facade can be used to add a derived attribute.
  */
 @Immutable
 public interface ICcyPair

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Symphony Communication Services, LLC.
+ * Copyright 2021 Symphony Communication Services, LLC.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,37 +24,49 @@ import com.symphony.oss.models.core.canon.IApplicationPayload;
 import com.symphony.oss.models.core.canon.facade.IApplicationRecord;
 
 /**
- * An example application which creates a ToDoItem, adding it to a current and absolute sequence.
+ * An example application which processes FX items without using a consumer.
+ * 
+ * For each item a single line summary is output.
  * 
  * @author Bruce Skingle
  *
  */
 public class MongoListFxItems extends MongoFxExample
 {
-  MongoListFxItems(String[] args)
+  private MongoListFxItems(String[] args)
   {
     super(args);
   }
 
-  @Override
-  public void run()
+  private void run()
   {
-    
+    // Process all documents in the fxItems collection
     for(Document doc : fxItems_.find())
     {
+      /* Call Allegro to decrypt the Document. The returned IApplicationRecord contains the header as well as the decrypted payload. */
       IApplicationRecord applicationRecord = allegro2MongoApi_.decrypt(doc);
+      
+      /* Get the decrypted payload. The returned type is IApplicationPayload however if the ModelRegistry contains factories for the
+       * domain model (it is added in the contructor of MongoFxExample, our super class) then the returned object will be fully typed,
+       * allowing us to do instanceof tests.
+       * 
+       * Note that a ConsumerManager would do all this for you.
+       */
       IApplicationPayload payload = applicationRecord.getPayload();
       
       if(payload instanceof IRfq)
       {
+        // Handle and RFQ
         printRfq((IRfq) payload);
       }
       else if(payload instanceof IQuote)
       {
+        // Handle a Quote
         printQuote((IQuote) payload);
       }
       else
       {
+        // Handle anything else
         System.out.println("header = " + applicationRecord.getHeader());
         System.out.println("payload = " + applicationRecord.getPayload());
       }

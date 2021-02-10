@@ -37,6 +37,9 @@ import com.symphony.oss.commons.dom.json.MutableJsonObject;
  *
  * A Currency Pair.
  * Generated from ObjectSchema(CcyPair) at #/components/schemas/CcyPair
+ * 
+ * Everything in this file was generated as a proforma by Canon except for the getCode() method
+ * which was hand written.
  */
 @Immutable
 public class CcyPair extends CcyPairEntity implements ICcyPair

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Symphony Communication Services, LLC.
+ * Copyright 2021 Symphony Communication Services, LLC.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,23 +19,36 @@ package com.symphony.s2.allegro.examples.calendar.mongo;
 import com.symphony.oss.allegro2.mongo.api.Allegro2MongoApi;
 import com.symphony.oss.allegro2.mongo.api.IAllegro2MongoApi;
 import com.symphony.oss.models.allegro.canon.facade.Allegro2Configuration;
-import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 
+/**
+ * Base class for Mongo examples.
+ * 
+ * This class contains protected members containing all the configuration parameters used by the various examples,
+ * as well as the Allegro Mongo client.
+ * 
+ * @author Bruce Skingle
+ *
+ */
 abstract class MongoExample
 {
+  /** Name of the Symphony service account to login to the pod as */
   protected final String            serviceAccount_;
+  /** URL of the Symphony pod */
   protected final String            podUrl_;
+  /* Path to a file containing the service account RSA private key to authenticate with */
   protected final String            credentialFile_;
+  /* Thread (conversation) ID whose content key should be used to encrypt new objects */
   protected final ThreadId          threadId_;
-  protected final Long              ownerId_;
-
-  protected final IAllegro2MongoApi allegro2MongoApi_;
-
+  /** Host name for the Mongodb cluster */
   protected final String            mongoHost_;
+  /** Mongodb user name */
   protected final String            mongoUser_;
+  /** Mongodb password */
   protected final String            mongoPassword_;
-  protected final PodAndUserId      ownerUserId_;
+  
+  /** Allegro client */
+  protected final IAllegro2MongoApi allegro2MongoApi_;
 
   /**
    * Constructor.
@@ -52,7 +65,6 @@ abstract class MongoExample
     podUrl_         = handler.podUrl_;
     credentialFile_ = handler.credentialFile_;
     threadId_       = handler.threadId_;
-    ownerId_        = handler.ownerId_;
     mongoHost_      = handler.mongoHost_;
     mongoUser_      = handler.mongoUser_;
     mongoPassword_  = handler.mongoPassword_;
@@ -65,9 +77,5 @@ abstract class MongoExample
                 .withRsaPemCredentialFile(credentialFile_)
                 .build())
         .build();
-    
-    ownerUserId_ = ownerId_ == null ? allegro2MongoApi_.getUserId() : PodAndUserId.newBuilder().build(ownerId_);
   }
-  
-  protected abstract void run();
 }

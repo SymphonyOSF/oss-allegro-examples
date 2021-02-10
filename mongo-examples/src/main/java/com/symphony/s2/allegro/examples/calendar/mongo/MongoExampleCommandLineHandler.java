@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Symphony Communication Services, LLC.
+ * Copyright 2021 Symphony Communication Services, LLC.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,13 @@ package com.symphony.s2.allegro.examples.calendar.mongo;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.core.canon.facade.ThreadId;
 
+/**
+ * Class to gather configuration variables from the command line, system properties or environment variables.
+ * See MongoExample for a description of each value.
+ * 
+ * @author Bruce Skingle
+ *
+ */
 class MongoExampleCommandLineHandler extends CommandLineHandler
 {
   private static final String ALLEGRO         = "ALLEGRO_";
@@ -34,7 +41,6 @@ class MongoExampleCommandLineHandler extends CommandLineHandler
   String              podUrl_;
   String              credentialFile_;
   ThreadId            threadId_;
-  Long                ownerId_;
 
   String              mongoHost_;
   String              mongoUser_;

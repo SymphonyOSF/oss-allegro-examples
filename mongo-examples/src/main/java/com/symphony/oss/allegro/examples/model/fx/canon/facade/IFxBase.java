@@ -36,6 +36,10 @@ import com.symphony.oss.models.core.canon.IApplicationPayload;
  *
  * Base of FX objects.
  * Generated from ObjectSchema(FxBase) at #/components/schemas/FxBase
+ * 
+ * In this FX example all objects have a common header object format, this facade shows how hand written code can
+ * be safely overlaid on the Canon generated code.
+ * 
  */
 @Immutable
 public interface IFxBase
