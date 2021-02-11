@@ -71,7 +71,7 @@ public class ListItems extends CommandLineHandler implements Runnable
   @Override
   public void run()
   {
-	allegroApi_ = new AllegroApi.Builder()
+    allegroApi_ = new AllegroApi.Builder()
 	            .withConfiguration(new AllegroConfiguration.Builder()
 	                    .withPodUrl(podUrl_)
 	                    .withApiUrl(objectStoreUrl_)
@@ -83,8 +83,6 @@ public class ListItems extends CommandLineHandler implements Runnable
 	                    .build())
 	            .withFactories(CalendarModel.FACTORIES)
 	            .build();
-    
-    System.out.println("Allegro configuration = " + allegroApi_.getConfiguration());
     
     PodAndUserId ownerUserId = ownerId_ == null ? allegroApi_.getUserId() : PodAndUserId.newBuilder().build(ownerId_);
     
