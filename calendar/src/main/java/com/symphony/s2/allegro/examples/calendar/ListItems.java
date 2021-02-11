@@ -84,20 +84,6 @@ public class ListItems extends CommandLineHandler implements Runnable
 	            .withFactories(CalendarModel.FACTORIES)
 	            .build();
     
-    System.out.println("Allegro configuration = " + allegroApi_.getConfiguration());
-    
-    // Verify obsolete deprecated methods still work
-    allegroApi_ = new AllegroApi.Builder()
-        .withPodUrl(podUrl_)
-        .withObjectStoreUrl(objectStoreUrl_)
-        .withUserName(serviceAccount_)
-        .withRsaPemCredentialFile(credentialFile_)
-        .withFactories(CalendarModel.FACTORIES)
-        .withTrustAllSslCerts()
-        .build();
-    
-    System.out.println("Obsolete configuration = " + allegroApi_.getConfiguration());
-    
     PodAndUserId ownerUserId = ownerId_ == null ? allegroApi_.getUserId() : PodAndUserId.newBuilder().build(ownerId_);
     
     System.out.println("CallerId is " + allegroApi_.getUserId());
