@@ -16,11 +16,6 @@
 	},
 	"components": {
 		"schemas": {
-      
-      
-      
-      
-      
       "Ccy": {
         "description": "An currency code.",
         "type": "string",

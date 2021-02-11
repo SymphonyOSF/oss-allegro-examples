@@ -44,7 +44,7 @@ public class MongoAllegroListToDoItems extends AllegroMongoCalendarExample
       
       System.out.println("storedObject = " + storedObject);
       
-      IApplicationRecord applicationRecord = context.allegro2Api_.decryptObject(storedObject);
+      IApplicationRecord applicationRecord = context.allegro2Api_.decrypt(storedObject);
       
       System.out.println("header = " + applicationRecord.getHeader());
       System.out.println("payload = " + applicationRecord.getPayload());

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.symphony.s2.allegro.examples.calendar.mongo;
+package com.symphony.oss.allegro.examples.mongo.fx;
 
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
 import com.symphony.oss.models.core.canon.facade.ThreadId;

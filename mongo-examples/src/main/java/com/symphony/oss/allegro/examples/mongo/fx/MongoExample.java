@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.symphony.s2.allegro.examples.calendar.mongo;
+package com.symphony.oss.allegro.examples.mongo.fx;
 
 import com.symphony.oss.allegro2.mongo.api.Allegro2MongoApi;
 import com.symphony.oss.allegro2.mongo.api.IAllegro2MongoApi;
