@@ -43,7 +43,6 @@
   	<module>calendar</module>
   	<module>json-objects</module>
   	<module>benchmark</module>
-  	<module>mongo-allegro-examples</module>
   	<module>mongo-examples</module>
   </modules>
 </project>
