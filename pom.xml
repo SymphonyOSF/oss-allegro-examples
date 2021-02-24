@@ -26,10 +26,10 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
 
-    <oss.commons.version>0.2.3</oss.commons.version>
-    <oss.canon.version>0.3.5</oss.canon.version>
-    <oss.fugue.version>0.2.34</oss.fugue.version>
-    <oss.models.version>0.7.27-SNAPSHOT</oss.models.version>
+    <oss.commons.version>0.3.0</oss.commons.version>
+    <oss.canon.version>0.4.0</oss.canon.version>
+    <oss.fugue.version>0.3.0</oss.fugue.version>
+    <oss.models.version>0.8.0</oss.models.version>
     <allegro.version>0.6.0-SNAPSHOT</allegro.version>
     
     <canon.template.groupid>com.symphony.oss.canon</canon.template.groupid>
