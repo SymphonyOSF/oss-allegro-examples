@@ -27,6 +27,9 @@ import com.symphony.oss.allegro.api.request.PartitionId;
 import com.symphony.oss.allegro.api.request.UpsertFeedRequest;
 import com.symphony.oss.allegro.examples.calendar.canon.CalendarModel;
 import com.symphony.oss.fugue.cmd.CommandLineHandler;
+import com.symphony.oss.models.allegro.canon.SslTrustStrategy;
+import com.symphony.oss.models.allegro.canon.facade.AllegroConfiguration;
+import com.symphony.oss.models.allegro.canon.facade.ConnectionSettings;
 import com.symphony.oss.models.core.canon.facade.PodAndUserId;
 import com.symphony.oss.models.object.canon.IFeed;
 
@@ -74,13 +77,17 @@ public class CreateFeed extends CommandLineHandler implements Runnable
   public void run()
   {
     allegroApi_ = new AllegroApi.Builder()
-      .withPodUrl(podUrl_)
-      .withObjectStoreUrl(objectStoreUrl_)
-      .withUserName(serviceAccount_)
-      .withRsaPemCredentialFile(credentialFile_)
-      .withFactories(CalendarModel.FACTORIES)
-      .withTrustAllSslCerts()
-      .build();
+            .withConfiguration(new AllegroConfiguration.Builder()
+                    .withPodUrl(podUrl_)
+                    .withApiUrl(objectStoreUrl_)
+                    .withUserName(serviceAccount_)
+                    .withRsaPemCredentialFile(credentialFile_)
+                    .withApiConnectionSettings(new ConnectionSettings.Builder()
+                        .withSslTrustStrategy(SslTrustStrategy.TRUST_ALL_CERTS)
+                        .build())
+                    .build())
+            .withFactories(CalendarModel.FACTORIES)
+            .build();
     
     System.out.println("CallerId is " + allegroApi_.getUserId());
     System.out.println("OwnerId is " + otherUserId_);
@@ -97,7 +104,7 @@ public class CreateFeed extends CommandLineHandler implements Runnable
     }
     
     UpsertFeedRequest.Builder builder = new UpsertFeedRequest.Builder()
-        .withName("myCalendarFeed")
+        .withName(CalendarApp.FEED_NAME)
         .withPermissions(permissions)
         .withPartitionIds(
             new PartitionId.Builder()
@@ -108,7 +115,8 @@ public class CreateFeed extends CommandLineHandler implements Runnable
         ;
     
     IFeed feed = allegroApi_.upsertFeed(builder.build());
-    
+
+    log_.info("Feed hash is " + feed.getId().getHash());
     log_.info("Feed is " + feed);
   }
   
