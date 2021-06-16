@@ -29,8 +29,8 @@
     <oss.commons.version>0.3.0</oss.commons.version>
     <oss.canon.version>0.4.0</oss.canon.version>
     <oss.fugue.version>0.3.0</oss.fugue.version>
-    <oss.models.version>0.8.1</oss.models.version>
-    <allegro.version>0.6.1</allegro.version>
+    <oss.models.version>0.8.2-SNAPSHOT</oss.models.version>
+    <allegro.version>0.6.2-SNAPSHOT</allegro.version>
     
     <canon.template.groupid>com.symphony.oss.canon</canon.template.groupid>
     <canon.template.java>canon-template-java</canon.template.java>

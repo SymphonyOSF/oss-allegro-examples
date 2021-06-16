@@ -22,5 +22,6 @@ public class CalendarApp
 {
   public static final String PARTITION_NAME  = "MyCalendar";
   public static final String FEED_NAME       = "MyCalendarFeed";
+  public static final String MESSAGES_FEED_NAME = "MyMessageFeed";
 
 }
