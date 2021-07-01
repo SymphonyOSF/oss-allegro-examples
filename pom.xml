@@ -27,8 +27,8 @@
     <maven.compiler.target>1.8</maven.compiler.target>
 
     <oss.commons.version>0.3.0</oss.commons.version>
-    <oss.canon.version>0.4.0</oss.canon.version>
-    <oss.fugue.version>0.3.0</oss.fugue.version>
+    <oss.canon.version>0.4.2-SNAPSHOT</oss.canon.version>
+    <oss.fugue.version>0.3.2-SNAPSHOT</oss.fugue.version>
     <oss.models.version>0.8.2-SNAPSHOT</oss.models.version>
     <allegro.version>0.6.2-SNAPSHOT</allegro.version>
     
@@ -45,5 +45,6 @@
   	<module>benchmark</module>
   	<module>mongo-examples</module>
   	<module>allegro2-examples</module>
+  	<module>allegrobot</module>
   </modules>
 </project>

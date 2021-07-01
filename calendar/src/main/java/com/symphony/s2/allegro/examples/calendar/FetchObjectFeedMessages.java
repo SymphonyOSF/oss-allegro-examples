@@ -68,7 +68,7 @@ public class FetchObjectFeedMessages extends CommandLineHandler implements Runna
   @Override
   public void run()
   {
-	allegroApi_ = new AllegroApi.Builder()
+    allegroApi_ = new AllegroApi.Builder()
 	            .withConfiguration(new AllegroConfiguration.Builder()
 	                    .withPodUrl(podUrl_)
 	                    .withApiUrl(objectStoreUrl_)
@@ -96,17 +96,14 @@ public class FetchObjectFeedMessages extends CommandLineHandler implements Runna
             .withConsumer(IReceivedSocialMessage.class, (object, trace) ->
             {
               System.out.println(object);
-              throw new NullPointerException("TEST");
             })
             .withConsumer(IReceivedMaestroMessage.class, (object, trace) ->
             {
               System.out.println(object);
-              throw new NullPointerException("TEST");
             })
             .withConsumer(Object.class, (object, trace) ->
             {
               System.out.println(object);
-              throw new NullPointerException("TEST");
             })
             .build())
         .build()
